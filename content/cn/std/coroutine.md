@@ -1,0 +1,114 @@
+# coroutine
+
+## coroutine.main
+
+### 概述
+coroutine 模块提供了协程的基础功能，包括协程的创建、调度和休眠等功能。
+
+### 常量
+
+#### SOLO
+用于标记协程的标志位。
+
+```nature
+var SOLO = 1 << 1
+```
+
+### 函数
+
+#### sleep()
+使当前协程休眠指定的毫秒数。
+
+```nature
+fn sleep(int ms)
+```
+
+#### yield()
+主动让出当前协程的执行权。
+
+```nature
+fn yield()
+```
+
+#### arg()
+获取协程的参数。
+
+```nature
+fn arg():void_ptr
+```
+
+### 使用示例
+
+```nature
+import coroutine
+
+fn main() {
+    // 协程休眠
+    coroutine.sleep(1000)  // 休眠 1 秒
+    
+    // 主动让出执行权
+    coroutine.yield()
+}
+```
+
+## coroutine.mutex
+
+### 概述
+mutex 模块提供了协程互斥锁功能，用于实现协程间的互斥访问控制。需要通过 `import coroutine.mutex` 引入。
+
+### 类型
+
+#### mutex_t
+互斥锁结构体。
+
+```nature
+type mutex_t = struct {
+    i64 state
+    i64 sema
+    i64 waiter_count
+    var waiters = types.linkco_list_t{}
+}
+```
+
+### mutex_t 方法
+
+#### lock()
+获取互斥锁。如果锁已被占用，当前协程将被阻塞直到获取到锁。
+
+```nature
+fn mutex_t.lock()
+```
+
+#### try_lock()
+尝试获取互斥锁。如果锁已被占用，立即返回 false，否则获取锁并返回 true。
+
+```nature
+fn mutex_t.try_lock():bool
+```
+
+#### unlock()
+释放互斥锁。
+
+```nature
+fn mutex_t.unlock()
+```
+
+### 使用示例
+
+```nature
+import coroutine.mutex
+
+fn main() {
+    // 创建互斥锁
+    var m = mutex.mutex_t{}
+    
+    // 获取锁
+    m.lock()
+    
+    // 临界区代码
+    // ...
+    
+    // 释放锁
+    m.unlock()
+}
+```

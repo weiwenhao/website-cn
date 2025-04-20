@@ -1,0 +1,175 @@
+# http
+
+## 概述
+http 标准库提供了创建 HTTP 服务器的基础功能，支持处理 HTTP 请求、路由管理以及响应生成等功能。
+
+## 类型
+
+### server_t
+HTTP 服务器结构体，用于创建和管理 HTTP 服务器实例。
+
+```nature
+type server_t = struct {
+    fn():void! handler_fn
+    string addr
+    int port
+    arr<{string:callback_fn},8> routers
+    void_ptr uv_server_handler
+    void_ptr listen_co
+}
+```
+
+### request_t
+HTTP 请求结构体，包含请求的所有相关信息。
+
+```nature
+type request_t = struct {
+    u8 method
+    {string:string} headers
+    int length
+    string host
+    string url
+    string path
+    string query
+    string body
+}
+```
+
+### response_t
+HTTP 响应结构体，用于构建 HTTP 响应。
+
+```nature
+type response_t = struct {
+    string version
+    {string:string} headers
+    int status
+    string message
+    int length
+    string body
+    string content_type
+    string charset
+}
+```
+
+## 函数
+
+### server()
+创建一个新的 HTTP 服务器实例。
+
+```nature
+fn server():ptr<server_t>
+```
+
+示例：
+```nature
+var app = http.server()
+```
+
+## server_t 方法
+
+### listen()
+启动 HTTP 服务器并监听指定端口。
+
+```nature
+fn server_t.listen(int port):void!
+```
+
+### get()
+注册 GET 请求路由处理器。
+
+```nature
+fn server_t.get(string path, callback_fn callback)
+```
+
+### post()
+注册 POST 请求路由处理器。
+
+```nature
+fn server_t.post(string path, callback_fn callback)
+```
+
+### put()
+注册 PUT 请求路由处理器。
+
+```nature
+fn server_t.put(string path, callback_fn callback)
+```
+
+### delete()
+注册 DELETE 请求路由处理器。
+
+```nature
+fn server_t.delete(string path, callback_fn callback)
+```
+
+### patch()
+注册 PATCH 请求路由处理器。
+
+```nature
+fn server_t.patch(string path, callback_fn callback)
+```
+
+### options()
+注册 OPTIONS 请求路由处理器。
+
+```nature
+fn server_t.options(string path, callback_fn callback)
+```
+
+### head()
+注册 HEAD 请求路由处理器。
+
+```nature
+fn server_t.head(string path, callback_fn callback)
+```
+
+### all()
+注册处理所有 HTTP 方法的路由处理器。
+
+```nature
+fn server_t.all(string path, callback_fn callback)
+```
+
+### close()
+关闭 HTTP 服务器。
+
+```nature
+fn server_t.close()
+```
+
+## response_t 方法
+
+### send()
+设置响应体内容。
+
+```nature
+fn response_t.send(string msg)
+```
+
+## 使用示例
+
+```nature
+import http
+
+fn main() {
+    var app = http.server()
+    
+    app.get("/", fn(req, res) {
+        res.send("Hello World!")
+    })
+    
+    app.post("/api", fn(req, res) {
+        res.content_type = "application/json"
+        res.send("{\"status\": \"success\"}")
+    })
+    
+    app.listen(8080)!
+}
+```
+
+## 注意事项
+1. 服务器默认监听地址为 "0.0.0.0"
+2. 默认响应的 Content-Type 为 "text/plain"，字符集为 "utf8"
+3. 路由处理器在找不到匹配路径时会返回 404 状态码
+4. 响应头默认包含 "Connection: close"
+5. 该标准库基于 libuv 实现底层网络功能

@@ -1,0 +1,75 @@
+# fmt
+
+## 概述
+fmt 标准库提供了字符串格式化的功能，支持多种数据类型的格式化输出。
+
+## 函数
+
+### sprintf(fmt, ...args)
+根据格式化字符串和参数生成格式化后的字符串。
+
+```nature
+fn sprintf(string fmt, ...[any] args):string
+```
+
+### printf(fmt, ...args)
+格式化并打印字符串到标准输出。
+
+```nature
+fn printf(string fmt, ...[any] args)
+```
+
+## 格式化指令
+格式化字符串中的指令以 `%` 开头，支持以下格式：
+
+### 基本格式
+- `%v` - 通用格式，根据值的类型自动选择合适的格式
+- `%d` - 整数格式
+- `%s` - 字符串格式
+- `%c` - 字符格式
+- `%%` - 输出百分号 %
+
+### 宽度和填充
+支持指定输出的最小宽度和填充字符：
+- `%Nd` - 指定最小宽度为 N（使用空格填充）
+- `%0Nd` - 指定最小宽度为 N（使用 0 填充）
+
+## 支持的类型
+- 整数类型：`int`, `i8`, `i16`, `i32`, `i64`, `uint`, `u8`, `u16`, `u32`, `u64`
+- 浮点类型：`float`, `f32`, `f64`
+- 布尔类型：`bool`
+- 字符串：`string`
+- 指针: `ptr`，`void_ptr`， `raw_ptr`， `vec`， `map`， `set` ，`tup`
+
+## 使用示例
+
+```nature
+import fmt
+
+fn main() {
+    // 基本格式化
+    fmt.printf("Hello %s\n", "World")     // 输出: Hello World
+    fmt.printf("Number: %d\n", 42)        // 输出: Number: 42
+    
+    // 宽度和填充
+    fmt.printf("%05d\n", 123)             // 输出: 00123
+    fmt.printf("%5d\n", 123)              // 输出:   123
+    
+    // 通用格式化
+    fmt.printf("Bool: %v\n", true)        // 输出: Bool: true
+    fmt.printf("Float: %v\n", 3.14)       // 输出: Float: 3.140000
+    
+    // 字符
+    fmt.printf("Char: %c\n", 65 as u8)    // 输出: Char: A
+    
+    // 格式化为字符串
+    var s = fmt.sprintf("Value: %v", 42)
+    fmt.printf("%s\n", s)                 // 输出: Value: 42
+}
+```
+
+## 注意事项
+1. 格式化指令与参数类型不匹配时会输出错误标记（如 `%!d`, `%!s` 等）
+2. 参数数量不足时会输出 `%!` 加对应的格式字符
+3. 不支持的格式化指令会输出 `%?` 加对应的字符
+4. 浮点数格式化默认保留 6 位小数

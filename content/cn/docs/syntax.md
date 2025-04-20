@@ -1,0 +1,2032 @@
+# 语法文档
+
+## 源码结构
+
+这个文件 main.n 是用 nature 编程语言编写的一个简单程序
+
+```nature
+import fmt
+
+fn main() {
+	fmt.printf('hello world')
+}
+```
+
+`import fmt`
+
+这行代码导入了一个名为 `fmt` 的模块，通常用于格式化和输出文本。
+
+`fn main() {`
+
+这行代码定义了一个名为 main 的函数，main 函数是程序的入口点，当程序运行时会首先执行这个函数中的代码。
+
+`fmt.printf('hello world')`
+
+这行代码使用 `fmt` 模块中的 `printf` 函数输出字符串 `'hello world'` 到控制台。
+
+这个程序的功能是当运行时，在控制台输出 "hello world"。
+
+> 只有 fn、import、var、type 这四种类型的语句可以直接在文件顶层声明，并具有全局作用域，其他语句，如 if、for、return 等只能在函数作用域内进行声明。 
+
+```nature
+import fmt
+
+var globalv = 1
+
+type globalt = int
+
+fn main() {
+	var localv = 2
+	type local t = int
+	
+	if true {
+	}
+
+	for true {
+	}
+}
+
+if true { // x 不允许在全局作用域中声明 if 语句
+
+}
+```
+
+
+## 变量
+
+自动类型推导
+
+```nature
+var foo = 1 // v 声明变量 foo 并赋值，foo 类型自动推导为 int  
+  
+var foo = 1 // x 同一作用域下，不允许重复声明变量  
+  
+if (true) {  
+var foo = 2 // v 不同作用域下允许重复声明  
+}
+```
+
+不使用类型推导
+
+```nature
+int foo = 1 // v  
+float bar = 2.2 // v  
+string car = 'hello world' // v 字符串使用单引号包裹  
+  
+foo = 2 // v 变量允许重新定值  
+
+foo = 'hello world' // x foo 已经定义为 int 类型变量，不允许使用字符串赋值  
+  
+i8 f2 = 12 // v 字面量能够根据类型进行自动转换  
+i16 f3 // x 变量声明必须赋值
+```
+
+复合类型变量定义
+
+```nature
+string bar = '' // v 请使用这种方式声明一个空的字符串
+
+[int] baz = [] // v 声明空 vec  
+
+{float} s = {} // v 声明空 set
+
+{string:float} m = {} // v 声明空 map
+
+(int,bool,bool) t = (1, true, false) // v 定义 tuple， 使用方式 t[0], t[1], t[2]
+
+var (t1, t2, t3) = (1, true, 'hello') // tuple 解构声明
+
+var baz = [] // x, 无法推导 vec element 的类型
+  
+bar = null // x 不允许将 null 赋值给任何类型复合类型或者简单类型
+```
+
+如何赋值为 null？
+
+```nature
+// 方式 1
+string? s = null
+s = 'i am string'
+
+// 方式 2
+nullable<string> s2 = null 
+s2 = 'hello world'
+```
+
+
+## 控制结构
+
+### if 语法
+
+```nature
+if condition {
+    // 当 condition 为 true 时执行的代码
+} else {
+    // 当 condition 为 false 时执行的代码
+}
+```
+
+condition 的类型必须是 bool
+
+可以使用 else 语法来检查多个条件，示例
+
+```nature
+int foo = 23
+
+if foo > 100 {
+    print('foo > 100')
+    
+} else if foo > 20 {
+    print('foo > 20')
+    
+} else {
+    print('else handle')
+}
+```
+
+### `for` 语法
+
+`for` 语句用于循环执行代码块。Nature 语言中的 `for` 语句有三种主要形式：经典循环、条件循环和迭代循环。
+
+- **经典循环**
+
+经典循环用于执行固定次数的循环。基本语法如下：
+
+```nature
+var sum = 0
+for int i = 1; i <= 100; i += 1 {
+    sum += i
+}
+println('1 +..+100 = ', sum)
+```
+
+在这个示例中，循环从 `i = 1` 开始，每次循环 `i` 增加 1，直到 `i` 大于 100。最终输出 `1 +..+100 = 5050`。
+
+> ❗️注意：Nature 中没有 `++` 语法，请使用 `i += 1` 代替 `i++`。`for` 后面的表达式不需要括号包裹。
+
+
+- **条件循环**
+
+条件循环用于根据条件执行循环，类似于 C 语言中的 `while` 表达式。基本语法如下：
+
+```nature
+var sum = 0
+var i = 0
+for i <= 100 {
+    sum += i
+    i += 1
+}
+println('1 +..+100 = ', sum)
+```
+
+在这个示例中，循环会一直执行，直到 `i` 大于 100。最终输出与经典循环相同。
+
+- 迭代循环
+
+迭代循环用于遍历集合类型（如 `vec`、`map` 、`string`、 `chan`）。基本语法如下
+
+遍历 `vec`
+
+```nature
+var list = [1, 1, 2, 3, 5, 8, 13, 21]
+for v in list {
+    println(v)
+}
+```
+
+遍历 map，其中 map 作为关键字不能占用
+
+```nature
+var m = {1:10, 2:20, 3:30, 4:40}
+for k in m {
+    println(k)
+}
+```
+
+在这个示例中，循环遍历 `map` 中的每个键，并输出它们。
+
+同时遍历键和值
+
+```nature
+for k, v in m {
+    println(k, v)
+}
+```
+
+- **循环中断与跳过**
+
+关键字 `break` 用于退出当前循环，`continue` 则跳过本次循环逻辑立刻进入到循环判断逻辑。
+
+## 注释
+
+### 单行注释
+单行注释使用 `//` 开头，后面跟随注释内容。例如：
+```nature
+// 这是一个单行注释
+var str = `hello world` // 这也是一个单行注释
+```
+
+### 多行注释
+多行注释使用 `/*` 开头，并以 `*/` 结束。例如：
+```nature
+/*
+这是一个多行注释
+可以跨越多行
+*/
+var str = `hello world`
+```
+
+你可以在代码中使用这些注释来解释代码的功能或添加备注。
+
+## 类型系统
+
+### 数值类型
+| 类型    | 字节数 | 说明                          |
+| ----- | --- | --------------------------- |
+| int   | -   | 有符号整型，与平台CPU位宽一致(64位平台占8字节) |
+| i8    | 1   | 8位有符号整型                     |
+| i16   | 2   | 16位有符号整型                    |
+| i32   | 4   | 32位有符号整型                    |
+| i64   | 8   | 64位有符号整型                    |
+| uint  | -   | 无符号整型，与平台CPU位宽一致            |
+| u8    | 1   | 8位无符号整型                     |
+| u16   | 2   | 16位无符号整型                    |
+| u32   | 4   | 32位无符号整型                    |
+| u64   | 8   | 64位无符号整型                    |
+| float | -   | 浮点数，与平台CPU位宽一致(64位平台等同于f64) |
+| f32   | 4   | 单精度浮点数                      |
+| f64   | 8   | 双精度浮点数                      |
+| bool  | 1   | 布尔类型，值为 true/false          |
+
+### 复合类型
+| 类型名称     | 存储位置  | 语法        | 示例                                 | 说明                            |
+| -------- | ----- | --------- | ---------------------------------- | ----------------------------- |
+| string   | heap  | string    | `string str = 'hello'`             | 字符串类型， 可以使用单引号、双引号、反引号声明字符串类型 |
+| vector   | heap  | [T]       | `[int] list = [1, 2, 3]`           | 动态数组                          |
+| map      | heap  | {T:T}     | `{int:string} m = {1:'a'}`         | 映射表(键限制为integer/float/string) |
+| set      | heap  | {T}       | `{int} s = {1, 2, 3}`              | 集合                            |
+| tuple    | heap  | (T)       | `(int, bool) t = (1, true)`        | 元组                            |
+| function | heap  | fn(T):T   | `fn(int,int):int f = fn(a,b){...}` | 函数类型                          |
+| struct   | stack | struct {} | `struct { int x }`                 | 结构体                           |
+| array    | stack | `[T;n]`   | `[int;3] a = [1,2,3]`              | 固定长度数组                        |
+
+### 特殊类型
+| 类型名称        | 说明                                                                    | 示例                                                       |
+| ----------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
+| self        | 结构体方法中引用自身,只能在 fn extend 中使用                                          | fn string.len():int {  <br>    return self.length  <br>} |
+| ptr         | 安全指针，不允许为null                                                         | `ptr<person> p = new person()`                           |
+| anyptr      | unsafe int 指针，等同于 uintptr, 用于和 c 语言交互                                 | 除了 float 外，任何类型都可以通过 as 转换为 anyptr 类型                    |
+| `rawptr<T>` | unsafe 可空指针，使用 `&` load addr 语法可以获得 rawptr，使用 `*` indirect addr 可以解引用 | `rawptr<int> len_ptr = &len`                             |
+| any         | 任意类型容器，union 类型的特殊形态                                                  | `any v = 42`                                             |
+
+
+## 类型操作
+
+### 类型转换
+
+显式类型转换
+
+- 支持 integer/floater 类型之间相互进行转换
+
+- 支持 string 与 `[u8]` 类型之间相互转换
+
+- 支持 anyptr 与任意类型(除了 floater)之间相互转换
+
+- 后续联合类型断言也使用 as 语法
+
+```nature
+int i = 42.5 as int  // 浮点数转整数
+[u8] bytes = "hello" as [u8]  // 字符串转字节数组
+
+anyptr ptr = &i as anyptr  // rawptr<int> 转 anyptr
+```
+
+### 类型定义
+
+```nature
+type my_int = int
+type nullable<T> = T|null
+```
+
+### 类型扩展
+
+Nature 支持对内置类型和自定义类型进行方法扩展。
+
+**内置类型**
+
+支持扩展的内置类型包括：`bool`、`string`、`int`、`int8`、`int16`、`int32`、`int64`、`uint`、`uint8`、`uint16`、`uint32`、`uint64`、`float`、`float32`、`float64`、`chan`、`vec`、`map`、`set`、`tuple`。
+
+为内置类型添加方法示例：
+
+```nature
+fn string.find_char(u8 char, int after):int {
+    int len = self.len()
+    for int k = after; k < len; k += 1 {
+        if self[k] == char {
+            return k
+        }
+    }
+    return -1
+}
+```
+
+**自定义类型**
+
+通过 type 关键字定义的类型同样支持方法扩展：
+
+```nature
+type square = struct {
+    int length
+    int width
+}
+
+fn square.area():int {
+    return self.length * self.width
+}
+```
+
+**扩展规则**
+
+- 自定义类型扩展必须定义在同一模块中
+- 使用 `self` 关键字引用当前实例
+- 支持泛型参数，后续泛型支持会详细介绍
+
+
+## 函数
+
+函数是 nature 中的一等公民,可以像其他值一样被传递和操作。nature 支持多种函数定义和使用方式。
+
+### 函数定义
+
+基本函数定义语法如下:
+
+```nature
+fn function_name(parameter_list):return_type {
+    // 函数体
+}
+```
+
+例如定义一个简单的加法函数:
+
+```nature
+fn sum(int a, int b):int {
+    return a + b
+}
+```
+
+### 匿名函数与闭包
+
+nature 支持匿名函数(lambda)和闭包:
+
+```nature
+// 将匿名函数赋值给变量
+var f = fn(int a, int b):int {
+    return a + b
+}
+
+// 调用匿名函数
+var result = f(1, 2)
+```
+
+### 可变参数
+
+函数支持可变数量的参数,使用 固定格式 `...` + vec 创建一个可变参数
+
+```nature
+fn sum(...[int] numbers):int {
+    var result = 0
+    for v in numbers {
+        result += v
+    }
+    return result
+}
+
+// 调用
+println(sum(1, 2, 3, 4, 5))
+```
+
+### 参数解构
+
+支持在函数调用时解构参数:
+
+```nature
+fn printf(string fmt, ...[any] args) {
+    var str = sprintf(fmt, ...args)
+    print(str)
+}
+```
+
+### 多返回值
+
+函数可以返回多个值,使用 tuple 语法:
+
+```nature
+fn divide(int a, int b):(int, int) {
+    return (a / b, a % b) // 返回商和余数
+}
+
+// 使用 tuple 解构接收返回值
+var (quotient, remainder) = divide(10, 3)
+```
+
+### 函数类型
+
+函数类型的语法为 `fn(parameter_types):return_type`:
+
+```nature
+// 定义一个函数类型变量
+fn(int,int):int calculator = fn(int a, int b):int {
+     return a + b 
+}
+
+// 函数类型作为参数
+fn apply(fn(int,int):int f, int x, int y):int {
+    return f(x, y)
+}
+```
+
+> nature 中的函数必须显式声明函数的参数类型和返回类型。如果函数不需要返回值,可以省略返回类型声明。
+
+## 算数运算符
+
+| 优先级 | 关键字 | 使用示例       | 说明                   |
+| ------ | ------ | -------------- | ---------------------- |
+| 1      | ()     | (1 + 1)        | (expr)                 |
+| 2      | -      | -12            | -number_expr 负数      |
+| 2      | ！     | !true          | !bool_expr 逻辑非      |
+| 2      | ~      | ~12            | ~integer_expr 按位取反 |
+| 2      | &      | &q            | &var    加载栈地址引用   |
+| 2      | *      | *p            | *ptr_var  解引用         |
+| 3      | /      | 1 / 2          | 除                     |
+| 3      | \*     | 1 \* 2         | 乘                     |
+| 3      | %      | 5 % 2          | 余数                   |
+| 4      | +      | 1 + 1          | 加                     |
+| 4      | -      | 1 - 1          | 减                     |
+| 5      | <<     | 100 << 2       | 按位左移               |
+| 5      | >>     | 100 >> 2       | 按位右移               |
+| 6      | >      | 1 > 2          | 大于                   |
+| 6      | >=     | 1 >= 2         | 大于等于               |
+| 6      | <      | 1 < 2          | 小于                   |
+| 6      | <=     | 1 <= 2         | 小于等于               |
+| 7      | ==     | 1 == 2         | 等于                   |
+| 7      | !=     | 1 != 2         | 不等于                 |
+| 8      | &      | 1 & 2          | 按位与                 |
+| 9      | ^      | 1 ^ 2          | 按位异或               |
+| 10     | \|     | 1 \| 2         | 按位或                 |
+| 11     | &&     | true && true   | 逻辑与                 |
+| 12     | \|\|   | true \|\| true | 逻辑或                 |
+| 13     | =      | a = 1          | 赋值运算符             |
+| 13     | %=     | a %= 1         | 相当于 a = a % 1       |
+| 13     | \*=    | a \*= 1        | a = a \* 1             |
+| 13     | /=     | a /= 1         | a = a / 1              |
+| 13     | +=     | a += 1         | a = a + 1              |
+| 13     | -=     | a -= 1         | a = a - 1              |
+| 13     | \|=    | a \|= 1        | a = a \| 1             |
+| 13     | &=     | a &= 1         | a = a & 1              |
+| 13     | ^=     | a ^= 1         | a = a ^ 1              |
+| 13     | <<=    | a <<= 1        | a = a << 1             |
+| 13     | >>=    | a >>= 1        | a = a >> 1             |
+
+> & 和 * 在获取栈地址是 rawptr\<T\> , rawptr 不安全的允许为 null 的，指针可能会悬空或者指向无效的内存区域。nature 不会进行逃逸分析，如果不是必须的情况下，请尽量避免使用 & 和 *, 使用 new + ptr\<T\>  来获取更加安全的堆指针
+
+## 结构体
+
+在 nature 中,结构体必须通过 `type` 关键字声明， 不支持匿名结构体。
+
+### 基本语法
+
+```nature
+// 结构体声明
+type person = struct {
+    string name
+    int age
+    bool active
+}
+
+// 结构体初始化，此时 p 在栈上进行初始化
+var p = person{
+    name = "Alice",
+    age = 25
+}
+
+//  使用 new 可以在堆上初始化， 并获取结构体指针
+ptr<person> p2 = new person(name = "Bob", age = 30)
+p2.name = "Tom"  // 自动解引用
+```
+
+### 默认值
+
+struct 默认值只支持简单的常量，不支持闭包默认值。
+
+```nature
+type person_t = struct{
+    string name = "unnamed"
+    bool active = true
+}
+
+// 使用默认值初始化
+var p = person_t{}  // p.name="unnamed", p.active=true
+```
+
+###  类型扩展
+
+```nature
+type rect = struct {
+    int width
+    int height
+}
+
+// 为 rect 类型添加扩展函数
+fn rect.area():int {
+    return self.width * self.height  // 使用 self 访问结构体字段
+}
+
+fn main() {
+    var r = rect{width = 10, height = 5}
+    println(r.area())  // 输出: 50
+    
+    ptr<rect> rp = new rect(width = 20, height = 10)
+    println(rp.area()) // 输出: 200
+}
+```
+
+### 嵌套与组合
+
+```nature
+// 嵌套结构体
+type outer = struct {
+    int x
+    rect r = rect{}  // 嵌套结构体with默认初始化
+}
+
+// 结构体组合
+type animal = struct {
+    string name
+}
+
+type dog = struct {
+    animal base    // 组合 animal 结构体
+    string breed
+}
+
+
+type dog = struct {
+    struct {
+        string name
+    } base // x 不要使用匿名结构体, 虽然能够声明也无法进行初始化赋值, 仅用于内存结构转换使用
+    string breed
+}
+```
+
+
+## 数据结构
+### string
+
+字符串是 nature 语言的内置数据类型，用于表示文本序列。
+
+- 字符串使用 ASCII 编码
+- 字符串存储在堆上
+
+```nature
+// 字符串声明 - 支持单引号、双引号或反引号
+string s1 = 'hello world'
+string s2 = "hello world"
+string s3 = `hello world`
+
+// 字符串拼接
+string s4 = s1 + ' one piece'
+
+// 字符串比较
+bool b1 = 'hello' == 'hello'  // true
+bool b2 = 'a' < 'b'          // true
+
+// 获取字符串长度
+int len = s1.len()
+
+// 索引访问和修改
+s1[0] = 72  // 将第一个字符修改为 'H'（ASCII 码 72）
+
+// 字符串与字节数组转换
+[u8] bytes = s1 as [u8]
+string s5 = bytes as string
+
+// 字符串遍历
+for v in s1 {
+    // v 的类型为 u8，表示 ASCII 码值
+    println(v)
+}
+```
+
+### vec
+
+vec 是 nature 的内置动态数组类型，支持动态扩容，存储在堆上。
+
+> 线程不安全
+
+```nature
+// 声明与初始化
+[int] list = [1, 2, 3]        // 语法 1：使用 [T] 声明
+vec<int> list2 = [1, 2, 3]    // 语法 2：使用 vec<T> 声明
+var list3 = vec_new<int>(0, 10) // 创建空 vec, 其中第一个参数是初始化的默认类型
+var list7 = vec_new<string>("hello", 10) // 初始化字符串数组，默认值是 string
+var list5 = [0;10]  // 等同于 vec_new，并根据默认参数类型自动推导
+var list6 = vec_cap<int>(10) // 指定 cap, len = 0
+[int] list4 = [] // 自动推导空 vec 类型
+
+// 基本操作
+list[0] = 10                   // 修改元素
+var first = list[0]           // 获取元素
+list.push(4)                  // 添加元素
+var len = list.len()          // 获取数组长度
+var cap = list.cap()          // 获取数组容量
+
+// 切片和合并
+var slice = list.slice(1, 3)  // 获取下标 1 到 3(不含) 的切片
+list = list.concat([4, 5, 6]) // 合并两个数组
+list.append([4, 5, 6]) // 追加到 list 数组上
+
+// 遍历
+for v in list {
+    println(v)
+}
+```
+
+
+### map
+
+map 是 nature 的内置映射表类型，用于存储键值对。
+
+> 线程不安全
+
+```nature
+// 声明与初始化
+var m3 = {'a': 1, 'b': 2}              // 类型推导
+{string:int} m1 = {'a': 1, 'b': 2}     // 使用 {T:T} 声明
+map<string,int> m2 = {'a': 1, 'b': 2}  // 使用 map<T,T> 声明
+
+// 基本操作
+m1['c'] = 3                    // 插入/更新元素
+var v = m1['a']                // 获取元素值
+m1.del('b')                    // 删除元素
+var exists = m1.contains('a')  // 检查键是否存在
+var size = m1.len()            // 获取元素数量
+
+// 遍历
+for k in m1 {                  // 仅遍历键
+    println(k)
+}
+
+for k, v in m1 {              // 同时遍历键和值
+    println(k, v)
+}
+
+// 空 map 声明 示例
+{string:int} empty = {}
+var empty = map_new<string,int>()
+```
+
+### set
+
+set 是 nature 的内置集合类型，用于存储唯一的元素。set 存储在堆上，元素不允许重复。
+
+> 线程不安全
+
+```nature
+// 声明与初始化
+{int} s1 = {-32, -64, 13}     // 使用 {T} 声明
+set<int> s3 = {1, 2, 3}       // 使用 set<T> 声明
+
+// 基本操作
+s1.add(111)                   // 添加元素
+s1.del(13)                    // 删除元素
+var exists = s1.contains(13)  // 检查元素是否存在
+
+var found = {1, 2, 3}.contains(2)  // 支持方法链式调用
+
+// 遍历
+for v in s1 {
+    println(v)
+}
+
+// 空集合声明
+{int} empty = {}              
+var empty = set_new<int>()     
+```
+
+### tuple
+
+tuple 是 nature 的内置类型，用于将一组不同类型的数据聚合在一个结构中。tuple 存储在堆上，在栈上只保存指针。
+
+
+```nature
+var tup = (1, 1.1, true) // v 声明并赋值，多个元素使用逗号分隔
+
+var tup = (1) // x tuple 中至少需要包含两个元素
+
+var foo = tup[0] // v 字面量 0 表示 tuple 中的第一个元素，以此类推
+
+// x tuple 中的元素访问不允许出现表达式，只允许通过 int 字面量访问
+var foo = tup[1 + 1]
+
+tup[0] = 2 // v 修改 tuple 中的值
+```
+
+tup 解构赋值语法，通过该语法可以模拟函数多返回值，或者快速的进行变量交换
+
+```nature
+var list = [1, 2, 3]
+
+// 1. 变量创建
+ // v 值允许通过 var 进行自动类型推导来连续创建多个变量
+var (foo, bar, car) = (1, 2, true)
+
+ // x 禁止声明类型，只允许通过 var 自动类型推导
+(custom_type, int, bool) (foo, bar, car) = (1, 2, true)
+
+var (foo, (bar, car)) = (1, (2, true)) // v 嵌套形式的创建多个变量
+var (list[0], list[1]) = (2, 4) // x 创建变量时，左侧不允许使用表达式
+
+
+// 2. 变量赋值
+(foo, bar) = (bar, foo) // v 修改变量 foo,bar 的值，可以进行快速变量值交换
+(foo, (bar, car)) = (2, (4, false)) // v 嵌套形式修改变量的值操作
+(foo, bar, car) = (2, (4, false)) // x 左值与右值的类型不匹配
+
+ // v tuple 赋值操作中允许使用左值表达式 ident/ident[T]/ident.T 这样的表达式为左值表达式
+(list[0], list[2]) = (1, 2)
+(1 + 1, 2 + 2) = (1, 2) // x 1+1 属于右值表达式
+```
+
+### arr
+
+arr 是定长数组，和 c 语言中的数据结构一致。
+
+```nature
+[u8;3] array = [1, 2, 3] // 声明一个长度为 12，元素为 u8 类型的数组
+array[0] = 12
+array[1] = 24
+var a = array[7]
+```
+
+arr 和 vec 最大的区别是，arr 默认在栈上进行分配。而 vec 在 stack 上仅仅保存了一个指针。以 struct 为例子
+
+```nature
+type t1 = struct {
+    [u8;12] array
+}
+
+var size = @sizeof(t1) // 12 * 1 = 12byte
+
+type t2 = struct {
+    [u8] list
+}
+
+var size = @sizeof(t2) // list is pointer size = 8byte
+```
+
+和 c 语言不同，在 nature 中使用 array 作为参数时会对 array 进行 copy 并进行值传递。
+
+## 错误处理
+
+nature 编程语言使用 try catch + throw 来进行错误处理。
+
+throw 语法使用示例
+
+```nature
+// x 错误使用方式, can't use throw stmt in a fn without an errable! declaration. example: fn rem(...):void!
+fn rem(int dividend, int divisor):int {
+	...
+}
+
+// v 正确使用方式, 函数必须声明包含 error, 使用 ! 表示函数函数可能抛出错误
+fn rem(int dividend, int divisor):int! {
+	if divisor == 0 {
+		throw errorf('divisor cannot zero')
+	}
+	return dividend % divisor
+}
+```
+
+可以使用 catch 语法捕获错误
+
+```nature
+// 存在 error(!)  声明的函数可以使用 catch 拦截， 其中 e  实现了 throwable 接口
+//type throwable = interface{  
+//    fn msg():string  
+//}  
+//type errort:throwable = struct{  
+// ...
+//}  
+
+var result = rem(10, 0) catch e {
+    println(e.msg())
+    break 1 // break 可以为 result 赋默认值
+}
+```
+
+也可以使用 try catch 来捕获多行表达式错误
+
+```nature
+try {
+    var a = 1
+    var b = a + 1
+    rem(10, 0)
+    var c = a + b
+} catch e { // e 实现了 throwable
+    println('catch err:', e.msg())
+}
+```
+
+error 如果没有被捕获，会随着函数调用栈向上传递，直到被协程调度器捕获并退出程序
+
+```nature
+fn bar():void! {
+    throw errorf('error in bar')
+}
+
+fn foo():void! {
+    bar()
+}
+
+fn main():void! {
+    foo()
+}
+```
+
+编译并运行会得到错误追踪栈
+
+```nature
+coroutine 'main' uncaught error: 'error in bar' at nature-test/main.n:2:22
+stack backtrace:
+0:	main.bar
+		at nature-test/main.n:2:22
+1:	main.foo
+		at nature-test/main.n:6:11
+2:	main.main
+		at nature-test/main.n:10:11
+```
+
+还有一种特殊错误类型是 panic，panic 不会随着函数传递，而是会直接导致程序崩溃。 最常见如索引越界
+
+```nature
+var list = [1, 2, 3]
+var a = list[4] 
+```
+
+编译并运行会得到错误
+
+coroutine 'main' panic: 'index out of vec [4] with length 3' at nature-test/main.n:3:18
+
+panic 也可以 catch 或者 try catch 捕获，但是由于 panic 不会 沿着调用栈传递, 所以必须立刻捕获而不能跨函数捕获。
+
+```nature
+// panic 捕获方式与 error 相同
+var a = list[4] catch e {
+    println(e.msg())
+}
+
+// 使用 panic 函数可以手动抛出 panic
+panic('failed')
+```
+
+main 函数默认会添加 `errable(!)`  
+
+## 联合类型
+
+联合类型（Union Types）允许一个变量持有多种可能的类型之一。nature 提供了灵活的联合类型系统。
+
+基本语法
+
+```nature
+// 使用 | 运算符声明联合类型
+type nullable<T> = T|null  // 可空类型
+type number = int|float    // 数值类型
+```
+
+> 联合类型只能在 global type alias 中进行声明，不支持匿名声明
+
+### nullable
+
+```nature
+int? foo = null        // 等同于 nullable<int> foo = null
+string? bar = "hello"  // 等同于 nullable<string> bar = "hello"
+```
+
+### 类型断言
+
+类型断言使用和类型转换一样的 as 语法
+
+```nature
+int? foo = 42
+int val = foo as int  // 将联合类型断言为具体类型
+```
+
+### 类型检查
+
+is 语法用于检查联合类型当前存储的类型
+
+```nature
+int? foo = 42
+bool is_int = foo is int    // true
+bool is_null = foo is null  // false
+
+// 在条件语句中使用, 如果可以通过逻辑判断确定 foo 的具体类型
+// foo 在 if body 中会自动进行断言 foo = foo as int
+if foo is int {
+    println("foo is an integer", foo)
+}
+```
+
+### 模式匹配
+
+模式匹配成功会进行自动断言
+
+```nature
+int? foo = null
+int result = match foo {
+    is int -> foo        // auto: foo = foo as int
+    is null -> -1        // auto: foo = foo as null
+}
+```
+
+### any
+
+any 是一种特殊的 union type 可以包含任意类型
+
+小范围的联合类型可以赋值给包含这些类型的大范围联合类型, any 包含最大的类型范围
+
+```nature
+any foo = 1
+int? bar = null
+foo = bar // v
+bar = foo // x bar 的范围小于 foo
+```
+
+## 接口
+
+声明方式
+
+```nature
+type measurable = interface{  
+    fn area():int  
+    fn perimeter():int
+}
+
+// interface 支持泛型声明
+type measurable<T> = interface{  
+    fn area():T  
+    fn perimeter():T  
+}
+```
+
+完整声明示例
+
+```nature
+type measurable<T> = interface{  
+    fn perimeter():T  
+    fn area():T  
+}  
+
+// type 实现 interface
+type rectangle: measurable<i64> = struct{  
+    i64 width  
+    i64 height  
+}  
+
+fn rectangle.area():i64 {  
+    return self.width * self.height  
+}
+
+fn rectangle.perimeter():i64 {  
+    return 2 * (self.width + self.height)  
+}
+```
+
+接口可以作为函数参数，只要实现了该接口就能通过函数参数示例
+
+```nature
+fn print_shape(measurable<i64> s) {  
+    println(s.area(), s.perimeter())  
+}
+
+fn main() {
+	// 值传递
+	var r = rectangle{width=3, height=4}  
+	print_shape(r)  
+
+	// 指针引用传递
+	var r1 = new rectangle(width=15, height=18)  
+	print_shape(r1)
+}
+```
+
+传递的参数如果是 ptr，则会解构 ptr 包含的类型是否实现了 measurable，type 可以实现多个 interface，interface 之间使用 `,` 分隔
+
+```nature
+type measurable<T> = interface{  
+    fn perimeter():T  
+    fn area():T  
+}  
+  
+type updatable = interface{  
+    fn update(i64)  
+}  
+  
+type rectangle: measurable<i64>,updatable = struct{  
+    i64 width  
+    i64 height  
+}  
+fn rectangle.area():i64 {  
+    return self.width * self.height  
+}  
+fn rectangle.perimeter():i64 {  
+    return 2 * (self.width + self.height)  
+}  
+fn rectangle.update(i64 i) {  
+   self.width = i  
+   self.height = i  
+}
+```
+
+可以通过 `is` 判断 interface 的具体类型
+
+```
+fn use_com(combination c):int {  
+    if c is square {  
+        // auto as: square c = c as square, c is interface  
+        c.unique()  
+        return 1  
+    }  
+    if c is ptr<square> {  
+        // auto as: ptr<square> c = c as ptr<square>  
+        c.unique()  
+        return 2  
+    }  
+    return 0  
+}
+
+// 同样支持 match is
+  
+fn use_com(combination c):int {  
+    return match c {  
+        is square -> 10  
+        is ptr<square> -> 20  
+        _ -> 0  
+    }  
+}
+```
+
+interface 支持 nullable
+
+```
+fn use(testable? test) {  
+    if (test is testable) { // test = test as testable  
+        println('testable value is', test.nice())  
+    } else {  
+        println('test not testable')  
+    }  
+}
+```
+
+接口也可以作为泛型约束使用，在后续的泛型章节介绍
+
+## 模式匹配
+
+
+nature 提供了强大的模式匹配功能，通过 `match` 表达式可以实现复杂的条件分支逻辑。
+
+### 基本语法
+
+match 表达式的基本语法如下：
+
+```nature
+match subject {
+    pattern1 -> expression1
+    pattern2 -> expression2
+    ...
+    _ -> default_expression  // 默认分支
+}
+```
+
+### 值匹配
+
+可以直接匹配字面量值：
+
+```nature
+var a = 12
+match a {
+    1 -> println('one')
+    12 -> println('twelve')  // 匹配成功
+    20 -> println('twenty')
+    _ -> println('other')
+}
+```
+
+支持字符串匹配：
+
+```nature
+match 'hello world' {
+    'hello' -> println('greeting')
+    'hello world' -> println('full greeting')  // 匹配成功
+    _ -> println('other')
+}
+```
+
+### 表达式匹配
+
+可以不携带 subject，此时只要 pattern1  表达式的结果为 true 就能进行匹配，只能匹配一个分支并执行
+
+```nature
+match {
+    12 > 0 && 0 > 0 -> println('case 1')
+    (13|(1|2)) == 15 -> println('case 2')  // 匹配成功
+    (1|2) > 3 -> println('case 3')
+    _ -> println('default')
+}
+```
+
+### 自动断言
+
+对于联合类型，可以使用 `is` 进行类型匹配，当 match subject 是 var 时，匹配成功后会自动进行类型断言
+
+```nature
+any value = 2.33
+var result = match value {
+    is int -> 0.0
+    is float -> value  // value 自动断言为 float 类型: var value = value as float
+    _ -> 0.0
+}
+```
+
+result 会根据第一个分支的返回类型进行自动推导。
+
+### 代码块与 break
+
+match 分支中可以使用代码块，并通过 `break` 返回值：
+
+```nature
+string result = match {
+    12 > 13 -> {
+        var msg = 'case 1'
+        break msg
+    }
+    12 > 11 -> {
+        var msg = 'case 2'
+        break msg  // 匹配成功，返回 'case 2'
+    }
+    _ -> 'default'
+}
+```
+
+
+### 注意事项
+
+1. match 表达式必须包含所有可能的情况，通常通过添加默认分支 `_` 来实现
+2. 所有分支的返回值类型必须一致，match 的返回值可以根据分支类型进行自动推导
+3. 在代码块中使用 `break` 返回值时，其类型必须与其他分支返回值类型一致
+4. 对 union 类型的局部变量进行 match 时，pattern1 匹配成功后会进行自动断言
+
+## 泛型
+
+nature 支持类型参数化的泛型编程，可以用于结构体、联合类型和函数。
+
+###  类型参数
+
+基本语法使用 `<T>` 来声明类型参数，其中 T 是类型参数名称。可以声明多个类型参数，用逗号分隔。
+
+```nature
+// 单个类型参数
+type box<T> = struct {
+    T value
+}
+
+// 多个类型参数
+type pair<T, U> = struct {
+    T first
+    U second
+}
+
+type result<T> = T|error    // 泛型联合类型
+
+type list<T> = [T]         // 泛型数组类型
+```
+
+类型参数支持嵌套
+
+```nature
+type wrapper<T> = struct {
+    box<T> inner    // 嵌套使用泛型类型
+}
+
+// 使用嵌套泛型
+var w = wrapper<int>{
+    inner = box<int>{value = 42}
+}
+```
+
+### 泛型函数
+
+```nature
+// 泛型函数声明
+fn sum<T>(T a, T b):T {
+    return a + b
+}
+
+// 泛型函数调用
+var result = sum<int>(1, 2)      // 显式指定类型
+var result2 = sum(1.1, 2.2)      // 类型自动推导
+
+
+//  类型参数定义扩展函数
+type box<T> = struct {
+    T value
+}
+
+fn box<T>.get():T {
+    return self.value
+}
+```
+
+### 泛型约束
+
+> nature 的泛型约束暂时还不完善，只会验证传递给泛型的参数是否满足泛型约束声明的类型，而没有验证在泛型函数使用中是否满足泛型约束的使用，在后续的版本中会解决这个问题。
+
+nature 的泛型约束支持三种类型，三种类型约束不允许相互组合，只能选取一种类型约束方式
+
+```nature
+// union 约束
+type test_union = int|bool|float  
+  
+fn test<T:test_union>(T param) {  
+    println(param)  
+}
+
+// union 简化写法
+fn test<T:int|bool|float>(T param) {  
+    println(param)  
+}
+
+// interface 约束
+type test_interface = interface{}  
+type test_interface2 = interface{}  
+  
+fn test<T:test_interface&test_interface2>(T param) {  
+    println(param)  
+}
+```
+
+### 使用示例
+
+```nature
+// 定义泛型结构体
+type pair<T, U> = struct {
+    T first
+    U second
+}
+
+// 定义泛型方法
+fn pair<T, U>.swap():(U, T) {
+    return (self.second, self.first)
+}
+
+fn main() {
+    // 创建泛型实例
+    var p = pair<int, string>{
+        first = 42,
+        second = "hello"
+    }
+    
+    // 调用泛型方法
+    var (s, i) = p.swap()
+}
+```
+
+### 注意事项
+
+1. 泛型类型参数在编译时必须是确定的
+2. 使用类型约束可以限制泛型类型的范围
+3. 泛型函数的类型参数可以通过参数类型自动推导
+4. 嵌套泛型使用时需要指定完整的类型参数
+
+
+## 协程
+
+协程是一种用户态的轻量级线程，可以在单个系统线程上运行多个协程。
+
+### 基本使用
+
+1. 使用 `go` 关键字
+```nature
+var fut = go sum(1, 2)  // 创建一个共享协程
+```
+
+1. 使用 `@async` 宏, 可以携带 flag 参数来定义协程的行为
+
+```nature
+var fut = @async(sum(1, 2), co.SAME)  // SAME 表示新的协程和当前协程共用 processor
+```
+
+### future\<T\>
+
+协程创建后会返回一个 future 对象， 此时协程已经在运行中，但是不会阻塞当前协程，可以通过 `await()` 方法阻塞并等待协程执行完成并获取返回值：
+
+```nature
+fn sum(int a, int b):int {
+    co.sleep(1000)  // 模拟耗时操作, sleep 单位 ms
+    return a + b
+}
+
+fn main() {
+    var fut = go sum(1, 2)
+    var result = fut.await()  // 等待协程执行完成并获取结果
+    println(result)  // 输出: 3
+}
+```
+
+> 使用 `co.sleep()` 可以让当前协程让出并休眠指定的毫秒数
+> 使用 `co.yield` 可以直接让出当前协程的执行权等待下一次调度
+
+### mutex
+
+mutex（互斥锁）是一种并发控制机制，用于保护共享资源，确保在同一时刻只有一个协程可以访问被保护的资源。
+
+```nature
+import co.mutex as m
+
+// 创建互斥锁
+var mu = m.mutex_t{}
+
+// 加锁
+mu.lock()
+
+// 临界区代码
+// ...
+
+// 解锁
+mu.unlock()
+```
+
+
+### 错误处理
+
+协程中的错误 也可以通过 `catch` 语法捕获
+
+```nature
+fn div(int a, int b):int! {
+    if b == 0 {
+        throw errorf("division by zero")
+    }
+    return a / b
+}
+
+fn main() {
+    var fut = go div(10, 0)
+    var result = fut.await() catch e {
+        println("error:", e.msg())
+        break 0  // 提供默认值
+    }
+}
+```
+
+如果协程中的错误没有被捕获，程序将会终止。
+
+
+### 注意事项
+
+1. 协程是轻量级的，可以创建大量协程
+2. 协程中的错误应该被适当处理，未捕获的错误会导致程序终止
+3. `await()` 方法会阻塞当前协程直到目标协程完成
+
+## channel
+
+channel 是 nature 提供的协程间通信的基本机制，用于在不同协程之间安全地传递数据。
+
+### 基本用法
+
+
+```nature
+// 创建无缓冲 channel
+var ch = chan_new<int>()      // 创建传递 int 类型数据的 channel
+var ch_str = chan_new<string>() // 创建传递 string 类型数据的 channel
+
+// 创建带缓冲的 channel
+var ch_buf = chan_new<int>(5)  // 创建缓冲大小为 5 的 channel
+
+// 发送数据
+ch.send(42)        // 发送数据到 channel
+ch_str.send("hello") 
+
+// 接收数据
+var value = ch.recv()     // 从 channel 接收数据
+var msg = ch_str.recv()
+
+```
+
+channel 状态
+
+```nature
+ch.close()                    // 关闭 channel
+bool closed = ch.is_closed()  // 判断协程 是否关闭
+var ok = ch.is_successful()   //  在协程关闭状态下可以检查最近的读取或者写入操作是否成功
+```
+
+协程在关闭状态下发送数据会产生 error，可以使用 catch 捕获。
+
+未接收完成的 chan buf 可以继续进行 recv，接收完成后再次 recv 会抛出 error
+
+### channel 特性
+
+1. **无缓冲 channel**
+   - 发送操作会阻塞，直到有接收者准备好接收数据
+   - 接收操作会阻塞，直到有发送者发送数据
+
+2. **带缓冲 channel**
+   - 当缓冲区未满时，发送操作不会阻塞
+   - 当缓冲区非空时，接收操作不会阻塞
+   - 适用于生产者消费者模式
+
+
+### select 语句
+
+select 语句用于同时监听多个 channel 的操作，类似于 switch 语句，但专门用于 channel 操作。
+
+基本语法：
+```nature
+select {
+    ch1.on_recv() -> msg {
+        // 处理从 ch1 接收到的数据
+    }
+    ch2.on_send(value) -> {
+        // ch2 发送成功后的处理
+    }
+    _ -> {
+        // 默认分支，当所有 channel 都不可操作时执行
+    }
+}
+```
+
+特性：
+1. 可以同时监听多个 channel 的发送和接收操作
+2. 如果多个 case 同时就绪，select 会随机选择一个执行
+3. 如果没有 case 就绪且没有默认分支，select 会阻塞等待
+4. select 会自动 closed error, 然后通过 `is_successful()` 检查当前被唤醒 channel 操作是否成功
+
+### 使用示例
+
+**简单的生产者消费者模式**
+
+```nature
+// 生产者
+go (fn(chan<int> ch):void! {
+    ch.send(42)
+})(ch)
+
+// 消费者
+var value = ch.recv()
+```
+
+**使用带缓冲 channel 实现限流器**
+```nature
+var limiter = chan_new<u8>(10)  // 最多允许 10 个并发任务
+for u8 i = 0; i < 100; i+=1 {
+    limiter.send(i)             // 获取令牌
+    go (fn():void! {
+        // 处理任务
+        limiter.recv()          // 释放令牌
+    })()
+}
+```
+
+1. **使用 select 实现超时控制**
+```nature
+var ch = chan_new<string>()
+var timeout = chan_new<bool>()
+
+select {
+    ch.on_recv() -> msg {
+        println("received:", msg)
+    }
+    timeout.on_recv() -> {
+        println("operation timeout")
+    }
+}
+```
+
+### 注意事项
+
+1. channel 是类型安全的，只能传递声明时指定的数据类型
+2. 关闭的 channel 不能再发送数据，但可以继续接收已缓冲的数据
+3. select 语句提供了处理多个 channel 的优雅方式
+4. 使用带缓冲的 channel 可以提高程序性能，但要注意合理设置缓冲大小
+
+
+## 宏
+
+一般函数无法实现的功能，可以通过宏来实现，如函数调用的延迟展开，或者读取类型的 size 等，nature  当前版本还不支持自定义宏，但内置了一些必须的宏函数
+
+```nature
+var size = @sizeof(i8) // sizeof 读取类型占用栈内存
+
+type double = f64
+var hash = @reflect_hash(double) // 读取类型反射唯一标识
+
+@async(delay_sum(1, 2), 0) //  创建协程
+
+// 使用 unsafe_load 避免对 package struct 进行堆分配  
+@unsafe_load(package).set_age(25) 
+
+var a = @default // 堆变量赋初始化默认值，通常用于泛型中的默认值赋值
+```
+
+> @unsafe_load 是由于没有实现逃逸分析，所以编译器遇到 package.set_age(25) 这样的 struct call 操作时，会对 package 进行默认堆分配，来避免 set_age 中产生不安全的指针。后续版本中会引入逃逸分析， 让是否堆分配变得更准确
+
+## 函数标签
+
+函数标签是一种特殊的函数声明语法，用于为函数添加元数据或修改函数的行为。标签使用 `#` 符号开头，必须放置在函数声明之前。
+
+### linkid 标签
+
+`#linkid` 标签用于自定义函数的链接器符号名称：
+
+```nature
+#linkid print_message
+fn log(string message):void {
+    // 函数实现
+}
+```
+
+### local 标签
+
+`#local` 标签用于标记函数的可见性，表明该函数仅在当前模块内可见
+
+```nature
+#local
+fn internal_helper():void {
+    // 函数实现
+}
+```
+
+> 编译器实际上不会对 local 添加任何限制，这是一种约定俗成
+
+### 注意事项
+
+1. 标签必须直接放在函数声明之前
+2. 一个函数可以同时使用多个标签
+3. 标签的顺序没有特定要求
+
+## 内置类型
+
+### nullable\<T\>
+可空类型，用于表示一个值可以为 null 或指定类型 T。
+
+```nature
+nullable<int> foo = null
+foo = 42  // 可以赋值为 int 类型
+
+// 简写语法
+int? bar = null
+bar = 42
+```
+
+### throwable
+
+错误类型，用于表示程序运行时的错误信息。
+
+```nature
+  
+type throwable = interface{  
+    fn msg():string  
+}  
+  
+type errort:throwable = struct{  
+    string message  
+    bool is_panic  
+}  
+  
+fn errort.msg():string {  
+    return self.message  
+}  
+  
+fn errorf(string format, ...[any] args):ptr<errort> {  
+    var msg = fmt.sprintf(format, ...args)  
+    return new errort(message = msg)  
+}
+```
+
+
+## 内置函数
+
+### print
+打印任意数量的参数到标准输出，不添加换行符。
+
+```nature
+print("Hello", 42, true)  // 输出: Hello42true
+```
+
+### println
+打印任意数量的参数到标准输出，并在多个参数之间添加空格，末尾添加换行符。
+
+```nature
+println("Hello", 42)  // 输出: Hello 42\n
+```
+
+### panic
+触发一个不可恢复的运行时错误，导致程序立即终止。
+
+```nature
+panic("something went wrong")  // 程序终止并输出错误信息
+```
+
+### assert
+断言条件为真，如果条件为假则触发 panic。
+
+```nature
+assert(1 + 1 == 2)  // 正常执行
+assert(1 > 2)       // 触发 panic
+```
+
+## 模块
+
+模块是 nature 中组织和重用代码的基本单位。每个 `.n` 文件都是一个独立的模块。
+
+### main 模块
+每个 nature 程序必须包含一个 `main` 函数作为程序入口点：
+
+```nature
+// main.n
+import fmt
+
+fn main() {
+    fmt.printf("Hello, World!")
+}
+```
+
+包含 `main` 函数的文件被视为 main 模块，是程序的入口模块。
+
+### 模块定义
+
+模块中可以包含以下全局声明：
+- 类型（type）
+- 变量（var）
+- 函数（fn）
+
+```nature
+// user.n
+type user = struct {
+    int id
+    string username
+}
+
+int total_users = 0
+
+fn create_user(string name):user {
+    total_users += 1
+    return user{
+        id = total_users,
+        username = name
+    }
+}
+```
+
+### 模块导入与使用
+
+使用 `import` 关键字导入模块：
+
+```nature
+// 基本导入
+import "user.n"
+
+// 使用别名
+import "user.n" as u
+
+fn main() {
+    var new_user = user.create_user("alice")
+    // 或者使用别名
+    var another = u.create_user("bob")
+}
+```
+
+### 注意事项
+
+1. 每个程序必须有且仅有一个包含 `main` 函数的模块
+2. 模块级别只能包含类型、变量和函数声明
+3. 模块中的变量声明必须显式指定类型
+4. 目前仅支持基于当前文件的相对路径导入
+
+
+## 包管理
+
+### package.toml
+
+在项目根目录下创建 `package.toml` 可以自动启用包管理功能，该文件来定义项目信息和依赖
+
+```toml
+```toml
+# 基础信息
+name = "myproject"        # 项目名称
+version = "1.0.0"        # 版本号
+authors = ["Alice <a@example.com>"]
+description = "项目描述"
+license = "MIT"
+type = "bin"             # bin 或 lib
+entry = "main"           # 库的入口文件（type = "lib" 时使用）
+
+# 依赖包，可以通过 git 或者本地路径指定
+[dependencies]
+rand = { type = "git", version = "v1.0.1", url = "jihulab.com/nature-lang/rand" }
+local_pkg = { type = "local", version = "v1.0.0", path = "./local" }
+```
+### 依赖管理
+
+包管理组件 npkg 已经随 nature 安装包一起安装，在项目根目录使用 `npkg sync` 命令同步依赖管理中的 package。package 会被同步到 $HOME/.nature/package 目录。
+
+```
+$HOME/.nature/package
+├── caches
+└── sources
+    ├── jihulab.com.nature-lang.os@v1.0.1
+    │   ├── main.n
+    │   └── package.toml
+    └── local@v1.0.0
+        ├── main.linux_amd64.n
+        ├── main.linux.n
+        ├── main.n
+        └── package.toml
+
+```
+
+### 导入语法
+
+```nature
+import rand                    // 导入包的主模块（等同于 import rand.main）
+import rand.utils.seed         // 导入特定模块
+import rand.utils.seed as seed // 使用别名
+```
+
+import 会按照以下顺序查找模块
+
+- 当前项目（package.toml 中的 name）
+- 项目依赖（dependencies 中定义的包）
+- 标准库
+
+### 跨平台支持
+
+当使用 `import syscall` 时，会按以下顺序查找导入的模块
+
+1. syscall.{os}_{arch}.n
+2. syscall.{os}.n
+3. syscall.n
+
+支持的平台：
+- os: linux、darwin
+- arch: amd64、arm64
+
+### 冲突处理
+
+当导入包的名称冲突时，可以在 dependencies 中使用不同的键名
+
+```toml
+[dependencies]
+rand_v1 = { type = "git", version = "v1.0", url = "jihulab.com/nature-lang/rand" }
+rand_v2 = { type = "git", version = "v2.0", url = "jihulab.com/nature-lang/rand" }
+ ```
+```
+
+然后使用不同的名称导入
+
+```nature
+import rand_v1
+import rand_v2
+ ```
+
+### 注意事项
+
+1. **禁止循环 import**
+2. package.toml 必须位于项目根目录
+3. npkg sync 和 nature build 命令必须在项目根目录执行
+4. module 导入支持跨平台特性，直接使用文件导入不支持
+5. 当前项目可以通过包名访问任意子目录的模块
+
+
+## 和 C 语言交互
+
+首先在 package.toml 中定义静态库文件，编译器会自动链接相关架构的静态库文件。然后再通过 `#linkid` 标签声明 C 函数模板，在 nature 中调用模板函数时编译器会自动链接到静态库中存在的 c 语言函数。
+
+当然，只要是能够生成静态库的编程语言，nature 都能够与之交互。
+
+### 静态库与模板函数声明
+
+在 `package.toml` 中通过 `[links]` 节点定义需要链接的静态库：
+
+```toml
+[links]
+libz = { 
+    linux_amd64 = 'libs/libz_linux_amd64.a',
+    darwin_amd64 = 'libs/libz_darwin_amd64.a',
+    linux_arm64 = 'libs/libz_linux_arm64.a', 
+    darwin_arm64 = 'libs/libz_darwin_arm64.a'
+}
+```
+
+使用 `#linkid` 标签和函数模板来声明需要调用的 C 函数 id 和相关参数
+
+```nature
+#linkid gzopen
+fn gzopen(anyptr fname, anyptr mode):anyptr
+
+#linkid sleep
+fn sleep(int second)
+```
+
+### 调用示例
+
+```nature
+// zlib.n
+#linkid gzopen
+fn gzopen(anyptr fname, anyptr mode):anyptr
+
+// main.n
+import zlib
+
+fn main() {
+    var output = "output.gz"
+    // 使用 string.ref 函数可以获取 c 语言字符串，包含 '\0'
+    var gzfile = zlib.gzopen(output.ref(), "wb".ref())
+    if gzfile == null {
+        throw errof("failed to open gzip file")
+    }
+    // ... 使用 gzfile
+}
+```
+
+### 类型映射
+
+nature 与 C 语言的类型映射关系
+
+| nature 类型   | C 类型             | 说明                        |
+| ----------- | ---------------- | ------------------------- |
+| anyptr      | uintptr          | 通用指针类型                    |
+| `rawptr<T>` | T*               | 类型化指针                     |
+| i8/u8       | int8_t/uint8_t   | 8位整型                      |
+| i16/u16     | int16_t/uint16_t | 16位整型                     |
+| i32/u32     | int32_t/uint32_t | 32位整型                     |
+| i64/u64     | int64_t/uint64_t | 64位整型                     |
+| int         | size_t           | 平台相关的整型，在64位系统上等同于int64_t |
+| f32         | float            | 32位浮点                     |
+| f64         | double           | 64位浮点                     |
+| [T,n]       | T[n]             | 固定长度数组，N为编译时常量            |
+
+获取 c 语言字符串以及指针
+
+```nature
+// 获取变量地址
+var str = "hello"
+anyptr ptr = str.ref()  // 获取字符串地址
+
+// 获取 rawptr 类型
+rawptr<tm_t> time_ptr = &time_info  // 获取结构体地址
+
+// 获取 anyptr 类型
+anyptr c_ptr = time_info as anyptr // 任何 nature 类型都可以转换为 anyptr 类型
+```
+
+结构体映射
+
+```nature
+type tm_t = struct {
+    i32 tm_sec
+    i32 tm_min
+    i32 tm_hour
+    i32 tm_mday
+    i32 tm_mon
+    i32 tm_year
+    i32 tm_wday
+    i32 tm_yday
+    i32 tm_isdst
+    i64 tm_gmtoff
+    anyptr tm_zone
+}
+```
+
+### 标准库函数
+
+nature 默认集成了 musl libc 和 macOS C 库，可以直接使用标准库函数, 只需要定义函数模板即可, nature 标准库的 libc 已经定义了部分函数可以直接使用。
+
+```nature
+// ...
+#linkid localtime
+fn localtime(rawptr<i64> timestamp):rawptr<tm_t>
+
+#linkid strlen
+fn strlen(anyptr str):uint
+
+#linkid fork
+fn fork():int
+
+// ...
+```
+
+### 注意事项
+
+1. 使用 C 语言交互时需要特别注意内存管理，nature 不会自动管理通过 C 函数分配的内存
+2. 使用 anyptr 和 rawptr 时要格外小心，它们会绕过 nature 的类型安全检查
+
+## 格式化
+
+```nature
+var bar = '' // stmt 结尾不需要携带 ; 
+
+if true {
+    var foo = 1 // 使用 4 个空格进行缩进
+}
+
+call_test(
+    1,
+    2, // 多行参数, 需要在最后一行添加 ,
+)
+
+var v = [
+    1,
+    2,
+    3, // 同上
+]
+
+var m = {
+    "a": 1,
+    "b": 2, // 同上
+}
+
+var s = person_t{ // 结构体 alias ident 和 { 之间不需要空格
+    name: "john",
+    age: 18, // 同上
+}
+
+// 1. 函数定义 '{' 和函数声明需要在同一行
+// 2. 返回参数和 ')' 之间需要空格
+// 3. 每个参数之间需要空格
+fn test(int arg1, int arg2):int {
+
+}
+```
+
+## 关键字
+
+类型关键字
+- `void`, `any`, `null`, `anyptr`
+- `bool`, `string`
+- `int`, `uint`, `float`
+- `i8`, `i16`, `i32`, `i64`
+- `u8`, `u16`, `u32`, `u64`
+- `f32`, `f64`
+
+保留关键字
+- `let` - 保留关键字
+- `const` - 保留关键字
+- `pub` - 保留关键字
+- `package` - 保留关键字
+- `static` - 保留关键字
+- `macro` - 保留关键字
+- `impl` - 保留关键字
+
+复合类型关键字
+- `struct`
+- `chan`
+- `arr`
+- `vec`
+- `map`
+- `set`
+- `tup`
+- `ptr`
+- `rawptr`
+
+声明关键字
+- `var` - 变量声明
+- `type` - 类型定义
+- `fn` - 函数定义
+- `import` - 导入模块
+- `new` - 创建实例
+
+控制流关键字
+- `if`, `else`
+- `for`, `in`
+- `break`
+- `continue`
+- `return`
+- `match`
+- `select`
+
+错误处理关键字
+- `try`
+- `catch`
+- `throw`
+
+并发关键字
+- `go`
+
+类型操作关键字
+- `as` - 类型转换
+- `is` - 类型判断
+
+布尔值
+- `true`
+- `false`

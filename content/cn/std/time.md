@@ -1,0 +1,102 @@
+# time
+
+## 概述
+time 标准库提供了处理时间相关操作的基础功能，包括获取当前时间、时间戳转换以及时间格式化等功能。
+
+## 类型
+
+### time_t
+时间结构体，用于表示时间点和相关信息。
+
+```nature
+type time_t = struct {
+    i64 sec        // 秒级时间戳
+    i64 nsec       // 纳秒部分
+    raw_ptr<tm_t> tm  // 本地时间结构体指针
+}
+```
+
+## 函数
+
+### now()
+获取当前时间。
+
+```nature
+fn now():time_t
+```
+
+示例：
+```nature
+var t = time.now()
+println(t.datetime())  // 输出: 2024-01-01 12:00:00
+```
+
+### unix()
+获取当前的 Unix 时间戳（秒级）。
+
+```nature
+fn unix():i64
+```
+
+示例：
+```nature
+var timestamp = time.unix()
+println(timestamp)  // 输出: 1704067200
+```
+
+## time_t 方法
+
+### timestamp()
+获取秒级时间戳。
+
+```nature
+fn time_t.timestamp():i64
+```
+
+### ms_timestamp()
+获取毫秒级时间戳。
+
+```nature
+fn time_t.ms_timestamp():i64
+```
+
+### ns_timestamp()
+获取纳秒级时间戳。
+
+```nature
+fn time_t.ns_timestamp():i64
+```
+
+### datetime()
+将时间格式化为可读的日期时间字符串（格式：YYYY-MM-DD HH:mm:ss）。
+
+```nature
+fn time_t.datetime():string
+```
+
+## 使用示例
+
+```nature
+import time
+
+fn main() {
+    // 获取当前时间
+    var t = time.now()
+    
+    // 获取不同精度的时间戳
+    println(t.timestamp())     // 秒级时间戳
+    println(t.ms_timestamp())  // 毫秒级时间戳
+    println(t.ns_timestamp())  // 纳秒级时间戳
+    
+    // 格式化时间
+    println(t.datetime())      // 例如: 2024-01-01 12:00:00
+    
+    // 直接获取当前时间戳
+    println(time.unix())
+}
+```
+
+## 注意事项
+1. `datetime()` 方法返回的时间字符串采用本地时区
+2. 时间戳相关方法返回的都是 UTC 时间
+3. 该标准库依赖系统调用和 C 标准库来实现底层功能
