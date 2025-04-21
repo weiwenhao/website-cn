@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CodeBlock } from "@/components/features/code-block";
-import { Download, Gamepad2, Bot, Cog, Globe } from "lucide-react";
+import { Gamepad2, Bot, Cog, Globe } from "lucide-react";
 
 export default function Home() {
   return (

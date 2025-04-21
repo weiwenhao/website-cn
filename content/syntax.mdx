@@ -4,7 +4,7 @@
 
 这个文件 main.n 是用 nature 编程语言编写的一个简单程序
 
-```nature
+```nature showLineNumbers
 import fmt
 
 fn main() {
@@ -241,6 +241,7 @@ var str = `hello world`
 ## 类型系统
 
 ### 数值类型
+
 | 类型    | 字节数 | 说明                          |
 | ----- | --- | --------------------------- |
 | int   | -   | 有符号整型，与平台CPU位宽一致(64位平台占8字节) |
@@ -258,22 +259,25 @@ var str = `hello world`
 | f64   | 8   | 双精度浮点数                      |
 | bool  | 1   | 布尔类型，值为 true/false          |
 
+
 ### 复合类型
+
 | 类型名称     | 存储位置  | 语法        | 示例                                 | 说明                            |
 | -------- | ----- | --------- | ---------------------------------- | ----------------------------- |
 | string   | heap  | string    | `string str = 'hello'`             | 字符串类型， 可以使用单引号、双引号、反引号声明字符串类型 |
 | vector   | heap  | [T]       | `[int] list = [1, 2, 3]`           | 动态数组                          |
-| map      | heap  | {T:T}     | `{int:string} m = {1:'a'}`         | 映射表(键限制为integer/float/string) |
-| set      | heap  | {T}       | `{int} s = {1, 2, 3}`              | 集合                            |
+| map      | heap  | `{T:T}`     | `{int:string} m = {1:'a'}`         | 映射表(键限制为integer/float/string) |
+| set      | heap  | `{T}`       | `{int} s = {1, 2, 3}`              | 集合                            |
 | tuple    | heap  | (T)       | `(int, bool) t = (1, true)`        | 元组                            |
 | function | heap  | fn(T):T   | `fn(int,int):int f = fn(a,b){...}` | 函数类型                          |
 | struct   | stack | struct {} | `struct { int x }`                 | 结构体                           |
 | array    | stack | `[T;n]`   | `[int;3] a = [1,2,3]`              | 固定长度数组                        |
 
 ### 特殊类型
+
 | 类型名称        | 说明                                                                    | 示例                                                       |
 | ----------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
-| self        | 结构体方法中引用自身,只能在 fn extend 中使用                                          | fn string.len():int {  <br>    return self.length  <br>} |
+| self        | 结构体方法中引用自身,只能在 fn extend 中使用                                          | `fn string.len():int {  <br>    return self.length  <br>}` |
 | ptr         | 安全指针，不允许为null                                                         | `ptr<person> p = new person()`                           |
 | anyptr      | unsafe int 指针，等同于 uintptr, 用于和 c 语言交互                                 | 除了 float 外，任何类型都可以通过 as 转换为 anyptr 类型                    |
 | `rawptr<T>` | unsafe 可空指针，使用 `&` load addr 语法可以获得 rawptr，使用 `*` indirect addr 可以解引用 | `rawptr<int> len_ptr = &len`                             |
@@ -462,12 +466,12 @@ fn apply(fn(int,int):int f, int x, int y):int {
 | 3      | %      | 5 % 2          | 余数                   |
 | 4      | +      | 1 + 1          | 加                     |
 | 4      | -      | 1 - 1          | 减                     |
-| 5      | <<     | 100 << 2       | 按位左移               |
+| 5      | \<\<     | 100 \<\< 2       | 按位左移               |
 | 5      | >>     | 100 >> 2       | 按位右移               |
 | 6      | >      | 1 > 2          | 大于                   |
 | 6      | >=     | 1 >= 2         | 大于等于               |
-| 6      | <      | 1 < 2          | 小于                   |
-| 6      | <=     | 1 <= 2         | 小于等于               |
+| 6      | \<      | 1 < 2          | 小于                   |
+| 6      | \<=     | 1 \<= 2         | 小于等于               |
 | 7      | ==     | 1 == 2         | 等于                   |
 | 7      | !=     | 1 != 2         | 不等于                 |
 | 8      | &      | 1 & 2          | 按位与                 |
@@ -484,7 +488,7 @@ fn apply(fn(int,int):int f, int x, int y):int {
 | 13     | \|=    | a \|= 1        | a = a \| 1             |
 | 13     | &=     | a &= 1         | a = a & 1              |
 | 13     | ^=     | a ^= 1         | a = a ^ 1              |
-| 13     | <<=    | a <<= 1        | a = a << 1             |
+| 13     | \<\<=    | a \<\<= 1        | a = a \<\< 1             |
 | 13     | >>=    | a >>= 1        | a = a >> 1             |
 
 > & 和 * 在获取栈地址是 rawptr\<T\> , rawptr 不安全的允许为 null 的，指针可能会悬空或者指向无效的内存区域。nature 不会进行逃逸分析，如果不是必须的情况下，请尽量避免使用 & 和 *, 使用 new + ptr\<T\>  来获取更加安全的堆指针
@@ -1763,7 +1767,7 @@ import rand.utils.seed         // 导入特定模块
 import rand.utils.seed as seed // 使用别名
 ```
 
-import 会按照以下顺序查找模块
+`import 会按照以下顺序查找模块`
 
 - 当前项目（package.toml 中的 name）
 - 项目依赖（dependencies 中定义的包）
@@ -1773,8 +1777,8 @@ import 会按照以下顺序查找模块
 
 当使用 `import syscall` 时，会按以下顺序查找导入的模块
 
-1. syscall.{os}_{arch}.n
-2. syscall.{os}.n
+1. syscall.\{os}_\{arch}.n
+2. syscall.\{os}.n
 3. syscall.n
 
 支持的平台：

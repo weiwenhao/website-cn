@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Oxanium } from "next/font/google";
 import "@/globals.css";
 import Link from 'next/link';
-import { Github, Twitter } from 'lucide-react';
+import { Github } from 'lucide-react';
 import Image from 'next/image';
 
 import { LandingNav } from "@/components/features/landing-nav";

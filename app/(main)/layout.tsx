@@ -44,9 +44,9 @@ export default function RootLayout({
               <LandingNav />
 
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <Link
-                href="https://github.com/your-repo/nature"
+                href="https://github.com/nature-lang/nature"
                 target="_blank"
                 className="p-2 hover:text-primary"
               >
@@ -68,7 +68,7 @@ export default function RootLayout({
               <div>
                 <h3 className="font-semibold mb-3">About Creator</h3>
                 <p className="text-sm text-muted-foreground">
-                  I'm Hacker, Just for fun.
+                  I&apos;m Hacker, Just for fun.
                 </p>
                 <div className="mt-2 text-sm text-muted-foreground space-y-2">
                   <div>

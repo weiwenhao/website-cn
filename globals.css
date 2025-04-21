@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
+@import 'highlight.js/styles/github.css';
 
 @layer base {
   :root {
@@ -123,4 +123,44 @@
 /* 添加到你的全局 CSS 文件中 */
 .cm-editor.cm-focused {
   outline: none !important;
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none !important;
+}
+
+.prose h1 {
+  /* text-align: center; */
+  font-size: 2em;
+}
+
+.prose h2::before {
+  content: "# ";
+  color: hsl(var(--muted-foreground));
+}
+
+.prose code::before,
+.prose code::after {
+  content: none !important;
+}
+
+/* 修改选择器，仅针对不在 <pre> 内的 code 元素 */
+.prose :where(code):not(:where(pre *)) {
+  /* 应用 shadcn/ui TypographyInlineCode 的样式 */
+  @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-normal;
+  /* 保留或调整自定义字体 */
+  font-family: 'Operator Mono', 'Monaco', 'Oxanium', 'Oxanium Fallback', monospace;
+}
+
+
+/* 确保选择器与你实际生成的 HTML 结构匹配 */
+/* 将之前的选择器替换为下面这个 */
+figure[data-rehype-pretty-code-figure] > pre {
+  border: 1px dashed #ccc; /* 实线 solid */
+  padding: 1em; /* 可选：增加内边距，避免代码紧贴边框 */
+  border-radius: 4px; /* 可选：添加圆角 */
+  /* 确保背景色不会覆盖边框，如果 pre 有内联背景色，可能需要 !important */
+  background-color: transparent !important; /* 尝试添加这个，或者调整 pre 的内联样式 */
+  font-family: 'Operator Mono', 'Monaco', 'Oxanium', 'Oxanium Fallback', monospace;
 }
