@@ -1,5 +1,4 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import TableOfContents from '@/components/features/table-of-contents'
 
 export default async function Page({
   params,

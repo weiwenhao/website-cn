@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { CodeBlock } from "@/components/features/code-block";
 import { Gamepad2, Bot, Cog, Globe } from "lucide-react";
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
@@ -29,18 +31,17 @@ export default function Home() {
                   className="bg-nature-red hover:bg-nature-red/80 text-white px-8 py-6 text-lg rounded-md shadow-lg flex items-center gap-2"
                   asChild
                 >
-                  <a href="/docs/get-started" rel="noopener noreferrer">
-                    {/* <Download className="h-5 w-5" /> */}
+                  <Link href="/docs/get-started" rel="noopener noreferrer">
                     Get Started
-                  </a>
+                  </Link>
                 </Button>
                 <span className="text-gray-600 dark:text-gray-400">or</span>
-                <a
+                <Link
                   href="/playground"
                   className="text-nature-red hover:text-nature-red/90 text-lg font-medium hover:underline"
                 >
                   Try in Browser
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -115,7 +116,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center mb-12">Supported By</h2>
 
             <div className="flex justify-center">
-              <a 
+              <Link 
                 href="https://www.jetbrains.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
@@ -126,7 +127,7 @@ export default function Home() {
                   alt="JetBrains logo"
                   className="h-12"
                 />
-              </a>
+              </Link>
             </div>
           </section>
         </div>
