@@ -1,0 +1,145 @@
+# process
+
+The `process` library provides functionalities for creating and managing child processes, allowing the execution of external commands and interaction with them.
+
+## Type Definitions
+
+### `state_t`
+
+Struct used to store state information after process execution completes.
+
+```nature
+type state_t = struct{
+    string stdout    // Process's standard output content
+    string stderr    // Process's standard error output content
+    i32 exit_code // Process's exit code
+    i32 term_sig  // The signal that caused the process to terminate (if applicable)
+}
+```
+
+### `process_t`
+
+Struct representing a running or exited child process.
+
+```nature
+type process_t = struct{
+    int pid          // Process ID
+    anyptr args      // Internal arguments pointer (implementation details)
+    anyptr envs      // Internal environment variables pointer (implementation details)
+    anyptr p         // Internal process handle pointer (implementation details)
+    anyptr co        // Associated coroutine pointer (implementation details)
+    bool exited      // Whether the process has exited
+    i32 exit_code // Process exit code (if exited is true)
+    i32 term_sig  // Signal that caused process termination (if applicable)
+    command_t cmd    // The command_t object used to create this process
+}
+```
+
+### `command_t`
+
+Struct used to configure and prepare an external command for execution.
+
+```nature
+type command_t = struct{
+    string name      // Name of the command or program to be executed
+    [string] args    // List of arguments passed to the command
+
+    string cwd       // Command's working directory (optional, defaults to current directory)
+    [string] env     // List of environment variables (optional, defaults to inheriting parent process environment)
+
+    io.reader stdin  // Process's standard input stream
+    io.writer stdout // Process's standard output stream
+    io.writer stderr // Process's standard error output stream
+}
+```
+
+## Functions
+
+### `run(string name, [string] args):ptr<state_t>!`
+
+Convenience function for executing a command and waiting for it to complete, then returning a `state_t` containing its output and status.
+
+* `name`: Name of the command to be executed.
+* `args`: List of arguments passed to the command.
+* Internally creates `io.buffer` to capture standard output and standard error.
+* Returns a pointer to a `state_t`, containing `stdout`, `stderr`, `exit_code`, and `term_sig`. If execution fails, returns an error.
+
+### `command(string name, [string] args):ptr<command_t>!`
+
+Creates a `command_t` object for more fine-grained configuration and launching of a process.
+
+* `name`: Name of the command to be executed.
+* `args`: List of arguments passed to the command.
+* Defaults `stdin` to `fs.discard()` (discards input), `stdout` to `fs.stdout()` (parent process standard output), and `stderr` to `fs.stderr()` (parent process standard error). You can modify these fields later.
+* Returns a pointer to a `command_t` object.
+
+## command_t Methods
+
+### `command_t.spawn():ptr<process_t>!`
+
+Launches a new child process according to the `command_t` configuration, but does not wait for it to complete.
+
+* Internally calls `uv_spawn` to create the process.
+* Asynchronously launches coroutines to handle the child process's standard output and standard error streams and writes them to the `stdout` and `stderr` writers configured in the `command_t`.
+* Returns a pointer to a `process_t` object, representing the newly launched process. If launch fails, returns an error.
+
+## process_t Methods
+
+### `process_t.wait():void!`
+
+Blocks the current coroutine until the associated child process exits.
+
+* This method waits for the process execution to complete and updates the `exited`, `exit_code`, and `term_sig` fields in the `process_t` struct.
+
+### `process_t.read_stdout():string!`
+
+Reads data from the child process's standard output pipe.
+
+* This is a blocking operation, waiting until data is available or the pipe is closed.
+* Returns the read string data. Returns an error if the pipe is closed or an error occurs.
+* Note: This method is typically not called directly; instead, output is handled by configuring `command_t.stdout`.
+
+### `process_t.read_stderr():string!`
+
+Reads data from the child process's standard error pipe.
+
+* This is a blocking operation, waiting until data is available or the pipe is closed.
+* Returns the read string data. Returns an error if the pipe is closed or an error occurs.
+* Note: This method is typically not called directly; instead, output is handled by configuring `command_t.stderr`.
+
+## Usage Example
+
+```nature
+import process
+import io
+
+fn main():void! {
+    var cmd = process.command('echo', ['hello world'])
+    var p = cmd.spawn()
+    p.wait()
+    println('process exited')
+}
+```
+
+Custom buf (Example using `io.buffer`, unrelated to `process` execution flow)
+
+```nature
+import io
+
+fn main():void! {
+    var buf = io.buffer{}
+    var n = buf.write('hello world' as [u8])
+    println('write 1:', n, buf.empty(), buf.len(), buf.cap())
+
+    n = buf.write('This is an arbitrary text written to the buffer' as [u8])
+    println('write 2:', n, buf.empty(), buf.len(), buf.cap())
+
+    var read_buf = vec_new<u8>(0, 5)
+    n = buf.read(read_buf)
+    println('read 1:', n, read_buf as string, buf.empty(), buf.len(), buf.cap())
+
+
+    var remain_buf = buf.read_all()
+    println('read 2:', remain_buf as string, buf.empty(), buf.len(), buf.cap())
+}
+```

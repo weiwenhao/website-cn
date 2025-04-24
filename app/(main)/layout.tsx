@@ -68,13 +68,13 @@ export default function RootLayout({
               <div>
                 <h3 className="font-semibold mb-3">About Creator</h3>
                 <p className="text-sm text-muted-foreground">
-                  I&apos;m Hacker, Just for fun.
+                  I&apos;m Hacker.
                 </p>
                 <div className="mt-2 text-sm text-muted-foreground space-y-2">
                   <div>
                     <span>Email: </span>
-                    <a 
-                      href="mailto:wwhacker@qq.com" 
+                    <a
+                      href="mailto:wwhacker@qq.com"
                       className="hover:text-primary"
                     >
                       wwhacker@qq.com
@@ -82,8 +82,8 @@ export default function RootLayout({
                   </div>
                   <div>
                     <span>GitHub: </span>
-                    <a 
-                      href="https://github.com/weiwenhao" 
+                    <a
+                      href="https://github.com/weiwenhao"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-primary"
@@ -97,13 +97,23 @@ export default function RootLayout({
                 <h3 className="font-semibold mb-3">Quick Links</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link href="/get_started" className="text-sm hover:text-primary">
+                    <Link href="/docs/get-started" className="text-sm hover:text-primary">
                       Get Started
                     </Link>
                   </li>
                   <li>
                     <Link href="https://github.com/nature-lang/nature/tree/master/tests/features/cases" className="text-sm hover:text-primary">
                       Examples
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="https://github.com/weiwenhao/website"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm hover:text-primary"
+                    >
+                      Edit on GitHub
                     </Link>
                   </li>
                 </ul>

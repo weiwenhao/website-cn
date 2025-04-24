@@ -44,7 +44,7 @@ export default function TableOfContents() {
 
   return (
     <div className="hidden xl:block xl:w-64 xl:flex-shrink-0">
-      <div className="sticky top-16 h-[calc(100vh-4rem)] w-full py-0 px-8 overflow-y-auto">
+      <div className="sticky top-16 h-[calc(100vh-4rem)] w-full py-0 px-8 overflow-y-auto no-scrollbar">
         <div className="text-md font-medium mb-4 pl-3">On this page</div>
         <nav className="text-sm">
           <ul className="space-y-2 list-none pl-0">
@@ -53,7 +53,7 @@ export default function TableOfContents() {
                 <a
                   href={`#${heading.id}`}
                   className={cn(
-                    'block text-muted-foreground hover:text-foreground py-1 px-2 no-underline transition-colors',
+                    'block text-muted-foreground hover:text-foreground py-0 px-2 no-underline transition-colors',
                     activeId === heading.id ? 'text-foreground font-bold' : ''
                   )}
                   onClick={(e) => {

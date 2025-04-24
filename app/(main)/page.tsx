@@ -29,7 +29,7 @@ export default function Home() {
                   className="bg-nature-red hover:bg-nature-red/80 text-white px-8 py-6 text-lg rounded-md shadow-lg flex items-center gap-2"
                   asChild
                 >
-                  <a href="/get-started" target="_blank" rel="noopener noreferrer">
+                  <a href="/docs/get-started" rel="noopener noreferrer">
                     {/* <Download className="h-5 w-5" /> */}
                     Get Started
                   </a>

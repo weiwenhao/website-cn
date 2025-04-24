@@ -1,0 +1,114 @@
+# co
+
+## co.main
+
+### Overview
+The `co` module provides basic coroutine functionalities, including coroutine creation, scheduling, and sleeping.
+
+### Constants
+
+#### SOLO
+A flag used to mark coroutines.
+
+```nature
+var SAME = 1 << 2
+```
+
+### Functions
+
+#### sleep
+Makes the current coroutine sleep for a specified number of milliseconds.
+
+```nature
+fn sleep(int ms)
+```
+
+#### yield
+Voluntarily yields the execution of the current coroutine.
+
+```nature
+fn yield()
+```
+
+#### arg
+Gets the coroutine's arguments.
+
+```nature
+fn arg():anyptr
+```
+
+### Usage Example
+
+```nature
+import co
+
+fn main() {
+    // Coroutine sleep
+    co.sleep(1000)  // Sleep for 1 second
+
+    // Voluntarily yield execution
+    co.yield()
+}
+```
+
+## co.mutex
+
+### Overview
+The `mutex` module provides coroutine mutex functionality, used to implement mutual exclusion control between coroutines. It needs to be included via `import co.mutex`.
+
+### Types
+
+#### mutex_t
+Mutex struct.
+
+```nature
+type mutex_t = struct {
+    i64 state
+    i64 sema
+    i64 waiter_count
+    var waiters = types.linkco_list_t{}
+}
+```
+
+### mutex_t Methods
+
+#### lock()
+Acquires the mutex. If the mutex is already held, the current coroutine will be blocked until it acquires the lock.
+
+```nature
+fn mutex_t.lock()
+```
+
+#### try_lock()
+Attempts to acquire the mutex. If the mutex is already held, immediately returns `false`, otherwise acquires the lock and returns `true`.
+
+```nature
+fn mutex_t.try_lock():bool
+```
+
+#### unlock()
+Releases the mutex.
+
+```nature
+fn mutex_t.unlock()
+```
+
+### Usage Example
+
+```nature
+import co.mutex
+
+fn main() {
+    // Create mutex
+    var m = mutex.mutex_t{}
+
+    // Acquire lock
+    m.lock()
+
+    // Critical section code
+    // ...
+
+    // Release lock
+    m.unlock()
+}
+```

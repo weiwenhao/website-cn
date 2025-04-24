@@ -8,10 +8,10 @@ import { githubLight } from '@uiw/codemirror-theme-github';
 import { basicSetup } from '@uiw/codemirror-extensions-basic-setup';
 import { javascript } from '@codemirror/lang-javascript';
 
-
-
 export default function Playground() {
-  const [code, setCode] = useState('// Enter your Nature code here');
+  const [code, setCode] = useState(`fn main() {
+    println('hello world')
+}`);
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +28,7 @@ export default function Playground() {
     setOutput('Running...');
 
     try {
-      const response = await fetch('http://127.0.0.1:8888/api/playgrounds/run', {
+      const response = await fetch('http://115.190.75.86:8888/api/playgrounds/run', {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
@@ -91,6 +91,9 @@ export default function Playground() {
                   onChange={onChange}
                   readOnly={isLoading}
                   className="h-full"
+                  style={{
+                    fontSize: '14px',
+                  }}
                   basicSetup={{
                     tabSize: 4,
                     indentUnit: 4,

@@ -5,6 +5,8 @@ import remarkToc from "remark-toc";
 import rehypeSlug from "rehype-slug";
 import { createHighlighter } from "shiki";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import fs from 'fs';
 
 
@@ -36,7 +38,7 @@ const options = {
 const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {
-    remarkPlugins: [remarkGfm, [remarkToc, {
+    remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter, [remarkToc, {
       heading: "toc his page", // 可选，定义TOC的标题
       maxDepth: 2,    // 只包含h2标题
       tight: true     // 紧凑模式

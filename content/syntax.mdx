@@ -1,8 +1,8 @@
-# 语法文档
+# Syntax Documentation
 
-## 源码结构
+## Source Code Structure
 
-这个文件 main.n 是用 nature 编程语言编写的一个简单程序
+This file `main.n` is a simple program written in the Nature programming language.
 
 ```nature showLineNumbers
 import fmt
@@ -14,19 +14,19 @@ fn main() {
 
 `import fmt`
 
-这行代码导入了一个名为 `fmt` 的模块，通常用于格式化和输出文本。
+This line imports a module named `fmt`, which is typically used for formatting and outputting text.
 
 `fn main() {`
 
-这行代码定义了一个名为 main 的函数，main 函数是程序的入口点，当程序运行时会首先执行这个函数中的代码。
+This line defines a function named `main`. The `main` function is the entry point of the program; the code within this function is executed first when the program runs.
 
 `fmt.printf('hello world')`
 
-这行代码使用 `fmt` 模块中的 `printf` 函数输出字符串 `'hello world'` 到控制台。
+This line uses the `printf` function from the `fmt` module to output the string `'hello world'` to the console.
 
-这个程序的功能是当运行时，在控制台输出 "hello world"。
+The function of this program is to output "hello world" to the console when run.
 
-> 只有 fn、import、var、type 这四种类型的语句可以直接在文件顶层声明，并具有全局作用域，其他语句，如 if、for、return 等只能在函数作用域内进行声明。 
+> Only statements of type `fn`, `import`, `var`, and `type` can be declared directly at the top level of a file and have global scope. Other statements, such as `if`, `for`, `return`, etc., can only be declared within a function scope.
 
 ```nature
 import fmt
@@ -38,7 +38,7 @@ type globalt = int
 fn main() {
 	var localv = 2
 	type local t = int
-	
+
 	if true {
 	}
 
@@ -46,281 +46,275 @@ fn main() {
 	}
 }
 
-if true { // x 不允许在全局作用域中声明 if 语句
-
+if true { // x: Declaring an if statement in the global scope is not allowed
 }
 ```
 
+## Variables
 
-## 变量
-
-自动类型推导
+### Automatic Type Inference
 
 ```nature
-var foo = 1 // v 声明变量 foo 并赋值，foo 类型自动推导为 int  
-  
-var foo = 1 // x 同一作用域下，不允许重复声明变量  
-  
-if (true) {  
-var foo = 2 // v 不同作用域下允许重复声明  
+var foo = 1 // v: Declares variable foo and assigns a value; foo's type is automatically inferred as int
+
+var foo = 1 // x: Redeclaring a variable in the same scope is not allowed
+
+if (true) {
+var foo = 2 // v: Redeclaration is allowed in a different scope
 }
 ```
 
-不使用类型推导
+### Explicit Typing
 
 ```nature
-int foo = 1 // v  
-float bar = 2.2 // v  
-string car = 'hello world' // v 字符串使用单引号包裹  
-  
-foo = 2 // v 变量允许重新定值  
+int foo = 1 // v
+float bar = 2.2 // v
+string car = 'hello world' // v: Strings are enclosed in single quotes
 
-foo = 'hello world' // x foo 已经定义为 int 类型变量，不允许使用字符串赋值  
-  
-i8 f2 = 12 // v 字面量能够根据类型进行自动转换  
-i16 f3 // x 变量声明必须赋值
+foo = 2 // v: Variables can be reassigned
+
+foo = 'hello world' // x: foo is defined as type int; assigning a string is not allowed
+
+i8 f2 = 12 // v: Literals can be automatically converted based on the type
+i16 f3 // x: Variable declaration must include an assignment
 ```
 
-复合类型变量定义
+### Composite Type Variable Definition
 
 ```nature
-string bar = '' // v 请使用这种方式声明一个空的字符串
+string bar = '' // v: Use this method to declare an empty string
 
-[int] baz = [] // v 声明空 vec  
+[int] baz = [] // v: Declare an empty vec
 
-{float} s = {} // v 声明空 set
+{float} s = {} // v: Declare an empty set
 
-{string:float} m = {} // v 声明空 map
+{string:float} m = {} // v: Declare an empty map
 
-(int,bool,bool) t = (1, true, false) // v 定义 tuple， 使用方式 t[0], t[1], t[2]
+(int,bool,bool) t = (1, true, false) // v: Define a tuple. Access elements using t[0], t[1], t[2]
 
-var (t1, t2, t3) = (1, true, 'hello') // tuple 解构声明
+var (t1, t2, t3) = (1, true, 'hello') // Tuple destructuring declaration
 
-var baz = [] // x, 无法推导 vec element 的类型
-  
-bar = null // x 不允许将 null 赋值给任何类型复合类型或者简单类型
+var baz = [] // x: Cannot infer the element type of the vec
+
+bar = null // x: Assigning null to any composite or simple type is not allowed
 ```
 
-如何赋值为 null？
+### How to Assign Null?
 
 ```nature
-// 方式 1
+// Method 1
 string? s = null
 s = 'i am string'
 
-// 方式 2
-nullable<string> s2 = null 
+// Method 2
+nullable<string> s2 = null
 s2 = 'hello world'
 ```
 
+## Control Structures
 
-## 控制结构
-
-### if 语法
+### `if` Syntax
 
 ```nature
 if condition {
-    // 当 condition 为 true 时执行的代码
+    // Code to execute when condition is true
 } else {
-    // 当 condition 为 false 时执行的代码
+    // Code to execute when condition is false
 }
 ```
 
-condition 的类型必须是 bool
+The type of `condition` must be `bool`.
 
-可以使用 else 语法来检查多个条件，示例
+You can use the `else if` syntax to check multiple conditions. Example:
 
 ```nature
 int foo = 23
 
 if foo > 100 {
     print('foo > 100')
-    
+
 } else if foo > 20 {
     print('foo > 20')
-    
+
 } else {
     print('else handle')
 }
 ```
 
-### `for` 语法
+### `for` Syntax
 
-`for` 语句用于循环执行代码块。Nature 语言中的 `for` 语句有三种主要形式：经典循环、条件循环和迭代循环。
+The `for` statement is used to execute a block of code repeatedly. In the Nature language, the `for` statement has three main forms: classic loop, conditional loop, and iteration loop.
 
-- **经典循环**
+* **Classic Loop**
 
-经典循环用于执行固定次数的循环。基本语法如下：
+    The classic loop is used to execute a loop a fixed number of times. The basic syntax is as follows:
+
+    ```nature
+    var sum = 0
+    for int i = 1; i <= 100; i += 1 {
+        sum += i
+    }
+    println('1 +..+100 = ', sum)
+    ```
+
+    In this example, the loop starts with `i = 1`, increments `i` by 1 in each iteration, and continues until `i` is greater than 100. It finally outputs `1 +..+100 = 5050`.
+
+    > ❗️Note: Nature does not have the `++` syntax. Use `i += 1` instead of `i++`. The expression following `for` does not need to be enclosed in parentheses.
+
+* **Conditional Loop**
+
+    The conditional loop is used to execute a loop based on a condition, similar to the `while` expression in C. The basic syntax is as follows:
+
+    ```nature
+    var sum = 0
+    var i = 0
+    for i <= 100 {
+        sum += i
+        i += 1
+    }
+    println('1 +..+100 = ', sum)
+    ```
+
+    In this example, the loop continues to execute until `i` is greater than 100. The final output is the same as the classic loop.
+
+* **Iteration Loop**
+
+    The iteration loop is used to iterate over collection types (such as `vec`, `map`, `string`, `chan`). The basic syntax is as follows:
+
+    Iterating over a `vec`:
+
+    ```nature
+    var list = [1, 1, 2, 3, 5, 8, 13, 21]
+    for v in list {
+        println(v)
+    }
+    ```
+
+    Iterating over a `map`:
+
+    ```nature
+    var m = {1:10, 2:20, 3:30, 4:40}
+    for k in m {
+        println(k)
+    }
+    ```
+
+    In this example, the loop iterates over each key in the `map` and prints them.
+
+    Iterating over keys and values simultaneously:
+
+    ```nature
+    for k, v in m {
+        println(k, v)
+    }
+    ```
+
+* **Loop Break and Continue**
+
+    The `break` keyword is used to exit the current loop. The `continue` keyword skips the current iteration's logic and proceeds immediately to the loop's condition check.
+
+## Comments
+
+### Single-line Comments
+
+Single-line comments start with `//`, followed by the comment text. For example:
 
 ```nature
-var sum = 0
-for int i = 1; i <= 100; i += 1 {
-    sum += i
-}
-println('1 +..+100 = ', sum)
+// This is a single-line comment
+var str = `hello world` // This is also a single-line comment
 ```
 
-在这个示例中，循环从 `i = 1` 开始，每次循环 `i` 增加 1，直到 `i` 大于 100。最终输出 `1 +..+100 = 5050`。
+### Multi-line Comments
 
-> ❗️注意：Nature 中没有 `++` 语法，请使用 `i += 1` 代替 `i++`。`for` 后面的表达式不需要括号包裹。
+Multi-line comments start with `/*` and end with `*/`. For example:
 
-
-- **条件循环**
-
-条件循环用于根据条件执行循环，类似于 C 语言中的 `while` 表达式。基本语法如下：
-
-```nature
-var sum = 0
-var i = 0
-for i <= 100 {
-    sum += i
-    i += 1
-}
-println('1 +..+100 = ', sum)
-```
-
-在这个示例中，循环会一直执行，直到 `i` 大于 100。最终输出与经典循环相同。
-
-- 迭代循环
-
-迭代循环用于遍历集合类型（如 `vec`、`map` 、`string`、 `chan`）。基本语法如下
-
-遍历 `vec`
-
-```nature
-var list = [1, 1, 2, 3, 5, 8, 13, 21]
-for v in list {
-    println(v)
-}
-```
-
-遍历 map，其中 map 作为关键字不能占用
-
-```nature
-var m = {1:10, 2:20, 3:30, 4:40}
-for k in m {
-    println(k)
-}
-```
-
-在这个示例中，循环遍历 `map` 中的每个键，并输出它们。
-
-同时遍历键和值
-
-```nature
-for k, v in m {
-    println(k, v)
-}
-```
-
-- **循环中断与跳过**
-
-关键字 `break` 用于退出当前循环，`continue` 则跳过本次循环逻辑立刻进入到循环判断逻辑。
-
-## 注释
-
-### 单行注释
-单行注释使用 `//` 开头，后面跟随注释内容。例如：
-```nature
-// 这是一个单行注释
-var str = `hello world` // 这也是一个单行注释
-```
-
-### 多行注释
-多行注释使用 `/*` 开头，并以 `*/` 结束。例如：
 ```nature
 /*
-这是一个多行注释
-可以跨越多行
+This is a multi-line comment
+It can span multiple lines
 */
 var str = `hello world`
 ```
 
-你可以在代码中使用这些注释来解释代码的功能或添加备注。
+You can use these comments in your code to explain functionality or add notes.
 
-## 类型系统
+## Type System
 
-### 数值类型
+### Numeric Types
 
-| 类型    | 字节数 | 说明                          |
-| ----- | --- | --------------------------- |
-| int   | -   | 有符号整型，与平台CPU位宽一致(64位平台占8字节) |
-| i8    | 1   | 8位有符号整型                     |
-| i16   | 2   | 16位有符号整型                    |
-| i32   | 4   | 32位有符号整型                    |
-| i64   | 8   | 64位有符号整型                    |
-| uint  | -   | 无符号整型，与平台CPU位宽一致            |
-| u8    | 1   | 8位无符号整型                     |
-| u16   | 2   | 16位无符号整型                    |
-| u32   | 4   | 32位无符号整型                    |
-| u64   | 8   | 64位无符号整型                    |
-| float | -   | 浮点数，与平台CPU位宽一致(64位平台等同于f64) |
-| f32   | 4   | 单精度浮点数                      |
-| f64   | 8   | 双精度浮点数                      |
-| bool  | 1   | 布尔类型，值为 true/false          |
+| Type  | Bytes | Description                                                          |
+| :---- | :---- | :------------------------------------------------------------------- |
+| int   | -     | Signed integer, matches platform CPU bit width (8 bytes on 64-bit)   |
+| i8    | 1     | 8-bit signed integer                                                 |
+| i16   | 2     | 16-bit signed integer                                                |
+| i32   | 4     | 32-bit signed integer                                                |
+| i64   | 8     | 64-bit signed integer                                                |
+| uint  | -     | Unsigned integer, matches platform CPU bit width                     |
+| u8    | 1     | 8-bit unsigned integer                                               |
+| u16   | 2     | 16-bit unsigned integer                                              |
+| u32   | 4     | 32-bit unsigned integer                                              |
+| u64   | 8     | 64-bit unsigned integer                                              |
+| float | -     | Floating-point, matches platform CPU bit width (equals f64 on 64-bit) |
+| f32   | 4     | Single-precision floating-point                                      |
+| f64   | 8     | Double-precision floating-point                                      |
+| bool  | 1     | Boolean type, values are `true`/`false`                              |
 
+### Composite Types
 
-### 复合类型
+| Type Name | Storage Location | Syntax    | Example                             | Description                                                              |
+| :-------- | :--------------- | :-------- | :---------------------------------- | :----------------------------------------------------------------------- |
+| string    | heap             | string    | `string str = 'hello'`              | String type. Can use single quotes, double quotes, or backticks.         |
+| vector    | heap             | `[T]`     | `[int] list = [1, 2, 3]`            | Dynamic array (vector)                                                   |
+| map       | heap             | `{T:T}`   | `{int:string} m = {1:'a'}`          | Map (keys limited to integer/float/string)                               |
+| set       | heap             | `{T}`     | `{int} s = {1, 2, 3}`               | Set                                                                      |
+| tuple     | heap             | `(T)`     | `(int, bool) t = (1, true)`         | Tuple                                                                    |
+| function  | heap             | `fn(T):T` | `fn(int,int):int f = fn(a,b){...}` | Function type                                                            |
+| struct    | stack            | struct {} | `struct { int x }`                  | Struct                                                                   |
+| array     | stack            | `[T;n]`   | `[int;3] a = [1,2,3]`               | Fixed-size array                                                         |
 
-| 类型名称     | 存储位置  | 语法        | 示例                                 | 说明                            |
-| -------- | ----- | --------- | ---------------------------------- | ----------------------------- |
-| string   | heap  | string    | `string str = 'hello'`             | 字符串类型， 可以使用单引号、双引号、反引号声明字符串类型 |
-| vector   | heap  | [T]       | `[int] list = [1, 2, 3]`           | 动态数组                          |
-| map      | heap  | `{T:T}`     | `{int:string} m = {1:'a'}`         | 映射表(键限制为integer/float/string) |
-| set      | heap  | `{T}`       | `{int} s = {1, 2, 3}`              | 集合                            |
-| tuple    | heap  | (T)       | `(int, bool) t = (1, true)`        | 元组                            |
-| function | heap  | fn(T):T   | `fn(int,int):int f = fn(a,b){...}` | 函数类型                          |
-| struct   | stack | struct {} | `struct { int x }`                 | 结构体                           |
-| array    | stack | `[T;n]`   | `[int;3] a = [1,2,3]`              | 固定长度数组                        |
+### Special Types
 
-### 特殊类型
+| Type Name   | Description                                                                                                                              | Example                                                  |
+| :---------- | :--------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| self        | Refers to the instance itself within type extension methods.                                                                             | `fn string.len():int { return self.length }`             |
+| ptr         | Safe pointer, cannot be null.                                                                                                            | `ptr<person> p = new person()`                           |
+| anyptr      | Unsafe integer pointer, equivalent to `uintptr`, used for C language interaction.                                                        | Any type except `float` can be converted to `anyptr` using `as`. |
+| `rawptr<T>` | Unsafe nullable pointer. Use the `&` (load address) syntax to obtain a `rawptr`. Use `*` (indirect address / dereference) to access value. | `rawptr<int> len_ptr = &len`                             |
+| any         | Container for any type, a special form of union type.                                                                                    | `any v = 42`                                             |
 
-| 类型名称        | 说明                                                                    | 示例                                                       |
-| ----------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
-| self        | 结构体方法中引用自身,只能在 fn extend 中使用                                          | `fn string.len():int {  <br>    return self.length  <br>}` |
-| ptr         | 安全指针，不允许为null                                                         | `ptr<person> p = new person()`                           |
-| anyptr      | unsafe int 指针，等同于 uintptr, 用于和 c 语言交互                                 | 除了 float 外，任何类型都可以通过 as 转换为 anyptr 类型                    |
-| `rawptr<T>` | unsafe 可空指针，使用 `&` load addr 语法可以获得 rawptr，使用 `*` indirect addr 可以解引用 | `rawptr<int> len_ptr = &len`                             |
-| any         | 任意类型容器，union 类型的特殊形态                                                  | `any v = 42`                                             |
+## Type Operations
 
+### Type Conversion
 
-## 类型操作
+Explicit Type Conversion
 
-### 类型转换
-
-显式类型转换
-
-- 支持 integer/floater 类型之间相互进行转换
-
-- 支持 string 与 `[u8]` 类型之间相互转换
-
-- 支持 anyptr 与任意类型(除了 floater)之间相互转换
-
-- 后续联合类型断言也使用 as 语法
+* Supports mutual conversion between integer/float types.
+* Supports mutual conversion between `string` and `[u8]` types.
+* Supports mutual conversion between `anyptr` and any type (except float).
+* Union type assertions also use the `as` syntax.
 
 ```nature
-int i = 42.5 as int  // 浮点数转整数
-[u8] bytes = "hello" as [u8]  // 字符串转字节数组
-
-anyptr ptr = &i as anyptr  // rawptr<int> 转 anyptr
+int i = 42.5 as int  // float to integer
+[u8] bytes = "hello" as [u8]  // string to byte array
+anyptr ptr = &i as anyptr  // rawptr<int> to anyptr
 ```
 
-### 类型定义
+### Type Definition
 
 ```nature
 type my_int = int
 type nullable<T> = T|null
 ```
 
-### 类型扩展
+### Type Extension
 
-Nature 支持对内置类型和自定义类型进行方法扩展。
+Nature supports extending both built-in and custom types with methods.
 
-**内置类型**
+**Built-in Types**
 
-支持扩展的内置类型包括：`bool`、`string`、`int`、`int8`、`int16`、`int32`、`int64`、`uint`、`uint8`、`uint16`、`uint32`、`uint64`、`float`、`float32`、`float64`、`chan`、`vec`、`map`、`set`、`tuple`。
+Built-in types that support extension include: `bool`, `string`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `float`, `float32`, `float64`, `chan`, `vec`, `map`, `set`, `tuple`.
 
-为内置类型添加方法示例：
+Example of adding a method to a built-in type:
 
 ```nature
 fn string.find_char(u8 char, int after):int {
@@ -334,9 +328,9 @@ fn string.find_char(u8 char, int after):int {
 }
 ```
 
-**自定义类型**
+**Custom Types**
 
-通过 type 关键字定义的类型同样支持方法扩展：
+Types defined using the `type` keyword also support method extension:
 
 ```nature
 type square = struct {
@@ -349,28 +343,28 @@ fn square.area():int {
 }
 ```
 
-**扩展规则**
+**Extension Rules**
 
-- 自定义类型扩展必须定义在同一模块中
-- 使用 `self` 关键字引用当前实例
-- 支持泛型参数，后续泛型支持会详细介绍
+* Custom type extensions must be defined within the same module.
+* Use the `self` keyword to refer to the current instance.
+* Supports generic parameters (details on generics will be provided later).
 
 
-## 函数
+## Functions
 
-函数是 nature 中的一等公民,可以像其他值一样被传递和操作。nature 支持多种函数定义和使用方式。
+In nature, functions are first-class citizens and can be passed and manipulated like other values. nature supports various ways to define and use functions.
 
-### 函数定义
+### Function Definition
 
-基本函数定义语法如下:
+The basic syntax for defining a function is as follows:
 
 ```nature
 fn function_name(parameter_list):return_type {
-    // 函数体
+    // Function body
 }
 ```
 
-例如定义一个简单的加法函数:
+For example, defining a simple addition function:
 
 ```nature
 fn sum(int a, int b):int {
@@ -378,23 +372,23 @@ fn sum(int a, int b):int {
 }
 ```
 
-### 匿名函数与闭包
+### Anonymous Functions and Closures
 
-nature 支持匿名函数(lambda)和闭包:
+nature supports anonymous functions (lambdas) and closures:
 
 ```nature
-// 将匿名函数赋值给变量
+// Assigning an anonymous function to a variable
 var f = fn(int a, int b):int {
     return a + b
 }
 
-// 调用匿名函数
+// Calling the anonymous function
 var result = f(1, 2)
 ```
 
-### 可变参数
+### Variadic Parameters
 
-函数支持可变数量的参数,使用 固定格式 `...` + vec 创建一个可变参数
+Functions support a variable number of parameters. Use the fixed format `...` + vec to create a variadic parameter.
 
 ```nature
 fn sum(...[int] numbers):int {
@@ -405,13 +399,13 @@ fn sum(...[int] numbers):int {
     return result
 }
 
-// 调用
+// Calling
 println(sum(1, 2, 3, 4, 5))
 ```
 
-### 参数解构
+### Parameter Destructuring
 
-支持在函数调用时解构参数:
+Parameter destructuring is supported during function calls:
 
 ```nature
 fn printf(string fmt, ...[any] args) {
@@ -420,107 +414,109 @@ fn printf(string fmt, ...[any] args) {
 }
 ```
 
-### 多返回值
+### Multiple Return Values
 
-函数可以返回多个值,使用 tuple 语法:
+Functions can return multiple values using tuple syntax:
 
 ```nature
 fn divide(int a, int b):(int, int) {
-    return (a / b, a % b) // 返回商和余数
+    return (a / b, a % b) // Returns the quotient and remainder
 }
 
-// 使用 tuple 解构接收返回值
+// Receiving return values using tuple destructuring
 var (quotient, remainder) = divide(10, 3)
 ```
 
-### 函数类型
+### Function Types
 
-函数类型的语法为 `fn(parameter_types):return_type`:
+The syntax for function types is `fn(parameter_types):return_type`:
 
 ```nature
-// 定义一个函数类型变量
+// Defining a function type variable
 fn(int,int):int calculator = fn(int a, int b):int {
      return a + b 
 }
 
-// 函数类型作为参数
+// Function type as a parameter
 fn apply(fn(int,int):int f, int x, int y):int {
     return f(x, y)
 }
 ```
 
-> nature 中的函数必须显式声明函数的参数类型和返回类型。如果函数不需要返回值,可以省略返回类型声明。
+> In nature, functions must explicitly declare the types of their parameters and return values. If a function does not need to return a value, the return type declaration can be omitted.
 
-## 算数运算符
 
-| 优先级 | 关键字 | 使用示例       | 说明                   |
-| ------ | ------ | -------------- | ---------------------- |
-| 1      | ()     | (1 + 1)        | (expr)                 |
-| 2      | -      | -12            | -number_expr 负数      |
-| 2      | ！     | !true          | !bool_expr 逻辑非      |
-| 2      | ~      | ~12            | ~integer_expr 按位取反 |
-| 2      | &      | &q            | &var    加载栈地址引用   |
-| 2      | *      | *p            | *ptr_var  解引用         |
-| 3      | /      | 1 / 2          | 除                     |
-| 3      | \*     | 1 \* 2         | 乘                     |
-| 3      | %      | 5 % 2          | 余数                   |
-| 4      | +      | 1 + 1          | 加                     |
-| 4      | -      | 1 - 1          | 减                     |
-| 5      | \<\<     | 100 \<\< 2       | 按位左移               |
-| 5      | >>     | 100 >> 2       | 按位右移               |
-| 6      | >      | 1 > 2          | 大于                   |
-| 6      | >=     | 1 >= 2         | 大于等于               |
-| 6      | \<      | 1 < 2          | 小于                   |
-| 6      | \<=     | 1 \<= 2         | 小于等于               |
-| 7      | ==     | 1 == 2         | 等于                   |
-| 7      | !=     | 1 != 2         | 不等于                 |
-| 8      | &      | 1 & 2          | 按位与                 |
-| 9      | ^      | 1 ^ 2          | 按位异或               |
-| 10     | \|     | 1 \| 2         | 按位或                 |
-| 11     | &&     | true && true   | 逻辑与                 |
-| 12     | \|\|   | true \|\| true | 逻辑或                 |
-| 13     | =      | a = 1          | 赋值运算符             |
-| 13     | %=     | a %= 1         | 相当于 a = a % 1       |
-| 13     | \*=    | a \*= 1        | a = a \* 1             |
-| 13     | /=     | a /= 1         | a = a / 1              |
-| 13     | +=     | a += 1         | a = a + 1              |
-| 13     | -=     | a -= 1         | a = a - 1              |
-| 13     | \|=    | a \|= 1        | a = a \| 1             |
-| 13     | &=     | a &= 1         | a = a & 1              |
-| 13     | ^=     | a ^= 1         | a = a ^ 1              |
-| 13     | \<\<=    | a \<\<= 1        | a = a \<\< 1             |
-| 13     | >>=    | a >>= 1        | a = a >> 1             |
 
-> & 和 * 在获取栈地址是 rawptr\<T\> , rawptr 不安全的允许为 null 的，指针可能会悬空或者指向无效的内存区域。nature 不会进行逃逸分析，如果不是必须的情况下，请尽量避免使用 & 和 *, 使用 new + ptr\<T\>  来获取更加安全的堆指针
+## Arithmetic Operators
 
-## 结构体
+| Precedence | Keyword | Example        | Description                     |
+| ---------- | ------- | -------------- | ------------------------------- |
+| 1          | ()      | (1 + 1)        | (expr)                          |
+| 2          | -       | -12            | -number_expr Negative number     |
+| 2          | !       | !true          | !bool_expr Logical NOT           |
+| 2          | ~       | ~12            | ~integer_expr Bitwise NOT       |
+| 2          | &       | &q             | &var Load stack address reference |
+| 2          | * | *p             | *ptr_var Dereference            |
+| 3          | /       | 1 / 2          | Division                        |
+| 3          | * | 1 * 2          | Multiplication                  |
+| 3          | %       | 5 % 2          | Remainder                       |
+| 4          | +       | 1 + 1          | Addition                        |
+| 4          | -       | 1 - 1          | Subtraction                     |
+| 5          | \<\<      | 100 \<\< 2       | Bitwise left shift              |
+| 5          | >>      | 100 >> 2       | Bitwise right shift             |
+| 6          | >       | 1 > 2          | Greater than                    |
+| 6          | >=      | 1 >= 2         | Greater than or equal to        |
+| 6          | \<       | 1 < 2          | Less than                       |
+| 6          | \<=      | 1 \<= 2         | Less than or equal to           |
+| 7          | ==      | 1 == 2         | Equal to                        |
+| 7          | !=      | 1 != 2         | Not equal to                    |
+| 8          | &       | 1 & 2          | Bitwise AND                     |
+| 9          | ^       | 1 ^ 2          | Bitwise XOR                     |
+| 10         | \|      | 1 \| 2         | Bitwise OR                      |
+| 11         | &&      | true && true   | Logical AND                     |
+| 12         | \|\|    | true \|\| true | Logical OR                      |
+| 13         | =       | a = 1          | Assignment operator             |
+| 13         | %=      | a %= 1         | Equivalent to a = a % 1         |
+| 13         | *=      | a *= 1         | a = a * 1                       |
+| 13         | /=      | a /= 1         | a = a / 1                       |
+| 13         | +=      | a += 1         | a = a + 1                       |
+| 13         | -=      | a -= 1         | a = a - 1                       |
+| 13         | \|=     | a \|= 1        | a = a \| 1                      |
+| 13         | &=      | a &= 1         | a = a & 1                       |
+| 13         | ^=      | a ^= 1         | a = a ^ 1                       |
+| 13         | \<\<=     | a \<\<= 1        | a = a \<\< 1                      |
+| 13         | >>=     | a >>= 1        | a = a >> 1                      |
 
-在 nature 中,结构体必须通过 `type` 关键字声明， 不支持匿名结构体。
+> `&` and `*` are used to obtain raw pointers (`rawptr<T>`) to stack addresses. `rawptr` is unsafe and allows null values; pointers may become dangling or point to invalid memory regions. nature does not perform escape analysis. Avoid using `&` and `*` unless absolutely necessary. Use `new + ptr<T>` to obtain safer heap pointers.
 
-### 基本语法
+## Structs
+
+In nature, structs must be declared using the `type` keyword. Anonymous structs are not supported.
+
+### Basic Syntax
 
 ```nature
-// 结构体声明
+// Struct declaration
 type person = struct {
     string name
     int age
     bool active
 }
 
-// 结构体初始化，此时 p 在栈上进行初始化
+// Struct initialization; p is initialized on the stack
 var p = person{
     name = "Alice",
     age = 25
 }
 
-//  使用 new 可以在堆上初始化， 并获取结构体指针
+// Using new initializes on the heap and obtains a struct pointer
 ptr<person> p2 = new person(name = "Bob", age = 30)
-p2.name = "Tom"  // 自动解引用
+p2.name = "Tom" // Automatic dereference
 ```
 
-### 默认值
+### Default Values
 
-struct 默认值只支持简单的常量，不支持闭包默认值。
+Struct default values only support simple constants; closure default values are not supported.
 
 ```nature
 type person_t = struct{
@@ -528,11 +524,11 @@ type person_t = struct{
     bool active = true
 }
 
-// 使用默认值初始化
-var p = person_t{}  // p.name="unnamed", p.active=true
+// Initialization with default values
+var p = person_t{} // p.name="unnamed", p.active=true
 ```
 
-###  类型扩展
+### Type Extension
 
 ```nature
 type rect = struct {
@@ -540,36 +536,36 @@ type rect = struct {
     int height
 }
 
-// 为 rect 类型添加扩展函数
+// Adding an extension function to the rect type
 fn rect.area():int {
-    return self.width * self.height  // 使用 self 访问结构体字段
+    return self.width * self.height // Use self to access struct fields
 }
 
 fn main() {
     var r = rect{width = 10, height = 5}
-    println(r.area())  // 输出: 50
-    
+    println(r.area()) // Output: 50
+
     ptr<rect> rp = new rect(width = 20, height = 10)
-    println(rp.area()) // 输出: 200
+    println(rp.area()) // Output: 200
 }
 ```
 
-### 嵌套与组合
+### Nesting and Composition
 
 ```nature
-// 嵌套结构体
+// Nested struct
 type outer = struct {
     int x
-    rect r = rect{}  // 嵌套结构体with默认初始化
+    rect r = rect{} // Nested struct with default initialization
 }
 
-// 结构体组合
+// Struct composition
 type animal = struct {
     string name
 }
 
 type dog = struct {
-    animal base    // 组合 animal 结构体
+    animal base // Compose the animal struct
     string breed
 }
 
@@ -577,258 +573,258 @@ type dog = struct {
 type dog = struct {
     struct {
         string name
-    } base // x 不要使用匿名结构体, 虽然能够声明也无法进行初始化赋值, 仅用于内存结构转换使用
+    } base // x Do not use anonymous structs; although declaration is possible, initialization and assignment are not, and it's only for memory structure conversion.
     string breed
 }
 ```
 
+## Data Structures
 
-## 数据结构
 ### string
 
-字符串是 nature 语言的内置数据类型，用于表示文本序列。
+String is a built-in data type in nature for representing text sequences.
 
-- 字符串使用 ASCII 编码
-- 字符串存储在堆上
+- Strings use ASCII encoding.
+- Strings are stored on the heap.
 
 ```nature
-// 字符串声明 - 支持单引号、双引号或反引号
+// String declaration - supports single quotes, double quotes, or backticks
 string s1 = 'hello world'
 string s2 = "hello world"
 string s3 = `hello world`
 
-// 字符串拼接
+// String concatenation
 string s4 = s1 + ' one piece'
 
-// 字符串比较
-bool b1 = 'hello' == 'hello'  // true
-bool b2 = 'a' < 'b'          // true
+// String comparison
+bool b1 = 'hello' == 'hello' // true
+bool b2 = 'a' < 'b'         // true
 
-// 获取字符串长度
+// Get string length
 int len = s1.len()
 
-// 索引访问和修改
-s1[0] = 72  // 将第一个字符修改为 'H'（ASCII 码 72）
+// Index access and modification
+s1[0] = 72 // Modify the first character to 'H' (ASCII code 72)
 
-// 字符串与字节数组转换
+// String to byte array conversion
 [u8] bytes = s1 as [u8]
 string s5 = bytes as string
 
-// 字符串遍历
+// String traversal
 for v in s1 {
-    // v 的类型为 u8，表示 ASCII 码值
+    // The type of v is u8, representing the ASCII code value
     println(v)
 }
 ```
 
 ### vec
 
-vec 是 nature 的内置动态数组类型，支持动态扩容，存储在堆上。
+`vec` is nature's built-in dynamic array type, supporting dynamic resizing and stored on the heap.
 
-> 线程不安全
+> Not thread-safe
 
 ```nature
-// 声明与初始化
-[int] list = [1, 2, 3]        // 语法 1：使用 [T] 声明
-vec<int> list2 = [1, 2, 3]    // 语法 2：使用 vec<T> 声明
-var list3 = vec_new<int>(0, 10) // 创建空 vec, 其中第一个参数是初始化的默认类型
-var list7 = vec_new<string>("hello", 10) // 初始化字符串数组，默认值是 string
-var list5 = [0;10]  // 等同于 vec_new，并根据默认参数类型自动推导
-var list6 = vec_cap<int>(10) // 指定 cap, len = 0
-[int] list4 = [] // 自动推导空 vec 类型
+// Declaration and initialization
+[int] list = [1, 2, 3]           // Syntax 1: Declare using [T]
+vec<int> list2 = [1, 2, 3]       // Syntax 2: Declare using vec<T>
+var list3 = vec_new<int>(0, 10)  // Create an empty vec, the first parameter is the initial default type
+var list7 = vec_new<string>("hello", 10) // Initialize a string array with "hello" as the default value
+var list5 = [0;10]               // Equivalent to vec_new and automatically infers the type based on the default parameter
+var list6 = vec_cap<int>(10)     // Specify capacity, len = 0
+[int] list4 = []                 // Automatically infers the empty vec type
 
-// 基本操作
-list[0] = 10                   // 修改元素
-var first = list[0]           // 获取元素
-list.push(4)                  // 添加元素
-var len = list.len()          // 获取数组长度
-var cap = list.cap()          // 获取数组容量
+// Basic operations
+list[0] = 10                     // Modify element
+var first = list[0]              // Get element
+list.push(4)                     // Add element
+var len = list.len()             // Get array length
+var cap = list.cap()             // Get array capacity
 
-// 切片和合并
-var slice = list.slice(1, 3)  // 获取下标 1 到 3(不含) 的切片
-list = list.concat([4, 5, 6]) // 合并两个数组
-list.append([4, 5, 6]) // 追加到 list 数组上
+// Slicing and concatenation
+var slice = list.slice(1, 3)     // Get a slice from index 1 to 3 (exclusive)
+list = list.concat([4, 5, 6])    // Concatenate two arrays
+list.append([4, 5, 6])           // Append to the list array
 
-// 遍历
+// Traversal
 for v in list {
     println(v)
 }
 ```
 
-
 ### map
 
-map 是 nature 的内置映射表类型，用于存储键值对。
+`map` is nature's built-in associative array type for storing key-value pairs.
 
-> 线程不安全
+> Not thread-safe
 
 ```nature
-// 声明与初始化
-var m3 = {'a': 1, 'b': 2}              // 类型推导
-{string:int} m1 = {'a': 1, 'b': 2}     // 使用 {T:T} 声明
-map<string,int> m2 = {'a': 1, 'b': 2}  // 使用 map<T,T> 声明
+// Declaration and initialization
+var m3 = {'a': 1, 'b': 2}           // Type inference
+{string:int} m1 = {'a': 1, 'b': 2}  // Declare using {T:T}
+map<string,int> m2 = {'a': 1, 'b': 2} // Declare using map<T,T>
 
-// 基本操作
-m1['c'] = 3                    // 插入/更新元素
-var v = m1['a']                // 获取元素值
-m1.del('b')                    // 删除元素
-var exists = m1.contains('a')  // 检查键是否存在
-var size = m1.len()            // 获取元素数量
+// Basic operations
+m1['c'] = 3                      // Insert/update element
+var v = m1['a']                  // Get element value
+m1.del('b')                      // Delete element
+var exists = m1.contains('a')    // Check if key exists
+var size = m1.len()              // Get the number of elements
 
-// 遍历
-for k in m1 {                  // 仅遍历键
+// Traversal
+for k in m1 {                    // Iterate through keys only
     println(k)
 }
 
-for k, v in m1 {              // 同时遍历键和值
+for k, v in m1 {                 // Iterate through both keys and values
     println(k, v)
 }
 
-// 空 map 声明 示例
+// Empty map declaration examples
 {string:int} empty = {}
 var empty = map_new<string,int>()
 ```
 
 ### set
 
-set 是 nature 的内置集合类型，用于存储唯一的元素。set 存储在堆上，元素不允许重复。
+`set` is nature's built-in collection type for storing unique elements. Sets are stored on the heap, and duplicate elements are not allowed.
 
-> 线程不安全
+> Not thread-safe
 
 ```nature
-// 声明与初始化
-{int} s1 = {-32, -64, 13}     // 使用 {T} 声明
-set<int> s3 = {1, 2, 3}       // 使用 set<T> 声明
+// Declaration and initialization
+{int} s1 = {-32, -64, 13}   // Declare using {T}
+set<int> s3 = {1, 2, 3}     // Declare using set<T>
 
-// 基本操作
-s1.add(111)                   // 添加元素
-s1.del(13)                    // 删除元素
-var exists = s1.contains(13)  // 检查元素是否存在
+// Basic operations
+s1.add(111)                 // Add element
+s1.del(13)                  // Delete element
+var exists = s1.contains(13) // Check if element exists
 
-var found = {1, 2, 3}.contains(2)  // 支持方法链式调用
+var found = {1, 2, 3}.contains(2) // Supports method chaining
 
-// 遍历
+// Traversal
 for v in s1 {
     println(v)
 }
 
-// 空集合声明
-{int} empty = {}              
-var empty = set_new<int>()     
+// Empty set declaration
+{int} empty = {}
+var empty = set_new<int>()
 ```
 
 ### tuple
 
-tuple 是 nature 的内置类型，用于将一组不同类型的数据聚合在一个结构中。tuple 存储在堆上，在栈上只保存指针。
-
+`tuple` is a built-in type in nature for aggregating a fixed-size collection of elements of potentially different types. Tuples are stored on the heap, with only a pointer stored on the stack.
 
 ```nature
-var tup = (1, 1.1, true) // v 声明并赋值，多个元素使用逗号分隔
+var tup = (1, 1.1, true) // v Declare and assign; multiple elements are separated by commas
 
-var tup = (1) // x tuple 中至少需要包含两个元素
+var tup = (1) // x A tuple must contain at least two elements
 
-var foo = tup[0] // v 字面量 0 表示 tuple 中的第一个元素，以此类推
+var foo = tup[0] // v Literal 0 represents the first element in the tuple, and so on
 
-// x tuple 中的元素访问不允许出现表达式，只允许通过 int 字面量访问
+// x Expression access is not allowed for tuple elements; only integer literals are allowed
 var foo = tup[1 + 1]
 
-tup[0] = 2 // v 修改 tuple 中的值
+tup[0] = 2 // v Modify the value of an element in the tuple
 ```
 
-tup 解构赋值语法，通过该语法可以模拟函数多返回值，或者快速的进行变量交换
+Tuple destructuring assignment syntax allows for simulating multiple return values from functions or quickly swapping variables.
 
 ```nature
 var list = [1, 2, 3]
 
-// 1. 变量创建
- // v 值允许通过 var 进行自动类型推导来连续创建多个变量
+// 1. Variable creation
+// v Multiple variables can be created consecutively with automatic type inference using var
 var (foo, bar, car) = (1, 2, true)
 
- // x 禁止声明类型，只允许通过 var 自动类型推导
-(custom_type, int, bool) (foo, bar, car) = (1, 2, true)
+// x Type declaration is prohibited; only automatic type inference via var is allowed
+// (custom_type, int, bool) (foo, bar, car) = (1, 2, true)
 
-var (foo, (bar, car)) = (1, (2, true)) // v 嵌套形式的创建多个变量
-var (list[0], list[1]) = (2, 4) // x 创建变量时，左侧不允许使用表达式
+var (foo, (bar, car)) = (1, (2, true)) // v Nested creation of multiple variables
+var (list[0], list[1]) = (2, 4) // x Expressions are not allowed on the left side when creating variables
 
 
-// 2. 变量赋值
-(foo, bar) = (bar, foo) // v 修改变量 foo,bar 的值，可以进行快速变量值交换
-(foo, (bar, car)) = (2, (4, false)) // v 嵌套形式修改变量的值操作
-(foo, bar, car) = (2, (4, false)) // x 左值与右值的类型不匹配
+// 2. Variable assignment
+(foo, bar) = (bar, foo) // v Modify the values of variables foo and bar, allowing for quick swapping
+(foo, (bar, car)) = (2, (4, false)) // v Nested modification of variable values
+(foo, bar, car) = (2, (4, false)) // x Type mismatch between left and right values
 
- // v tuple 赋值操作中允许使用左值表达式 ident/ident[T]/ident.T 这样的表达式为左值表达式
+// v Left-value expressions like ident/ident[T]/ident.T are allowed in tuple assignment
 (list[0], list[2]) = (1, 2)
-(1 + 1, 2 + 2) = (1, 2) // x 1+1 属于右值表达式
+(1 + 1, 2 + 2) = (1, 2) // x 1+1 is a right-value expression
 ```
 
 ### arr
 
-arr 是定长数组，和 c 语言中的数据结构一致。
+`arr` is a fixed-size array, consistent with the data structure in C.
 
 ```nature
-[u8;3] array = [1, 2, 3] // 声明一个长度为 12，元素为 u8 类型的数组
+[u8;3] array = [1, 2, 3] // Declare an array of length 12 with elements of type u8
 array[0] = 12
 array[1] = 24
 var a = array[7]
 ```
 
-arr 和 vec 最大的区别是，arr 默认在栈上进行分配。而 vec 在 stack 上仅仅保存了一个指针。以 struct 为例子
+The main difference between `arr` and `vec` is that `arr` is allocated on the stack by default, while `vec` only holds a pointer on the stack. For example, with structs:
 
 ```nature
 type t1 = struct {
     [u8;12] array
 }
 
-var size = @sizeof(t1) // 12 * 1 = 12byte
+var size = @sizeof(t1) // 12 * 1 = 12 bytes
 
 type t2 = struct {
     [u8] list
 }
 
-var size = @sizeof(t2) // list is pointer size = 8byte
+var size = @sizeof(t2) // list is a pointer, size = 8 bytes
 ```
 
-和 c 语言不同，在 nature 中使用 array 作为参数时会对 array 进行 copy 并进行值传递。
+Unlike C, when using `array` as a parameter in nature, a copy of the array is made, and it is passed by value.
 
-## 错误处理
 
-nature 编程语言使用 try catch + throw 来进行错误处理。
 
-throw 语法使用示例
+## Error Handling
+
+The nature programming language uses `try catch + throw` for error handling.
+
+Example of `throw` syntax:
 
 ```nature
-// x 错误使用方式, can't use throw stmt in a fn without an errable! declaration. example: fn rem(...):void!
+// x Incorrect usage: can't use throw stmt in a fn without an errable! declaration. example: fn rem(...):void!
 fn rem(int dividend, int divisor):int {
-	...
+    ...
 }
 
-// v 正确使用方式, 函数必须声明包含 error, 使用 ! 表示函数函数可能抛出错误
+// v Correct usage: the function must declare that it can contain an error using !
 fn rem(int dividend, int divisor):int! {
-	if divisor == 0 {
-		throw errorf('divisor cannot zero')
-	}
-	return dividend % divisor
+    if divisor == 0 {
+        throw errorf('divisor cannot zero')
+    }
+    return dividend % divisor
 }
 ```
 
-可以使用 catch 语法捕获错误
+Errors can be caught using the `catch` syntax:
 
 ```nature
-// 存在 error(!)  声明的函数可以使用 catch 拦截， 其中 e  实现了 throwable 接口
-//type throwable = interface{  
-//    fn msg():string  
-//}  
-//type errort:throwable = struct{  
+// Functions with error(!) declaration can be intercepted using catch, where e implements the throwable interface
+//type throwable = interface{
+//    fn msg():string
+//}
+//type errort:throwable = struct{
 // ...
-//}  
+//}
 
 var result = rem(10, 0) catch e {
     println(e.msg())
-    break 1 // break 可以为 result 赋默认值
+    break 1 // break can assign a default value to result
 }
 ```
 
-也可以使用 try catch 来捕获多行表达式错误
+`try catch` can also be used to catch errors in multi-line expressions:
 
 ```nature
 try {
@@ -836,12 +832,12 @@ try {
     var b = a + 1
     rem(10, 0)
     var c = a + b
-} catch e { // e 实现了 throwable
+} catch e { // e implements throwable
     println('catch err:', e.msg())
 }
 ```
 
-error 如果没有被捕获，会随着函数调用栈向上传递，直到被协程调度器捕获并退出程序
+If an error is not caught, it propagates up the function call stack until it is caught by the coroutine scheduler, which then exits the program:
 
 ```nature
 fn bar():void! {
@@ -857,9 +853,9 @@ fn main():void! {
 }
 ```
 
-编译并运行会得到错误追踪栈
+Compiling and running this will produce an error traceback:
 
-```nature
+```sh
 coroutine 'main' uncaught error: 'error in bar' at nature-test/main.n:2:22
 stack backtrace:
 0:	main.bar
@@ -870,303 +866,306 @@ stack backtrace:
 		at nature-test/main.n:10:11
 ```
 
-还有一种特殊错误类型是 panic，panic 不会随着函数传递，而是会直接导致程序崩溃。 最常见如索引越界
+Another special type of error is `panic`. Panics do not propagate up the function call stack; instead, they directly cause the program to crash. The most common example is index out of bounds:
 
 ```nature
 var list = [1, 2, 3]
-var a = list[4] 
+var a = list[4]
 ```
 
-编译并运行会得到错误
+Compiling and running this will produce an error:
 
+```sh
 coroutine 'main' panic: 'index out of vec [4] with length 3' at nature-test/main.n:3:18
+```
 
-panic 也可以 catch 或者 try catch 捕获，但是由于 panic 不会 沿着调用栈传递, 所以必须立刻捕获而不能跨函数捕获。
+Panics can also be caught using `catch` or `try catch`, but because they do not propagate up the call stack, they must be caught immediately and cannot be caught across function boundaries.
 
 ```nature
-// panic 捕获方式与 error 相同
+// Panic catching is the same as error catching
 var a = list[4] catch e {
     println(e.msg())
 }
 
-// 使用 panic 函数可以手动抛出 panic
+// The panic function can be used to manually throw a panic
 panic('failed')
 ```
 
-main 函数默认会添加 `errable(!)`  
+The `main` function implicitly has `errable(!)` added by default.
 
-## 联合类型
+## Union Types
 
-联合类型（Union Types）允许一个变量持有多种可能的类型之一。nature 提供了灵活的联合类型系统。
+Union types allow a variable to hold one of several possible types. nature provides a flexible union type system.
 
-基本语法
+Basic syntax:
 
 ```nature
-// 使用 | 运算符声明联合类型
-type nullable<T> = T|null  // 可空类型
-type number = int|float    // 数值类型
+// Declare union types using the | operator
+type nullable<T> = T|null // Nullable type
+type number = int|float   // Numeric type
 ```
 
-> 联合类型只能在 global type alias 中进行声明，不支持匿名声明
+> Union types can only be declared in global type aliases; anonymous declarations are not supported.
 
 ### nullable
 
 ```nature
-int? foo = null        // 等同于 nullable<int> foo = null
-string? bar = "hello"  // 等同于 nullable<string> bar = "hello"
+int? foo = null      // Equivalent to nullable<int> foo = null
+string? bar = "hello" // Equivalent to nullable<string> bar = "hello"
 ```
 
-### 类型断言
+### Type Assertion
 
-类型断言使用和类型转换一样的 as 语法
+Type assertion uses the same `as` syntax as type conversion:
 
 ```nature
 int? foo = 42
-int val = foo as int  // 将联合类型断言为具体类型
+int val = foo as int // Assert the union type to a specific type
 ```
 
-### 类型检查
+### Type Checking
 
-is 语法用于检查联合类型当前存储的类型
+The `is` syntax is used to check the current stored type of a union type:
 
 ```nature
 int? foo = 42
-bool is_int = foo is int    // true
-bool is_null = foo is null  // false
+bool is_int = foo is int   // true
+bool is_null = foo is null // false
 
-// 在条件语句中使用, 如果可以通过逻辑判断确定 foo 的具体类型
-// foo 在 if body 中会自动进行断言 foo = foo as int
+// Used in conditional statements; if the specific type of foo can be determined by logical judgment,
+// foo will be automatically asserted in the if body: foo = foo as int
 if foo is int {
     println("foo is an integer", foo)
 }
 ```
 
-### 模式匹配
+### Pattern Matching
 
-模式匹配成功会进行自动断言
+Successful pattern matching will result in automatic assertion:
 
 ```nature
 int? foo = null
 int result = match foo {
-    is int -> foo        // auto: foo = foo as int
-    is null -> -1        // auto: foo = foo as null
+    is int -> foo     // auto: foo = foo as int
+    is null -> -1    // auto: foo = foo as null
 }
 ```
 
 ### any
 
-any 是一种特殊的 union type 可以包含任意类型
+`any` is a special union type that can contain any type.
 
-小范围的联合类型可以赋值给包含这些类型的大范围联合类型, any 包含最大的类型范围
+A union type with a smaller range of types can be assigned to a union type with a larger range of types. `any` has the largest type range.
 
 ```nature
 any foo = 1
 int? bar = null
 foo = bar // v
-bar = foo // x bar 的范围小于 foo
+bar = foo // x The range of bar is smaller than foo
 ```
 
-## 接口
+## Interfaces
 
-声明方式
+Declaration method:
 
 ```nature
-type measurable = interface{  
-    fn area():int  
+type measurable = interface{
+    fn area():int
     fn perimeter():int
 }
 
-// interface 支持泛型声明
-type measurable<T> = interface{  
-    fn area():T  
-    fn perimeter():T  
+// Interface supports generic declaration
+type measurable<T> = interface{
+    fn area():T
+    fn perimeter():T
 }
 ```
 
-完整声明示例
+Complete declaration example:
 
 ```nature
-type measurable<T> = interface{  
-    fn perimeter():T  
-    fn area():T  
-}  
-
-// type 实现 interface
-type rectangle: measurable<i64> = struct{  
-    i64 width  
-    i64 height  
-}  
-
-fn rectangle.area():i64 {  
-    return self.width * self.height  
+type measurable<T> = interface{
+    fn perimeter():T
+    fn area():T
 }
 
-fn rectangle.perimeter():i64 {  
-    return 2 * (self.width + self.height)  
+// type implements interface
+type rectangle: measurable<i64> = struct{
+    i64 width
+    i64 height
+}
+
+fn rectangle.area():i64 {
+    return self.width * self.height
+}
+
+fn rectangle.perimeter():i64 {
+    return 2 * (self.width + self.height)
 }
 ```
 
-接口可以作为函数参数，只要实现了该接口就能通过函数参数示例
+Interfaces can be used as function parameters. Any type that implements the interface can be passed as an argument:
 
 ```nature
-fn print_shape(measurable<i64> s) {  
-    println(s.area(), s.perimeter())  
+fn print_shape(measurable<i64> s) {
+    println(s.area(), s.perimeter())
 }
 
 fn main() {
-	// 值传递
-	var r = rectangle{width=3, height=4}  
-	print_shape(r)  
+    // Pass by value
+    var r = rectangle{width=3, height=4}
+    print_shape(r)
 
-	// 指针引用传递
-	var r1 = new rectangle(width=15, height=18)  
-	print_shape(r1)
+    // Pass by pointer reference
+    var r1 = new rectangle(width=15, height=18)
+    print_shape(r1)
 }
 ```
 
-传递的参数如果是 ptr，则会解构 ptr 包含的类型是否实现了 measurable，type 可以实现多个 interface，interface 之间使用 `,` 分隔
+If the passed parameter is a pointer (`ptr`), nature will check if the type pointed to by the pointer implements the `measurable` interface. A type can implement multiple interfaces, separated by commas:
 
 ```nature
-type measurable<T> = interface{  
-    fn perimeter():T  
-    fn area():T  
-}  
-  
-type updatable = interface{  
-    fn update(i64)  
-}  
-  
-type rectangle: measurable<i64>,updatable = struct{  
-    i64 width  
-    i64 height  
-}  
-fn rectangle.area():i64 {  
-    return self.width * self.height  
-}  
-fn rectangle.perimeter():i64 {  
-    return 2 * (self.width + self.height)  
-}  
-fn rectangle.update(i64 i) {  
-   self.width = i  
-   self.height = i  
+type measurable<T> = interface{
+    fn perimeter():T
+    fn area():T
+}
+
+type updatable = interface{
+    fn update(i64)
+}
+
+type rectangle: measurable<i64>,updatable = struct{
+    i64 width
+    i64 height
+}
+fn rectangle.area():i64 {
+    return self.width * self.height
+}
+fn rectangle.perimeter():i64 {
+    return 2 * (self.width + self.height)
+}
+fn rectangle.update(i64 i) {
+   self.width = i
+   self.height = i
 }
 ```
 
-可以通过 `is` 判断 interface 的具体类型
+The specific type of an interface can be checked using `is`:
 
-```
-fn use_com(combination c):int {  
-    if c is square {  
-        // auto as: square c = c as square, c is interface  
-        c.unique()  
-        return 1  
-    }  
-    if c is ptr<square> {  
-        // auto as: ptr<square> c = c as ptr<square>  
-        c.unique()  
-        return 2  
-    }  
-    return 0  
+```nature
+fn use_com(combination c):int {
+    if c is square {
+        // auto as: square c = c as square, c is interface
+        c.unique()
+        return 1
+    }
+    if c is ptr<square> {
+        // auto as: ptr<square> c = c as ptr<square>
+        c.unique()
+        return 2
+    }
+    return 0
 }
 
-// 同样支持 match is
-  
-fn use_com(combination c):int {  
-    return match c {  
-        is square -> 10  
-        is ptr<square> -> 20  
-        _ -> 0  
-    }  
-}
-```
+// match is is also supported
 
-interface 支持 nullable
-
-```
-fn use(testable? test) {  
-    if (test is testable) { // test = test as testable  
-        println('testable value is', test.nice())  
-    } else {  
-        println('test not testable')  
-    }  
+fn use_com(combination c):int {
+    return match c {
+        is square -> 10
+        is ptr<square> -> 20
+        _ -> 0
+    }
 }
 ```
 
-接口也可以作为泛型约束使用，在后续的泛型章节介绍
+Interfaces support nullable types:
 
-## 模式匹配
+```nature
+fn use(testable? test) {
+    if (test is testable) { // test = test as testable
+        println('testable value is', test.nice())
+    } else {
+        println('test not testable')
+    }
+}
+```
+
+Interfaces can also be used as generic constraints, which will be introduced in the subsequent generics chapter.
 
 
-nature 提供了强大的模式匹配功能，通过 `match` 表达式可以实现复杂的条件分支逻辑。
 
-### 基本语法
+## Pattern Matching
 
-match 表达式的基本语法如下：
+nature provides a powerful pattern matching feature, allowing for complex conditional branching logic through the `match` expression.
+
+### Basic Syntax
+
+The basic syntax of a `match` expression is as follows:
 
 ```nature
 match subject {
     pattern1 -> expression1
     pattern2 -> expression2
     ...
-    _ -> default_expression  // 默认分支
+    _ -> default_expression // Default branch
 }
 ```
 
-### 值匹配
+### Value Matching
 
-可以直接匹配字面量值：
+You can directly match literal values:
 
 ```nature
 var a = 12
 match a {
     1 -> println('one')
-    12 -> println('twelve')  // 匹配成功
+    12 -> println('twelve') // Match successful
     20 -> println('twenty')
     _ -> println('other')
 }
 ```
 
-支持字符串匹配：
+String matching is supported:
 
 ```nature
 match 'hello world' {
     'hello' -> println('greeting')
-    'hello world' -> println('full greeting')  // 匹配成功
+    'hello world' -> println('full greeting') // Match successful
     _ -> println('other')
 }
 ```
 
-### 表达式匹配
+### Expression Matching
 
-可以不携带 subject，此时只要 pattern1  表达式的结果为 true 就能进行匹配，只能匹配一个分支并执行
+You can omit the subject. In this case, the match occurs if the result of `pattern1` is true. Only one branch will be matched and executed.
 
 ```nature
 match {
     12 > 0 && 0 > 0 -> println('case 1')
-    (13|(1|2)) == 15 -> println('case 2')  // 匹配成功
+    (13|(1|2)) == 15 -> println('case 2') // Match successful
     (1|2) > 3 -> println('case 3')
     _ -> println('default')
 }
 ```
 
-### 自动断言
+### Automatic Assertion
 
-对于联合类型，可以使用 `is` 进行类型匹配，当 match subject 是 var 时，匹配成功后会自动进行类型断言
+For union types, you can use `is` for type matching. When the match subject is `var`, automatic type assertion occurs upon a successful match.
 
 ```nature
 any value = 2.33
 var result = match value {
     is int -> 0.0
-    is float -> value  // value 自动断言为 float 类型: var value = value as float
+    is float -> value // value is automatically asserted to float type: var value = value as float
     _ -> 0.0
 }
 ```
 
-result 会根据第一个分支的返回类型进行自动推导。
+The type of `result` will be automatically inferred based on the return type of the first branch.
 
-### 代码块与 break
+### Code Blocks and break
 
-match 分支中可以使用代码块，并通过 `break` 返回值：
+Code blocks can be used within match branches, and values can be returned using `break`:
 
 ```nature
 string result = match {
@@ -1176,72 +1175,71 @@ string result = match {
     }
     12 > 11 -> {
         var msg = 'case 2'
-        break msg  // 匹配成功，返回 'case 2'
+        break msg // Match successful, returns 'case 2'
     }
     _ -> 'default'
 }
 ```
 
+### Important Notes
 
-### 注意事项
+1.  The `match` expression must cover all possible cases, usually by including a default branch `_`.
+2.  The return types of all branches must be consistent. The return type of the `match` expression can be automatically inferred from the branch types.
+3.  When using `break` to return a value within a code block, its type must be consistent with the return types of other branches.
+4.  When matching a local variable of a union type, automatic assertion occurs after a successful match of `pattern1`.
 
-1. match 表达式必须包含所有可能的情况，通常通过添加默认分支 `_` 来实现
-2. 所有分支的返回值类型必须一致，match 的返回值可以根据分支类型进行自动推导
-3. 在代码块中使用 `break` 返回值时，其类型必须与其他分支返回值类型一致
-4. 对 union 类型的局部变量进行 match 时，pattern1 匹配成功后会进行自动断言
+## Generics
 
-## 泛型
+nature supports parametric polymorphism through generics, which can be used with structs, union types, and functions.
 
-nature 支持类型参数化的泛型编程，可以用于结构体、联合类型和函数。
+### Type Parameters
 
-###  类型参数
-
-基本语法使用 `<T>` 来声明类型参数，其中 T 是类型参数名称。可以声明多个类型参数，用逗号分隔。
+The basic syntax uses `<T>` to declare a type parameter, where `T` is the name of the type parameter. Multiple type parameters can be declared, separated by commas.
 
 ```nature
-// 单个类型参数
+// Single type parameter
 type box<T> = struct {
     T value
 }
 
-// 多个类型参数
+// Multiple type parameters
 type pair<T, U> = struct {
     T first
     U second
 }
 
-type result<T> = T|error    // 泛型联合类型
+type result<T> = T|error   // Generic union type
 
-type list<T> = [T]         // 泛型数组类型
+type list<T> = [T]         // Generic array type
 ```
 
-类型参数支持嵌套
+Type parameters support nesting:
 
 ```nature
 type wrapper<T> = struct {
-    box<T> inner    // 嵌套使用泛型类型
+    box<T> inner    // Nested use of generic type
 }
 
-// 使用嵌套泛型
+// Using nested generics
 var w = wrapper<int>{
     inner = box<int>{value = 42}
 }
 ```
 
-### 泛型函数
+### Generic Functions
 
 ```nature
-// 泛型函数声明
+// Generic function declaration
 fn sum<T>(T a, T b):T {
     return a + b
 }
 
-// 泛型函数调用
-var result = sum<int>(1, 2)      // 显式指定类型
-var result2 = sum(1.1, 2.2)      // 类型自动推导
+// Generic function call
+var result = sum<int>(1, 2)     // Explicitly specify type
+var result2 = sum(1.1, 2.2)     // Type auto-inference
 
 
-//  类型参数定义扩展函数
+// Type parameter defined extension function
 type box<T> = struct {
     T value
 }
@@ -1251,129 +1249,128 @@ fn box<T>.get():T {
 }
 ```
 
-### 泛型约束
+### Generic Constraints
 
-> nature 的泛型约束暂时还不完善，只会验证传递给泛型的参数是否满足泛型约束声明的类型，而没有验证在泛型函数使用中是否满足泛型约束的使用，在后续的版本中会解决这个问题。
+> nature's generic constraints are currently incomplete. They only verify if the parameters passed to the generic satisfy the declared constraint type, without verifying if the usage within the generic function satisfies the constraint. This issue will be resolved in a later version.
 
-nature 的泛型约束支持三种类型，三种类型约束不允许相互组合，只能选取一种类型约束方式
+nature's generic constraints support three types, and these three types of constraints cannot be combined; only one type constraint can be selected.
 
 ```nature
-// union 约束
-type test_union = int|bool|float  
-  
-fn test<T:test_union>(T param) {  
-    println(param)  
+// union constraint
+type test_union = int|bool|float
+
+fn test<T:test_union>(T param) {
+    println(param)
 }
 
-// union 简化写法
-fn test<T:int|bool|float>(T param) {  
-    println(param)  
+// Simplified union constraint
+fn test<T:int|bool|float>(T param) {
+    println(param)
 }
 
-// interface 约束
-type test_interface = interface{}  
-type test_interface2 = interface{}  
-  
-fn test<T:test_interface&test_interface2>(T param) {  
-    println(param)  
+// interface constraint
+type test_interface = interface{}
+type test_interface2 = interface{}
+
+fn test<T:test_interface&test_interface2>(T param) {
+    println(param)
 }
 ```
 
-### 使用示例
+### Usage Example
 
 ```nature
-// 定义泛型结构体
+// Define a generic struct
 type pair<T, U> = struct {
     T first
     U second
 }
 
-// 定义泛型方法
+// Define a generic method
 fn pair<T, U>.swap():(U, T) {
     return (self.second, self.first)
 }
 
 fn main() {
-    // 创建泛型实例
+    // Create a generic instance
     var p = pair<int, string>{
         first = 42,
         second = "hello"
     }
-    
-    // 调用泛型方法
+
+    // Call the generic method
     var (s, i) = p.swap()
 }
 ```
 
-### 注意事项
+### Important Notes
 
-1. 泛型类型参数在编译时必须是确定的
-2. 使用类型约束可以限制泛型类型的范围
-3. 泛型函数的类型参数可以通过参数类型自动推导
-4. 嵌套泛型使用时需要指定完整的类型参数
+1.  Generic type parameters must be determined at compile time.
+2.  Type constraints can be used to restrict the range of generic types.
+3.  Type parameters of generic functions can be automatically inferred from the argument types.
+4.  When using nested generics, complete type parameters need to be specified.
 
+## Coroutines
 
-## 协程
+Coroutines are user-level lightweight threads that can run multiple coroutines on a single system thread.
 
-协程是一种用户态的轻量级线程，可以在单个系统线程上运行多个协程。
+### Basic Usage
 
-### 基本使用
+1.  Using the `go` keyword:
 
-1. 使用 `go` 关键字
 ```nature
-var fut = go sum(1, 2)  // 创建一个共享协程
+var fut = go sum(1, 2) // Create a shared coroutine
 ```
 
-1. 使用 `@async` 宏, 可以携带 flag 参数来定义协程的行为
+2.  Using the `@async` macro, which can take a flag parameter to define the coroutine's behavior:
 
 ```nature
-var fut = @async(sum(1, 2), co.SAME)  // SAME 表示新的协程和当前协程共用 processor
+var fut = @async(sum(1, 2), co.SAME) // SAME indicates that the new coroutine shares a processor with the current coroutine
 ```
 
 ### future\<T\>
 
-协程创建后会返回一个 future 对象， 此时协程已经在运行中，但是不会阻塞当前协程，可以通过 `await()` 方法阻塞并等待协程执行完成并获取返回值：
+After a coroutine is created, it returns a `future` object. At this point, the coroutine is already running but does not block the current coroutine. You can use the `await()` method to block and wait for the coroutine to complete and get its return value:
 
 ```nature
 fn sum(int a, int b):int {
-    co.sleep(1000)  // 模拟耗时操作, sleep 单位 ms
+    co.sleep(1000) // Simulate a time-consuming operation, sleep unit is ms
     return a + b
 }
 
 fn main() {
     var fut = go sum(1, 2)
-    var result = fut.await()  // 等待协程执行完成并获取结果
-    println(result)  // 输出: 3
+    var result = fut.await() // Wait for the coroutine to complete and get the result
+    println(result) // Output: 3
 }
 ```
 
-> 使用 `co.sleep()` 可以让当前协程让出并休眠指定的毫秒数
-> 使用 `co.yield` 可以直接让出当前协程的执行权等待下一次调度
+> Use `co.sleep()` to yield the current coroutine and sleep for the specified number of milliseconds.
+> Use `co.yield` to directly yield the execution right of the current coroutine and wait for the next scheduling.
 
 ### mutex
 
-mutex（互斥锁）是一种并发控制机制，用于保护共享资源，确保在同一时刻只有一个协程可以访问被保护的资源。
+A mutex (mutual exclusion lock) is a concurrency control mechanism used to protect shared resources, ensuring that only one coroutine can access the protected resource at any given time.
 
 ```nature
 import co.mutex as m
 
-// 创建互斥锁
+// Create a mutex
 var mu = m.mutex_t{}
 
-// 加锁
+// Lock
 mu.lock()
 
-// 临界区代码
+// Critical section code
 // ...
 
-// 解锁
+// Unlock
 mu.unlock()
 ```
 
+### Error Handling
 
-### 错误处理
-
-协程中的错误 也可以通过 `catch` 语法捕获
+Errors in coroutines can also be caught using the `catch` syntax:
 
 ```nature
 fn div(int a, int b):int! {
@@ -1387,121 +1384,123 @@ fn main() {
     var fut = go div(10, 0)
     var result = fut.await() catch e {
         println("error:", e.msg())
-        break 0  // 提供默认值
+        break 0 // Provide a default value
     }
 }
 ```
 
-如果协程中的错误没有被捕获，程序将会终止。
+If an error in a coroutine is not caught, the program will terminate.
+
+### Important Notes
+
+1.  Coroutines are lightweight, and a large number of coroutines can be created.
+2.  Errors in coroutines should be handled appropriately; uncaught errors will cause the program to terminate.
+3.  The `await()` method blocks the current coroutine until the target coroutine completes.
 
 
-### 注意事项
-
-1. 协程是轻量级的，可以创建大量协程
-2. 协程中的错误应该被适当处理，未捕获的错误会导致程序终止
-3. `await()` 方法会阻塞当前协程直到目标协程完成
 
 ## channel
 
-channel 是 nature 提供的协程间通信的基本机制，用于在不同协程之间安全地传递数据。
+`channel` is a fundamental mechanism provided by nature for inter-coroutine communication, used to safely pass data between different coroutines.
 
-### 基本用法
-
+### Basic Usage
 
 ```nature
-// 创建无缓冲 channel
-var ch = chan_new<int>()      // 创建传递 int 类型数据的 channel
-var ch_str = chan_new<string>() // 创建传递 string 类型数据的 channel
+// Create an unbuffered channel
+var ch = chan_new<int>()        // Create a channel for passing int type data
+var ch_str = chan_new<string>() // Create a channel for passing string type data
 
-// 创建带缓冲的 channel
-var ch_buf = chan_new<int>(5)  // 创建缓冲大小为 5 的 channel
+// Create a buffered channel
+var ch_buf = chan_new<int>(5)   // Create a channel with a buffer size of 5
 
-// 发送数据
-ch.send(42)        // 发送数据到 channel
-ch_str.send("hello") 
+// Send data
+ch.send(42)         // Send data to the channel
+ch_str.send("hello")
 
-// 接收数据
-var value = ch.recv()     // 从 channel 接收数据
+// Receive data
+var value = ch.recv()     // Receive data from the channel
 var msg = ch_str.recv()
-
 ```
 
-channel 状态
+Channel State
 
 ```nature
-ch.close()                    // 关闭 channel
-bool closed = ch.is_closed()  // 判断协程 是否关闭
-var ok = ch.is_successful()   //  在协程关闭状态下可以检查最近的读取或者写入操作是否成功
+ch.close()                      // Close the channel
+bool closed = ch.is_closed()    // Check if the channel is closed
+var ok = ch.is_successful()    // Check if the most recent read or write operation was successful after the channel is closed
 ```
 
-协程在关闭状态下发送数据会产生 error，可以使用 catch 捕获。
+Sending data to a closed channel will produce an error, which can be caught using `catch`.
 
-未接收完成的 chan buf 可以继续进行 recv，接收完成后再次 recv 会抛出 error
+An unreceived buffered channel can continue to `recv`. Once all buffered data is received, further `recv` operations will throw an error.
 
-### channel 特性
+### Channel Characteristics
 
-1. **无缓冲 channel**
-   - 发送操作会阻塞，直到有接收者准备好接收数据
-   - 接收操作会阻塞，直到有发送者发送数据
+1.  **Unbuffered channel**
+    -   Send operations block until a receiver is ready to receive the data.
+    -   Receive operations block until a sender sends data.
 
-2. **带缓冲 channel**
-   - 当缓冲区未满时，发送操作不会阻塞
-   - 当缓冲区非空时，接收操作不会阻塞
-   - 适用于生产者消费者模式
+2.  **Buffered channel**
+    -   Send operations do not block when the buffer is not full.
+    -   Receive operations do not block when the buffer is not empty.
+    -   Suitable for producer-consumer patterns.
 
+### select Statement
 
-### select 语句
+The `select` statement is used to simultaneously listen for operations on multiple channels, similar to a `switch` statement but specifically for channel operations.
 
-select 语句用于同时监听多个 channel 的操作，类似于 switch 语句，但专门用于 channel 操作。
+Basic Syntax:
 
-基本语法：
 ```nature
 select {
     ch1.on_recv() -> msg {
-        // 处理从 ch1 接收到的数据
+        // Process data received from ch1
     }
     ch2.on_send(value) -> {
-        // ch2 发送成功后的处理
+        // Processing after successful send on ch2
     }
     _ -> {
-        // 默认分支，当所有 channel 都不可操作时执行
+        // Default branch, executed when no channel is ready for operation
     }
 }
 ```
 
-特性：
-1. 可以同时监听多个 channel 的发送和接收操作
-2. 如果多个 case 同时就绪，select 会随机选择一个执行
-3. 如果没有 case 就绪且没有默认分支，select 会阻塞等待
-4. select 会自动 closed error, 然后通过 `is_successful()` 检查当前被唤醒 channel 操作是否成功
+Characteristics:
 
-### 使用示例
+1.  Can simultaneously listen for send and receive operations on multiple channels.
+2.  If multiple cases are ready at the same time, `select` will randomly choose one to execute.
+3.  If no case is ready and there is no default branch, `select` will block and wait.
+4.  `select` automatically handles closed channel errors, and `is_successful()` can be used to check if the awakened channel operation was successful.
 
-**简单的生产者消费者模式**
+### Usage Examples
+
+**Simple Producer-Consumer Pattern**
 
 ```nature
-// 生产者
+// Producer
 go (fn(chan<int> ch):void! {
     ch.send(42)
 })(ch)
 
-// 消费者
+// Consumer
 var value = ch.recv()
 ```
 
-**使用带缓冲 channel 实现限流器**
+**Implementing a Rate Limiter using a Buffered Channel**
+
 ```nature
-var limiter = chan_new<u8>(10)  // 最多允许 10 个并发任务
+var limiter = chan_new<u8>(10) // Allow a maximum of 10 concurrent tasks
 for u8 i = 0; i < 100; i+=1 {
-    limiter.send(i)             // 获取令牌
+    limiter.send(i)           // Acquire a token
     go (fn():void! {
-        // 处理任务
-        limiter.recv()          // 释放令牌
+        // Process task
+        limiter.recv()           // Release the token
     })()
 }
 ```
 
-1. **使用 select 实现超时控制**
+**Implementing Timeout Control using select**
+
 ```nature
 var ch = chan_new<string>()
 var timeout = chan_new<bool>()
@@ -1516,145 +1515,145 @@ select {
 }
 ```
 
-### 注意事项
+### Important Notes
 
-1. channel 是类型安全的，只能传递声明时指定的数据类型
-2. 关闭的 channel 不能再发送数据，但可以继续接收已缓冲的数据
-3. select 语句提供了处理多个 channel 的优雅方式
-4. 使用带缓冲的 channel 可以提高程序性能，但要注意合理设置缓冲大小
+1.  Channels are type-safe; they can only transmit data of the type specified during declaration.
+2.  Data cannot be sent to a closed channel, but buffered data can still be received.
+3.  The `select` statement provides an elegant way to handle multiple channels.
+4.  Using buffered channels can improve program performance, but the buffer size should be set appropriately.
 
+## Macros
 
-## 宏
-
-一般函数无法实现的功能，可以通过宏来实现，如函数调用的延迟展开，或者读取类型的 size 等，nature  当前版本还不支持自定义宏，但内置了一些必须的宏函数
+Functionality that cannot be achieved with regular functions can be implemented through macros, such as delayed expansion of function calls or reading the size of types. The current version of nature does not support custom macros but includes some essential built-in macro functions.
 
 ```nature
-var size = @sizeof(i8) // sizeof 读取类型占用栈内存
+var size = @sizeof(i8) // sizeof reads the stack memory occupied by the type
 
 type double = f64
-var hash = @reflect_hash(double) // 读取类型反射唯一标识
+var hash = @reflect_hash(double) // Reads the unique reflection identifier of the type
 
-@async(delay_sum(1, 2), 0) //  创建协程
+@async(delay_sum(1, 2), 0) // Create a coroutine
 
-// 使用 unsafe_load 避免对 package struct 进行堆分配  
-@unsafe_load(package).set_age(25) 
+// Use unsafe_load to avoid heap allocation for package structs
+@unsafe_load(package).set_age(25)
 
-var a = @default // 堆变量赋初始化默认值，通常用于泛型中的默认值赋值
+var a = @default // Assign the initial default value to a heap variable, commonly used for default value assignment in generics
 ```
 
-> @unsafe_load 是由于没有实现逃逸分析，所以编译器遇到 package.set_age(25) 这样的 struct call 操作时，会对 package 进行默认堆分配，来避免 set_age 中产生不安全的指针。后续版本中会引入逃逸分析， 让是否堆分配变得更准确
+> `@unsafe_load` is used because escape analysis has not been implemented. Therefore, when the compiler encounters struct call operations like `package.set_age(25)`, it performs a default heap allocation for `package` to avoid unsafe pointers in `set_age`. Subsequent versions will introduce escape analysis to make heap allocation more accurate.
 
-## 函数标签
+## Function Tags
 
-函数标签是一种特殊的函数声明语法，用于为函数添加元数据或修改函数的行为。标签使用 `#` 符号开头，必须放置在函数声明之前。
+Function tags are a special function declaration syntax used to add metadata to functions or modify their behavior. Tags start with the `#` symbol and must be placed before the function declaration.
 
-### linkid 标签
+### linkid Tag
 
-`#linkid` 标签用于自定义函数的链接器符号名称：
+The `#linkid` tag is used to customize the linker symbol name of a function:
 
 ```nature
 #linkid print_message
 fn log(string message):void {
-    // 函数实现
+    // Function implementation
 }
 ```
 
-### local 标签
+### local Tag
 
-`#local` 标签用于标记函数的可见性，表明该函数仅在当前模块内可见
+The `#local` tag is used to mark the visibility of a function, indicating that the function is only visible within the current module:
 
 ```nature
 #local
 fn internal_helper():void {
-    // 函数实现
+    // Function implementation
 }
 ```
 
-> 编译器实际上不会对 local 添加任何限制，这是一种约定俗成
+> The compiler does not actually add any restrictions to `local`; it is a convention.
 
-### 注意事项
+### Important Notes
 
-1. 标签必须直接放在函数声明之前
-2. 一个函数可以同时使用多个标签
-3. 标签的顺序没有特定要求
+1.  Tags must be placed directly before the function declaration.
+2.  Multiple tags can be used with a single function.
+3.  The order of tags is not significant.
 
-## 内置类型
+## Built-in Types
 
 ### nullable\<T\>
-可空类型，用于表示一个值可以为 null 或指定类型 T。
+
+A nullable type used to represent that a value can be either null or of the specified type `T`.
 
 ```nature
 nullable<int> foo = null
-foo = 42  // 可以赋值为 int 类型
+foo = 42 // Can be assigned an int type
 
-// 简写语法
+// Shorthand syntax
 int? bar = null
 bar = 42
 ```
 
 ### throwable
 
-错误类型，用于表示程序运行时的错误信息。
+An error type used to represent runtime error information.
 
 ```nature
-  
-type throwable = interface{  
-    fn msg():string  
-}  
-  
-type errort:throwable = struct{  
-    string message  
-    bool is_panic  
-}  
-  
-fn errort.msg():string {  
-    return self.message  
-}  
-  
-fn errorf(string format, ...[any] args):ptr<errort> {  
-    var msg = fmt.sprintf(format, ...args)  
-    return new errort(message = msg)  
+
+type throwable = interface{
+    fn msg():string
+}
+
+type errort:throwable = struct{
+    string message
+    bool is_panic
+}
+
+fn errort.msg():string {
+    return self.message
+}
+
+fn errorf(string format, ...[any] args):ptr<errort> {
+    var msg = fmt.sprintf(format, ...args)
+    return new errort(message = msg)
 }
 ```
 
 
-## 内置函数
+## Built-in Functions
 
 ### print
-打印任意数量的参数到标准输出，不添加换行符。
+Prints any number of arguments to standard output without adding a newline character.
 
 ```nature
-print("Hello", 42, true)  // 输出: Hello42true
+print("Hello", 42, true)  // Output: Hello42true
 ```
 
 ### println
-打印任意数量的参数到标准输出，并在多个参数之间添加空格，末尾添加换行符。
+Prints any number of arguments to standard output, adding spaces between multiple arguments and a newline character at the end.
 
 ```nature
-println("Hello", 42)  // 输出: Hello 42\n
+println("Hello", 42)  // Output: Hello 42\n
 ```
 
 ### panic
-触发一个不可恢复的运行时错误，导致程序立即终止。
+Triggers an unrecoverable runtime error, causing the program to terminate immediately.
 
 ```nature
-panic("something went wrong")  // 程序终止并输出错误信息
+panic("something went wrong")  // Program terminates and outputs an error message
 ```
 
 ### assert
-断言条件为真，如果条件为假则触发 panic。
+Asserts that a condition is true; if the condition is false, it triggers a panic.
 
 ```nature
-assert(1 + 1 == 2)  // 正常执行
-assert(1 > 2)       // 触发 panic
+assert(1 + 1 == 2)  // Executes normally
+assert(1 > 2)        // Triggers panic
 ```
 
-## 模块
+## Modules
 
-模块是 nature 中组织和重用代码的基本单位。每个 `.n` 文件都是一个独立的模块。
+Modules are the basic units for organizing and reusing code in nature. Each `.n` file is an independent module.
 
-### main 模块
-每个 nature 程序必须包含一个 `main` 函数作为程序入口点：
+### main Module
+Every nature program must contain a `main` function as the program's entry point:
 
 ```nature
 // main.n
@@ -1665,14 +1664,14 @@ fn main() {
 }
 ```
 
-包含 `main` 函数的文件被视为 main 模块，是程序的入口模块。
+The file containing the `main` function is considered the main module and serves as the program's entry module.
 
-### 模块定义
+### Module Definition
 
-模块中可以包含以下全局声明：
-- 类型（type）
-- 变量（var）
-- 函数（fn）
+A module can contain the following global declarations:
+- Types (`type`)
+- Variables (`var`)
+- Functions (`fn`)
 
 ```nature
 // user.n
@@ -1692,65 +1691,64 @@ fn create_user(string name):user {
 }
 ```
 
-### 模块导入与使用
+### Module Import and Usage
 
-使用 `import` 关键字导入模块：
+Use the `import` keyword to import modules:
 
 ```nature
-// 基本导入
+// Basic import
 import "user.n"
 
-// 使用别名
+// Using an alias
 import "user.n" as u
 
 fn main() {
     var new_user = user.create_user("alice")
-    // 或者使用别名
+    // Or using the alias
     var another = u.create_user("bob")
 }
 ```
 
-### 注意事项
+### Notes
 
-1. 每个程序必须有且仅有一个包含 `main` 函数的模块
-2. 模块级别只能包含类型、变量和函数声明
-3. 模块中的变量声明必须显式指定类型
-4. 目前仅支持基于当前文件的相对路径导入
+1. Each program must have exactly one module containing the `main` function.
+2. Only type, variable, and function declarations can be at the module level.
+3. Variable declarations within a module must explicitly specify the type.
+4. Currently, only relative path imports based on the current file are supported.
 
-
-## 包管理
+## Package Management
 
 ### package.toml
 
-在项目根目录下创建 `package.toml` 可以自动启用包管理功能，该文件来定义项目信息和依赖
+Creating a `package.toml` file in the project root directory automatically enables package management features. This file defines project information and dependencies.
 
 ```toml
-```toml
-# 基础信息
-name = "myproject"        # 项目名称
-version = "1.0.0"        # 版本号
+# Basic information
+name = "myproject"        # Project name
+version = "1.0.0"         # Version number
 authors = ["Alice <a@example.com>"]
-description = "项目描述"
+description = "Project description"
 license = "MIT"
-type = "bin"             # bin 或 lib
-entry = "main"           # 库的入口文件（type = "lib" 时使用）
+type = "bin"              # bin or lib
+entry = "main"            # Entry file for the library (used when type = "lib")
 
-# 依赖包，可以通过 git 或者本地路径指定
+# Dependencies, can be specified via git or local path
 [dependencies]
-rand = { type = "git", version = "v1.0.1", url = "jihulab.com/nature-lang/rand" }
+rand = { type = "git", version = "v1.0.1", url = "[jihulab.com/nature-lang/rand](https://jihulab.com/nature-lang/rand)" }
 local_pkg = { type = "local", version = "v1.0.0", path = "./local" }
 ```
-### 依赖管理
 
-包管理组件 npkg 已经随 nature 安装包一起安装，在项目根目录使用 `npkg sync` 命令同步依赖管理中的 package。package 会被同步到 $HOME/.nature/package 目录。
+### Dependency Management
 
-```
+The package management component `npkg` is installed with the nature installation package. Use the `npkg sync` command in the project root directory to synchronize dependencies defined in `package.toml`. Packages will be synchronized to the `$HOME/.nature/package` directory.
+
+```sh
 $HOME/.nature/package
 ├── caches
 └── sources
     ├── jihulab.com.nature-lang.os@v1.0.1
-    │   ├── main.n
-    │   └── package.toml
+    │    ├── main.n
+    │    └── package.toml
     └── local@v1.0.0
         ├── main.linux_amd64.n
         ├── main.linux.n
@@ -1759,80 +1757,80 @@ $HOME/.nature/package
 
 ```
 
-### 导入语法
+### Import Syntax
 
 ```nature
-import rand                    // 导入包的主模块（等同于 import rand.main）
-import rand.utils.seed         // 导入特定模块
-import rand.utils.seed as seed // 使用别名
+import rand                  // Import the main module of the package (equivalent to import rand.main)
+import rand.utils.seed       // Import a specific module
+import rand.utils.seed as seed // Use an alias
 ```
 
-`import 会按照以下顺序查找模块`
+`import` will look for modules in the following order:
 
-- 当前项目（package.toml 中的 name）
-- 项目依赖（dependencies 中定义的包）
-- 标准库
+- Current project (`name` in `package.toml`)
+- Project dependencies (packages defined in `dependencies`)
+- Standard library
 
-### 跨平台支持
+### Cross-Platform Support
 
-当使用 `import syscall` 时，会按以下顺序查找导入的模块
+When using `import syscall`, the imported module will be searched for in the following order:
 
 1. syscall.\{os}_\{arch}.n
 2. syscall.\{os}.n
 3. syscall.n
 
-支持的平台：
-- os: linux、darwin
-- arch: amd64、arm64
+Supported platforms:
+- os: linux, darwin
+- arch: amd64, arm64
 
-### 冲突处理
+### Conflict Resolution
 
-当导入包的名称冲突时，可以在 dependencies 中使用不同的键名
+When there are naming conflicts with imported packages, you can use different key names in `dependencies`:
 
 ```toml
 [dependencies]
-rand_v1 = { type = "git", version = "v1.0", url = "jihulab.com/nature-lang/rand" }
-rand_v2 = { type = "git", version = "v2.0", url = "jihulab.com/nature-lang/rand" }
- ```
+rand_v1 = { type = "git", version = "v1.0", url = "[jihulab.com/nature-lang/rand](https://jihulab.com/nature-lang/rand)" }
+rand_v2 = { type = "git", version = "v2.0", url = "[jihulab.com/nature-lang/rand](https://jihulab.com/nature-lang/rand)" }
 ```
 
-然后使用不同的名称导入
+Then import using the different names:
 
 ```nature
 import rand_v1
 import rand_v2
- ```
+```
 
-### 注意事项
+### Notes
 
-1. **禁止循环 import**
-2. package.toml 必须位于项目根目录
-3. npkg sync 和 nature build 命令必须在项目根目录执行
-4. module 导入支持跨平台特性，直接使用文件导入不支持
-5. 当前项目可以通过包名访问任意子目录的模块
+1. **Circular imports are prohibited.**
+2. `package.toml` must be located in the project root directory.
+3. The `npkg sync` and `nature build` commands must be executed in the project root directory.
+4. Module import supports cross-platform features; direct file import does not.
+5. The current project can access modules in any subdirectory through the package name.
 
 
-## 和 C 语言交互
 
-首先在 package.toml 中定义静态库文件，编译器会自动链接相关架构的静态库文件。然后再通过 `#linkid` 标签声明 C 函数模板，在 nature 中调用模板函数时编译器会自动链接到静态库中存在的 c 语言函数。
+## Interacting with C
 
-当然，只要是能够生成静态库的编程语言，nature 都能够与之交互。
+First, define the static library files in `package.toml`. The compiler will automatically link the static library files for the relevant architecture. Then, declare C function templates using the `#linkid` tag. When calling template functions in nature, the compiler will automatically link to the corresponding C functions in the static library.
 
-### 静态库与模板函数声明
+Of course, nature can interact with any programming language that can generate static libraries.
 
-在 `package.toml` 中通过 `[links]` 节点定义需要链接的静态库：
+### Static Libraries and Template Function Declarations
+
+Define the static libraries to be linked in the `[links]` section of `package.toml`:
 
 ```toml
 [links]
-libz = { 
+libz = {
     linux_amd64 = 'libs/libz_linux_amd64.a',
     darwin_amd64 = 'libs/libz_darwin_amd64.a',
-    linux_arm64 = 'libs/libz_linux_arm64.a', 
+    linux_arm64 = 'libs/libz_linux_arm64.a',
     darwin_arm64 = 'libs/libz_darwin_arm64.a'
 }
 ```
 
-使用 `#linkid` 标签和函数模板来声明需要调用的 C 函数 id 和相关参数
+Use the `#linkid` tag and function templates to declare the C function ID and related parameters to be called:
 
 ```nature
 #linkid gzopen
@@ -1842,7 +1840,7 @@ fn gzopen(anyptr fname, anyptr mode):anyptr
 fn sleep(int second)
 ```
 
-### 调用示例
+### Calling Example
 
 ```nature
 // zlib.n
@@ -1854,47 +1852,47 @@ import zlib
 
 fn main() {
     var output = "output.gz"
-    // 使用 string.ref 函数可以获取 c 语言字符串，包含 '\0'
+    // Use the string.ref function to get a C-style string, including '\0'
     var gzfile = zlib.gzopen(output.ref(), "wb".ref())
     if gzfile == null {
         throw errof("failed to open gzip file")
     }
-    // ... 使用 gzfile
+    // ... use gzfile
 }
 ```
 
-### 类型映射
+### Type Mapping
 
-nature 与 C 语言的类型映射关系
+Mapping between nature and C types:
 
-| nature 类型   | C 类型             | 说明                        |
-| ----------- | ---------------- | ------------------------- |
-| anyptr      | uintptr          | 通用指针类型                    |
-| `rawptr<T>` | T*               | 类型化指针                     |
-| i8/u8       | int8_t/uint8_t   | 8位整型                      |
-| i16/u16     | int16_t/uint16_t | 16位整型                     |
-| i32/u32     | int32_t/uint32_t | 32位整型                     |
-| i64/u64     | int64_t/uint64_t | 64位整型                     |
-| int         | size_t           | 平台相关的整型，在64位系统上等同于int64_t |
-| f32         | float            | 32位浮点                     |
-| f64         | double           | 64位浮点                     |
-| [T,n]       | T[n]             | 固定长度数组，N为编译时常量            |
+| nature Type    | C Type             | Description                                                                  |
+| -------------- | ------------------ | ---------------------------------------------------------------------------- |
+| anyptr         | uintptr            | Universal pointer type                                                       |
+| `rawptr<T>`    | T* | Typed pointer                                                                |
+| i8/u8          | int8_t/uint8_t     | 8-bit integer                                                                |
+| i16/u16        | int16_t/uint16_t   | 16-bit integer                                                               |
+| i32/u32        | int32_t/uint32_t   | 32-bit integer                                                               |
+| i64/u64        | int64_t/uint64_t   | 64-bit integer                                                               |
+| int            | size_t             | Platform-dependent integer, equivalent to int64_t on 64-bit systems          |
+| f32            | float              | 32-bit floating-point number                                                 |
+| f64            | double             | 64-bit floating-point number                                                 |
+| `[T,n]`        | T[n]               | Fixed-size array, N is a compile-time constant                               |
 
-获取 c 语言字符串以及指针
+Getting C-style strings and pointers:
 
 ```nature
-// 获取变量地址
+// Get the address of a variable
 var str = "hello"
-anyptr ptr = str.ref()  // 获取字符串地址
+anyptr ptr = str.ref()  // Get the string address
 
-// 获取 rawptr 类型
-rawptr<tm_t> time_ptr = &time_info  // 获取结构体地址
+// Get a rawptr type
+rawptr<tm_t> time_ptr = &time_info  // Get the address of a struct
 
-// 获取 anyptr 类型
-anyptr c_ptr = time_info as anyptr // 任何 nature 类型都可以转换为 anyptr 类型
+// Get an anyptr type
+anyptr c_ptr = time_info as anyptr // Any nature type can be converted to anyptr type
 ```
 
-结构体映射
+Structure mapping:
 
 ```nature
 type tm_t = struct {
@@ -1912,9 +1910,9 @@ type tm_t = struct {
 }
 ```
 
-### 标准库函数
+### Standard Library Functions
 
-nature 默认集成了 musl libc 和 macOS C 库，可以直接使用标准库函数, 只需要定义函数模板即可, nature 标准库的 libc 已经定义了部分函数可以直接使用。
+nature integrates musl libc and macOS C library by default. Standard library functions can be used directly by simply defining function templates. nature's standard libc has already defined some functions that can be used directly.
 
 ```nature
 // ...
@@ -1930,52 +1928,52 @@ fn fork():int
 // ...
 ```
 
-### 注意事项
+### Notes
 
-1. 使用 C 语言交互时需要特别注意内存管理，nature 不会自动管理通过 C 函数分配的内存
-2. 使用 anyptr 和 rawptr 时要格外小心，它们会绕过 nature 的类型安全检查
+1. When interacting with C, pay special attention to memory management. nature does not automatically manage memory allocated by C functions.
+2. Use `anyptr` and `rawptr` with extreme caution, as they bypass nature's type safety checks.
 
-## 格式化
+## Formatting
 
 ```nature
-var bar = '' // stmt 结尾不需要携带 ; 
+var bar = '' // No semicolon needed at the end of a statement
 
 if true {
-    var foo = 1 // 使用 4 个空格进行缩进
+    var foo = 1 // Use 4 spaces for indentation
 }
 
 call_test(
     1,
-    2, // 多行参数, 需要在最后一行添加 ,
+    2, // Multi-line parameters need a comma on the last line
 )
 
 var v = [
     1,
     2,
-    3, // 同上
+    3, // Same as above
 ]
 
 var m = {
     "a": 1,
-    "b": 2, // 同上
+    "b": 2, // Same as above
 }
 
-var s = person_t{ // 结构体 alias ident 和 { 之间不需要空格
+var s = person_t{ // No space between struct alias identifier and '{'
     name: "john",
-    age: 18, // 同上
+    age: 18, // Same as above
 }
 
-// 1. 函数定义 '{' 和函数声明需要在同一行
-// 2. 返回参数和 ')' 之间需要空格
-// 3. 每个参数之间需要空格
+// 1. Function definition '{' should be on the same line as the function declaration
+// 2. There should be a space between the return parameters and ')'
+// 3. There should be a space between each parameter
 fn test(int arg1, int arg2):int {
 
 }
 ```
 
-## 关键字
+## Keywords
 
-类型关键字
+Type Keywords
 - `void`, `any`, `null`, `anyptr`
 - `bool`, `string`
 - `int`, `uint`, `float`
@@ -1983,16 +1981,7 @@ fn test(int arg1, int arg2):int {
 - `u8`, `u16`, `u32`, `u64`
 - `f32`, `f64`
 
-保留关键字
-- `let` - 保留关键字
-- `const` - 保留关键字
-- `pub` - 保留关键字
-- `package` - 保留关键字
-- `static` - 保留关键字
-- `macro` - 保留关键字
-- `impl` - 保留关键字
-
-复合类型关键字
+Composite Type Keywords
 - `struct`
 - `chan`
 - `arr`
@@ -2003,14 +1992,14 @@ fn test(int arg1, int arg2):int {
 - `ptr`
 - `rawptr`
 
-声明关键字
-- `var` - 变量声明
-- `type` - 类型定义
-- `fn` - 函数定义
-- `import` - 导入模块
-- `new` - 创建实例
+Declaration Keywords
+- `var` - variable declaration
+- `type` - type definition
+- `fn` - function definition
+- `import` - import module
+- `new` - create instance
 
-控制流关键字
+Control Flow Keywords
 - `if`, `else`
 - `for`, `in`
 - `break`
@@ -2019,18 +2008,27 @@ fn test(int arg1, int arg2):int {
 - `match`
 - `select`
 
-错误处理关键字
+Error Handling Keywords
 - `try`
 - `catch`
 - `throw`
 
-并发关键字
+Concurrency Keywords
 - `go`
 
-类型操作关键字
-- `as` - 类型转换
-- `is` - 类型判断
+Type Operation Keywords
+- `as` - type conversion
+- `is` - type checking
 
-布尔值
+Boolean Values
 - `true`
 - `false`
+
+Reserved Keywords
+- `let`
+- `const`
+- `pub`
+- `package`
+- `static`
+- `macro`
+- `impl`

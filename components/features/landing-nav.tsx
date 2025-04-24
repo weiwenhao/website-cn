@@ -22,17 +22,24 @@ export function LandingNav() {
           <NavigationMenuTrigger>Documents</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              <ListItem
+              {/* <ListItem
                 title="Get Started"
                 href="/docs/get-started"
               >
-                Introduction to all syntax included in the Nature programming language
+              </ListItem> */}
+
+              <ListItem
+                title="Syntax"
+                href="/docs/syntax"
+              >
+                Syntax Documentation
               </ListItem>
 
               <ListItem
                 title="Std Library"
-                href="/docs/std-library"
+                href="/stds"
               >
+                Standard Library Documentation
               </ListItem>
             </ul>
           </NavigationMenuContent>

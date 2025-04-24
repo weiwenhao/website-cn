@@ -1,0 +1,172 @@
+# fs
+
+The `fs` library provides basic functionalities for interacting with the filesystem, including operations such as file opening, reading/writing, and status retrieval.
+
+## Type Definitions
+
+### `timespec_t`
+
+Struct representing time, containing seconds and nanoseconds.
+
+```
+type timespec_t = struct {
+    u64 sec   // Seconds
+    u64 nsec  // Nanoseconds
+}
+```
+
+### `stat_t`
+
+Struct representing file status information.
+
+```
+type stat_t = struct {
+    u64 dev     // Device ID
+    u64 mode    // File mode (permissions, etc.)
+    u64 nlink   // Number of hard links
+    u64 uid     // User ID
+    u64 gid     // Group ID
+    u64 rdev    // Device type (if file is a device file)
+    u64 ino     // inode number
+    u64 size    // File size (bytes)
+    u64 blksize // Filesystem block size
+    u64 blocks  // Number of allocated blocks
+    u64 flags   // User-defined flags
+    u64 gen     // File generation number
+    timespec_t atime    // Last access time
+    timespec_t mtime    // Last modification time
+    timespec_t ctime    // Last status change time
+    timespec_t birthtime // Creation time
+}
+```
+
+### `file_t`
+
+Represents an open file descriptor, implementing the `io.reader`, `io.writer`, `io.seeker` interfaces.
+
+```
+// Matches runtime.fs_context_t
+type file_t:io.reader, io.writer, io.seeker = struct{
+    int fd       // File descriptor
+    anyptr data  // Internal data pointer (implementation details)
+    i64 data_len // Data length
+    i64 data_cap // Data capacity
+    bool closed  // Whether the file is closed
+    // ... May contain other internal fields
+}
+```
+
+## Functions
+
+### `from(int fd, string name):ptr<file_t>!`
+
+Creates a `file_t` object from an existing file descriptor `fd`. `name` is used to identify the file (e.g., for error messages).
+
+### `open(string path, int flags, int mode):ptr<file_t>!`
+
+Opens or creates a file.
+
+* `path`: File path.
+* `flags`: Flags for opening the file (e.g., `syscall.O_RDONLY`, `syscall.O_WRONLY`, `syscall.O_RDWR`, `syscall.O_CREATE`, `syscall.O_APPEND`, etc.).
+* `mode`: File permission mode (e.g., `0644`), only effective when creating a new file.
+Returns a pointer to a `file_t` object. If the operation fails, it returns an error.
+
+## file_t Methods
+
+### `file_t.content():string!`
+
+Reads the entire content of the file and returns a string.
+First gets the file size, then reads data of the corresponding size. If the read is incomplete, it returns an error.
+
+### `file_t.read([u8] buf):int!`
+
+Reads data from the file into `buf`.
+
+* `buf`: Byte slice used to store the read data.
+Returns the number of bytes actually read. If the operation fails, it returns an error.
+
+### `file_t.write([u8] buf):int!`
+
+Writes the data in `buf` to the file.
+
+* `buf`: Byte slice containing the data to be written.
+Returns the number of bytes actually written. If the operation fails, it returns an error.
+Underlying link: `rt_uv_fs_write`
+
+### `file_t.seek(int offset, int whence):int!`
+
+Sets the file's read/write offset.
+
+* `offset`: Offset.
+* `whence`: Base position for the offset (e.g., `syscall.SEEK_SET`, `syscall.SEEK_CUR`, `syscall.SEEK_END`).
+Returns the new offset (relative to the beginning of the file). Depends on `syscall.seek`.
+
+### `file_t.read_at([u8] buf, int offset):int!`
+
+Reads data from the specified offset `offset` in the file into `buf`, without changing the current file pointer position.
+
+* `buf`: Byte slice used to store the read data.
+* `offset`: Starting offset for the read.
+Returns the number of bytes actually read. If the operation fails, it returns an error.
+Underlying link: `rt_uv_fs_read_at`
+
+### `file_t.write_at([u8] buf, int offset):int!`
+
+Writes the data in `buf` to the specified offset `offset` in the file, without changing the current file pointer position.
+
+* `buf`: Byte slice containing the data to be written.
+* `offset`: Starting offset for the write.
+Returns the number of bytes actually written. If the operation fails, it returns an error.
+Underlying link: `rt_uv_fs_write_at`
+
+### `file_t.close():void`
+
+Closes the file descriptor and releases associated resources.
+Underlying link: `rt_uv_fs_close`
+
+### `file_t.stat():stat_t!`
+
+Gets the file status information.
+Returns a `stat_t` struct. If the operation fails, it returns an error.
+Underlying link: `rt_uv_fs_stat`
+
+## Standard I/O
+
+### `stdout():ptr<file_t>!`
+
+Gets the standard output file object (`/dev/stdout`).
+
+### `stdin():ptr<file_t>!`
+
+Gets the standard input file object (`/dev/stdin`).
+
+### `stderr():ptr<file_t>!`
+
+Gets the standard error file object (`/dev/stderr`).
+
+### `discard():ptr<file_t>!`
+
+Gets a special file object that discards all written data (`/dev/null`), opened in read/write mode.
+
+## Usage Example
+
+```nature
+import fs
+import syscall
+
+fn main():void! {
+    var f = fs.open('./test.txt', syscall.O_RDONLY, 0)
+    var buf = vec_new<u8>(0, 50)
+
+    var len = f.read(buf)
+
+    len = f.read(buf)
+
+    len = f.read(buf)
+    if len == 0 {
+        println('read completed')
+    }
+
+    f.close()
+}
+```

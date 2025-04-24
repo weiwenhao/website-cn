@@ -132,7 +132,7 @@ export function CodeBlock() {
           </Button>
         ))}
       </div>
-      <div className="h-[320px] overflow-y-auto bg-white">
+      <div className="h-[320px] overflow-y-auto bg-white no-scrollbar">
         <Highlight
           theme={themes.github}
           code={CODE_EXAMPLES[activeExample]}

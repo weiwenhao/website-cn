@@ -1,0 +1,243 @@
+# libc
+
+## Overview
+The `libc` standard library provides a low-level binding for the C standard library, including basic functionalities such as system calls, time handling, and file operations.
+
+## Types
+
+### tm_t
+Time information struct, used to represent broken-down time information.
+
+```nature
+type tm_t = struct {
+    i32 tm_sec   // Seconds [0-60]
+    i32 tm_min   // Minutes [0-59]
+    i32 tm_hour  // Hours [0-23]
+    i32 tm_mday  // Day of the month [1-31]
+    i32 tm_mon   // Month [0-11] (0 is January)
+    i32 tm_year  // Years (since 1900)
+    i32 tm_wday  // Day of the week [0-6] (Sunday=0)
+    i32 tm_yday  // Day of the year [0-365]
+    i32 tm_isdst // Daylight Saving Time flag
+    i64 tm_gmtoff // GMT offset
+    anyptr tm_zone // Timezone name
+}
+```
+
+### dir_t
+Directory handle type.
+
+```nature
+type dir_t = anyptr
+```
+
+### dirent_t
+Directory entry struct, used to represent file information within a directory.
+
+```nature
+type dirent_t = struct {
+    u64 ino      // inode number
+    u64 off      // Directory offset
+    u16 reclen   // Record length
+    u16 namlen   // Filename length
+    u8 t         // File type
+    arr<u8,1024> name // Filename
+}
+```
+
+## Functions
+
+### Time Related
+
+#### localtime
+Converts a timestamp to a local time struct.
+
+```nature
+fn localtime(rawptr<i64> timestamp):rawptr<tm_t>
+```
+
+#### mktime
+Converts a time struct to a timestamp.
+
+```nature
+fn mktime(rawptr<tm_t> time_info):i64
+```
+
+#### strftime
+Formats a time string.
+
+```nature
+fn strftime(anyptr s, i64 size, anyptr format, rawptr<tm_t> time_info):i64
+```
+
+### Directory Operations
+
+#### opendir
+Opens a directory.
+
+```nature
+fn opendir(anyptr str):dir_t
+```
+
+#### readdir
+Reads a directory entry.
+
+```nature
+fn readdir(dir_t d):rawptr<dirent_t>
+```
+
+#### closedir
+Closes a directory.
+
+```nature
+fn closedir(dir_t d):int
+```
+
+### System Related
+
+#### getcwd
+Gets the current working directory.
+
+```nature
+fn getcwd(anyptr path, uint size):anyptr
+```
+
+#### fork
+Creates a child process.
+
+```nature
+fn fork():int
+```
+
+#### exit
+Exits the program.
+
+```nature
+fn exit(i32 status)
+```
+
+#### sleep
+Sleeps for a specified number of seconds.
+
+```nature
+fn sleep(int second)
+```
+
+#### usleep
+Sleeps for a specified number of microseconds.
+
+```nature
+fn usleep(u32 usec):i32
+```
+
+### String Operations
+
+#### strlen
+Gets the string length.
+
+```nature
+fn strlen(anyptr str):uint
+```
+
+#### strstr
+Finds a substring.
+
+```nature
+fn strstr(anyptr haystack, anyptr needle):anyptr
+```
+
+#### strrstr
+Finds a substring from the end backwards.
+
+```nature
+fn strrstr(anyptr haystack, anyptr needle):anyptr
+```
+
+### Other Functions
+
+#### get_envs
+Gets the list of environment variables.
+
+```nature
+fn get_envs():[string]
+```
+
+#### errno
+Gets the most recent error code.
+
+```nature
+fn errno():int
+```
+
+#### strerror
+Gets the error description string.
+
+```nature
+fn strerror():string
+```
+
+#### sqrtf
+```nature
+fn sqrtf(float x):float
+```
+
+#### powf
+```nature
+fn powf(float x, float y):float
+```
+
+#### sinf
+```nature
+fn sinf(float x):float
+```
+
+#### cosf
+```nature
+fn cosf(float x):float
+```
+
+#### roundf
+```nature
+fn roundf(f32 x):f32
+```
+
+#### round
+
+```nature
+fn round(f64 x):f64
+```
+
+## Usage Example
+
+```nature
+import libc
+
+fn main() {
+    // Get current working directory
+    var path = new arr<u8>(256)
+    libc.getcwd(path.ref(), path.len())
+
+    // Open directory
+    var dir = libc.opendir(path.ref())
+    if dir == null {
+        println("Failed to open directory")
+        return
+    }
+
+    // Read directory contents
+    var entry = libc.readdir(dir)
+    while entry != null {
+        // Process directory entry
+        entry = libc.readdir(dir)
+    }
+
+    // Close directory
+    libc.closedir(dir)
+}
+```
+
+## Notes
+1. This standard library provides direct access to low-level system functionalities; care must be taken regarding memory safety when using it.
+2. Some functions return raw pointers (`rawptr`), which require careful handling.
+3. The behavior of certain functions may vary depending on the operating system.
+4. When using system-related functionalities, it is recommended to implement proper error handling.

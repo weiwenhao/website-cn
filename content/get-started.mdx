@@ -1,95 +1,94 @@
-# 快速开始
+# Get Started
 
-## 简介
+## Introduction
 
-nature 是通用开源编程语言与编译器，期望为开发者提供**简洁优雅**的开发体验，能够**简单高效**构建出安全可靠的跨平台软件。
+Nature is a general-purpose open source programming language and compiler that aspires to provide developers with a **simple and elegant** development experience that can **simply and efficiently** build secure and reliable cross-platform software.
 
-## 特性
+## Features 
   
-- ✅ 简洁、自然、一致性的语法设计
-- ✅ 独立的编译系统，不依赖 llvm，支持跨平台编译
-- ✅ 完善的类型系统，支持泛型、空值安全、错误处理 
-- ✅ 自动 GC，具有非常短暂的 STW
-- ✅ 模块化与包管理系统 npkg
-- ✅ 内置共享栈协程，每秒进行数百万的协程切换  
-- ✅ 内置 libuv 与协程合作处理 IO 事件循环  
-- ✅ 内置常用数据结构及标准库实现，并且方便的和 C 语言交互  
-- ✅ 编辑器 lsp 支持  
-- 🚧 渐进式 GC，能够进行手动内存管理  
-- 🚧 测试模块以及专用测试 DSL，高效稳定利用 AI 编码  
-- 🚧 macho 跨平台连接器，目前缺少 macho 链接器 darwin 无法跨平台编译。
-- 🚧 协作式调度系统完善  
-- 🚧 跨平台编译支持 wasm、risc64 平台  
-- 🚧 编译为可读的 golang 编程语言
+- ✓ Simple, natural, and consistent syntax design 
+- ✓ Independent compilation system, no dependency on llvm, supports cross-platform compilation 
+- ✓ Well-formed type system with support for generics, null-value safety, and error handling 
+- ✓ Automated GC, with very short STW 
+- ✓ Modularity and package management system, npkg 
+- ✓ Built-in shared-stack concatenation, millions of concatenation switches per second 
+- ✓ Built-in libuv cooperates with the concatenation to handle IO event loops 
+- ✓ Built-in implementations of common data structures and standard libraries, and easy interaction with C 
+- ✓ Editor lsp support 
+- ○ Asymptotic GC, capable of manual memory management 
+- ○ Tests DSLs, efficient and stable use of AI coding 
+- ○ macho cross-platform connector, currently lacks the macho linker darwin can't be cross-platform compilation.
+- ○ Improvement of collaborative scheduling system 
+- ○ Cross-platform compilation support for wasm and risc64 platforms 
+- ○ Compilation to readable golang programming language 
 
-## 项目概况
+## Project Overview 
 
-nature 编程语言已经有早期可用版本，目前的语法 API 基本稳定，在 1.0 版本之前不会有大幅的变化，但是依旧会有小范围的语法改动。  
+The nature programming language has reached a usable version, and the syntax APIs are basically stable, there will not be any drastic changes before version 1.0, but there are some minor syntax changes.
 
-当前版本 nature 源码支持编译的目标平台有 
-- linux/amd64
-- linux/arm64
-- darwin/amd64
-- darwin/arm64
-
+The current version of nature source code supports compilation on the following target platforms 
+- linux/amd64 
+- linux/arm64 
+- darwin/amd64 
+- darwin/arm64 
   
-该项目包含一组测试用例及标准库用来测试语法的可用性，但未经过中大型的项目测试，所以还有较多的 bug。
+nature includes a set of test cases and a standard library to test the usability of the syntax, but it has not been tested on a medium to large scale project, and so there are still many bugs. 
 
-后续版本的主要工作有  
-- 标准库完善  
-- 收集用户反馈
-- 项目验证及 bug 修复
-- 完善语言特性
-- 编译为可读 golang 编程语言以增加 nature 编程语言可用性
+Major work in the next versions of The main work is 
+- Standard library refinement 
+- Gathering user feedback 
+- Project validation and bug fixes 
+- Refinement of language features 
+- Compilation into a readable golang programming language to increase the usability of the nature programming language 
 
-## 设计理念
+## Design Philosophy
 
-golang 是我使用最多的编程语言，其语法简单，拥有非常优秀且高性能的跨平台编译器和 runtime 实现，拥有先进的协程设计风格和高性能网络 I/O 以及完善的标准库支持。但也有一些不方便的地方
+golang is the programming language I work with. It has a simple syntax, a very good and high-performance cross-platform compiler and runtime implementation, an advanced concurrent design style and high-performance network I/O, as well as good support for standard libraries. However, there are some inconveniences.
 
-- 语法过于简单导致表达能力不足
-- 类型系统过于简单，缺乏 nullable，枚举参数等
-- 最新版本加入了泛型，但是表达能力依旧不足
-- 错误处理机制繁琐
-- GC 和抢占式调度的设计虽然非常优秀，但是也让 golang 的应用范围受限，如 GUI、OS、游戏开发、AI 等领域
+- Syntax is too simple, leading to lack of expressiveness.
+- Type system is not perfect, lack of nullable, enum parameters, generic (now available), etc.
+- Error handling is cumbersome.
+- GC and preemptive scheduling, although very good, but it also limits the scope of golang's applications in areas such as GUI, OS, game development, and AI.
 
-nature 在设计理念上是对 golang 编程语言的延续与优化，就如特性一栏所述一般。
+nature is designed to be a continuation and optimization of the golang programming language, and pursues certain differences, as described in the Features section.
 
-基于 nature 编程语言的现有特性，其适用于游戏引擎和游戏开发、科学计算和 AI、操作系统和物联网，以及 Web 开发等领域。nature 也将着重于和 golang 有差异的领域，如游戏、AI 等方面。
-
-## 使用建议
-
-作为早期的编程语言，目前适合以下类型的开发人员
-1. 技术探索者
-    - 对新技术充满好奇心的开发者
-    - 愿意尝试新事物，并能够承受早期版本存在的各种 bug
-    - 有兴趣参与语言设计和改进的讨论
-
-2. 语言开发者和研究者
-    - 对编程语言设计和实现感兴趣的开发者
-    - 编译原理研究者
-    - 想要学习如何实现一门编程语言的学习者
-
-3. 反馈贡献者
-    - 愿意提供使用反馈的开发者
-    - 能够提交 bug 报告和改进建议
-    - 有兴趣参与项目建设及标准库完善
-
-不适用于以下类型的开发人员
-
-1. 需要在生产环境使用的企业用户
-2. 对稳定性要求较高的项目开发者
-3. 编程初学者
-4. 需要大量第三方库支持的开发者
+Based on the existing features of the nature programming language, it is suitable for game engines and game development, scientific computing and AI, OS and IoT, and web development.
 
 
-## 安装
+## Suggestions for Use
 
-1️⃣ 在 [https://github.com/nature-lang/nature/releases](https://github.com/nature-lang/nature/releases) 下载适用于您系统的二进制压缩包并解压。
+As an early programming language, it is currently suitable for the following types of developers
+1. technology explorers
+    - Developers who are curious about new technologies
+    - Developers who are curious about new technologies, willing to try new things, and able to live with the bugs that existed in earlier versions.
+    - Interested in participating in discussions about language design and improvement.
+
+2. language developers and researchers
+    - Developers interested in programming language design and implementation.
+    - Researchers in compilation principles
+    - Learners who want to learn how to implement a programming language.
+
+3. Feedback Contributors
+    - Developers who are willing to provide feedback on their use of the language.
+    - Developers who are willing to provide feedback on their use of the language.
+    - Interested in contributing to projects and standards library improvements
+
+Not applicable to the following types of developers
+
+1. enterprise users who need to use in production environment
+2. project developers who require high stability.
+3. Programming beginners
+4. developers who need a lot of third-party library support
 
 
-2️⃣ 将 nature 文件夹移动到 `/usr/local` 目录下。如果需要将 nature 安装在其他目录，请手动设置 NATURE_ROOT 环境变量指向 nature 所在目录
+## Installation
 
-```
+1️⃣ Download the binary zip for your system at [https://github.com/nature-lang/nature/releases](https://github.com/nature-lang/nature/releases) and extract it.
+
+
+2️⃣ Move the nature folder to the `/usr/local` directory. If you need to install nature in another directory, manually set the NATURE_ROOT environment variable to point to the nature directory.
+
+```sh
 /usr/local/nature/
 ├── LICENSE-APACHE
 ├── LICENSE-MIT
@@ -97,91 +96,91 @@ nature 在设计理念上是对 golang 编程语言的延续与优化，就如�
 ├── bin
 ├── lib
 └── std
+└── std
 ```
 
+3️⃣ Add the `/usr/local/nature/bin` directory to the system environment variables, e.g. `cat ~/.zshrc`
 
-3️⃣ 将 `/usr/local/nature/bin` 目录加入到系统环境变量中，例如 `cat ~/.zshrc`
-
-```
+```sh
 ...
 export PATH="/usr/local/nature/bin:$PATH"
 ...
 ```
 
-4️⃣ 运行命令 `nature --version` 查看当前版本
+4️⃣ Run the command `nature --version` to view the current version
 
-```
+```sh
 > nature --version
 nature v0.5.0-beta - release build 2025-02-22
 ```
 
-5️⃣ 运行命令 nature --help 查看可用命令
+5️⃣ Run the command `nature -h` to see the available commands
 
-```
+```bash
 > nature -h
 Nature Programming Language Compiler vx.x.x
 
-Usage:
+Usage.
   nature [command] [flags] [arguments]
 ...
 ```
 
 ## Hello Nature
 
-创建 main.n 文件
+Create the main.n file
 
-```js  
-import fmt  
-  
-fn main() {  
+```nature
+import fmt
+
+fn main() {
     fmt.printf('hello nature')
-}  
+}
 ```
 
-编译并运行编二进制文件 main
+Compile and run the binary main
 
 ```sh
-> nature build main.n && ./main
+> nature build main.n && . /main
 hello nature
 ```
 
-指定编译目标平台与架构 
+Specify the target platform and architecture
 
 ```sh
 > nature build --target darwin_amd64 main.n
 ```
 
-指定输出二进制文件名称为 hello
+Specify that the output binary is called hello
 
-```
+```sh
 > nature build -o hello main.n
 ```
 
-## 示例项目
+## Example project
 
-1. [parker](https://github.com/weiwenhao/parker) 轻量打包工具
-2. [llama.n](https://github.com/weiwenhao/llama.n) Llama2 nature 语言实现
-3. [tetris](https://github.com/weiwenhao/tetris) 基于 raylib 实现的俄罗斯方块，仅支持 macos
-4. [playground](https://github.com/weiwenhao/playground) playground server api 实现
+1. [parker](https://github.com/weiwenhao/parker) lightweight packaging tool
+2. [llama.n](https://github.com/weiwenhao/llama.n) Llama2 nature language implementation
+3. [tetris](https://github.com/weiwenhao/tetris) Tetris based on raylib, macos only.
+4. [playground](https://github.com/weiwenhao/playground) playground server api implementation
 
-## 编辑器支持
+## Editor support
 
-lsp server `nls` 已经和和 nature 安装包一起安装在 /usr/local/nature/bin 目录中，
+The lsp server `nls` has been installed in the /usr/local/nature/bin directory along with the nature installer.
 
 ``` sh
 ls -lh /usr/local/nature/bin
 total 44696
--rwxr-xr-x@ 1 root  wheel   764K Feb 24 13:18 nature
--rwxr-xr-x@ 1 root  wheel   6.1M Feb 24 13:20 nls
--rwxr-xr-x@ 1 root  wheel    15M Feb 24 13:20 npkg
+-rwxr-xr-x@ 1 root wheel 764K Feb 24 13:18 nature
+-rwxr-xr-x@ 1 root wheel 6.1M Feb 24 13:20 nls
+-rwxr-xr-x@ 1 root wheel 15M Feb 24 13:20 npkg
 ```
 
-在 vscode 扩展商店搜索 nature language 下载即可使用
+Search for nature language in the vscode extension store and download it.
 
-##  深入学习
+## Learn more
 
-[语法文档](https://nature-lang.org/docs/syntax) - 详细的 Nature 语言语法说明
+[Syntax documentation](https://nature-lang.org/docs/syntax) - A detailed description of the syntax of the Nature language.
 
-[标准库文档](https://nature-lang.org/docs/std) - Nature 标准库 API 参考
+[Standard Library Documentation](https://nature-lang.org/stds) - Nature Standard Library API reference.
 
-[贡献指南](https://nature-lang.org/docs/contribute) - 如何参与 Nature 语言的开发
+[Contribution Guidelines](https://nature-lang.org/docs/contribute) - How to get involved in Nature language development.

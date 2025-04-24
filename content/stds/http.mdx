@@ -1,16 +1,12 @@
----
-title: http
----
-
 # http
 
-## 概述
-http 标准库提供了创建 HTTP 服务器的基础功能，支持处理 HTTP 请求、路由管理以及响应生成等功能。
+## Overview
+The `http` standard library provides basic functionalities for creating HTTP servers, supporting features like handling HTTP requests, route management, and response generation.
 
-## 类型
+## Types
 
 ### server_t
-HTTP 服务器结构体，用于创建和管理 HTTP 服务器实例。
+HTTP server struct, used for creating and managing HTTP server instances.
 
 ```nature
 type server_t = struct {
@@ -18,13 +14,13 @@ type server_t = struct {
     string addr
     int port
     arr<{string:callback_fn},8> routers
-    void_ptr uv_server_handler
-    void_ptr listen_co
+    anyptr uv_server_handler
+    anyptr listen_co
 }
 ```
 
 ### request_t
-HTTP 请求结构体，包含请求的所有相关信息。
+HTTP request struct, containing all relevant information about the request.
 
 ```nature
 type request_t = struct {
@@ -40,7 +36,7 @@ type request_t = struct {
 ```
 
 ### response_t
-HTTP 响应结构体，用于构建 HTTP 响应。
+HTTP response struct, used for building HTTP responses.
 
 ```nature
 type response_t = struct {
@@ -55,125 +51,125 @@ type response_t = struct {
 }
 ```
 
-## 函数
+## Functions
 
-### server()
-创建一个新的 HTTP 服务器实例。
+### server
+Creates a new HTTP server instance.
 
 ```nature
 fn server():ptr<server_t>
 ```
 
-示例：
+Example:
 ```nature
 var app = http.server()
 ```
 
-## server_t 方法
+## server_t Methods
 
-### listen()
-启动 HTTP 服务器并监听指定端口。
+### listen
+Starts the HTTP server and listens on the specified port.
 
 ```nature
 fn server_t.listen(int port):void!
 ```
 
-### get()
-注册 GET 请求路由处理器。
+### get
+Registers a GET request route handler.
 
 ```nature
 fn server_t.get(string path, callback_fn callback)
 ```
 
-### post()
-注册 POST 请求路由处理器。
+### post
+Registers a POST request route handler.
 
 ```nature
 fn server_t.post(string path, callback_fn callback)
 ```
 
-### put()
-注册 PUT 请求路由处理器。
+### put
+Registers a PUT request route handler.
 
 ```nature
 fn server_t.put(string path, callback_fn callback)
 ```
 
-### delete()
-注册 DELETE 请求路由处理器。
+### delete
+Registers a DELETE request route handler.
 
 ```nature
 fn server_t.delete(string path, callback_fn callback)
 ```
 
-### patch()
-注册 PATCH 请求路由处理器。
+### patch
+Registers a PATCH request route handler.
 
 ```nature
 fn server_t.patch(string path, callback_fn callback)
 ```
 
-### options()
-注册 OPTIONS 请求路由处理器。
+### options
+Registers an OPTIONS request route handler.
 
 ```nature
 fn server_t.options(string path, callback_fn callback)
 ```
 
-### head()
-注册 HEAD 请求路由处理器。
+### head
+Registers a HEAD request route handler.
 
 ```nature
 fn server_t.head(string path, callback_fn callback)
 ```
 
-### all()
-注册处理所有 HTTP 方法的路由处理器。
+### all
+Registers a route handler for all HTTP methods.
 
 ```nature
 fn server_t.all(string path, callback_fn callback)
 ```
 
-### close()
-关闭 HTTP 服务器。
+### close
+Closes the HTTP server.
 
 ```nature
 fn server_t.close()
 ```
 
-## response_t 方法
+## response_t Methods
 
-### send()
-设置响应体内容。
+### send
+Sets the response body content.
 
 ```nature
 fn response_t.send(string msg)
 ```
 
-## 使用示例
+## Usage Example
 
 ```nature
 import http
 
 fn main() {
     var app = http.server()
-    
+
     app.get("/", fn(req, res) {
         res.send("Hello World!")
     })
-    
+
     app.post("/api", fn(req, res) {
         res.content_type = "application/json"
         res.send("{\"status\": \"success\"}")
     })
-    
+
     app.listen(8080)!
 }
 ```
 
-## 注意事项
-1. 服务器默认监听地址为 "0.0.0.0"
-2. 默认响应的 Content-Type 为 "text/plain"，字符集为 "utf8"
-3. 路由处理器在找不到匹配路径时会返回 404 状态码
-4. 响应头默认包含 "Connection: close"
-5. 该标准库基于 libuv 实现底层网络功能
+## Notes
+1. The server's default listening address is "0.0.0.0".
+2. The default response Content-Type is "text/plain", and the character set is "utf8".
+3. Route handlers will return a 404 status code when no matching path is found.
+4. Response headers default to including "Connection: close".
+5. This standard library implements underlying network functionalities based on libuv.

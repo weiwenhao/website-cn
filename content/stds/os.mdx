@@ -1,0 +1,124 @@
+# os
+
+## os.main
+
+### Overview
+The `os` module provides basic operating system-related functionalities, including filesystem operations and process information retrieval.
+
+### Functions
+
+#### args
+Gets the command-line argument list.
+
+```nature
+fn args():[string]
+```
+
+#### exe
+Gets the path of the current executable file. Implemented by reading the `/proc/self/exe` link.
+
+```nature
+fn exe():string!
+```
+
+#### listdir
+Lists the names of all files and directories under the specified directory. The returned list is sorted.
+
+```nature
+fn listdir(string path):[string]!
+```
+
+#### mkdirs
+Recursively creates directories. If the directory already exists, no operation is performed.
+
+```nature
+fn mkdirs(string dir, u32 mode):void!
+```
+
+#### remove
+Deletes the specified file. If the file does not exist, no operation is performed.
+
+```nature
+fn remove(string full_path):void!
+```
+
+#### rmdir
+Removes a directory. When `recursive` is `true`, recursively deletes the directory and its contents.
+
+```nature
+fn rmdir(string dir, bool recursive):void!
+```
+
+### Usage Example
+
+```nature
+import os
+
+fn main() {
+    // Get command-line arguments
+    var args = os.args()
+
+    // Create directory
+    os.mkdirs("./test/subdir", 0755) catch err {
+        // Handle error
+    }
+
+    // List directory contents
+    var files = os.listdir("./test") catch err {
+        // Handle error
+    }
+
+    // Delete file and directory
+    os.remove("./test/file.txt") catch err {}
+    os.rmdir("./test", true) catch err {}
+}
+```
+
+## os.signal
+
+### Overview
+The `signal` module provides functionalities related to signal handling, used for processing operating system signals. It needs to be included via `import os.signal`.
+
+### Types
+
+#### sig_t
+Alias for signal type.
+
+```nature
+type sig_t = int
+```
+
+### Functions
+
+#### notify()
+Registers a signal handler that sends the specified signals to a channel，signals are empty and listen for all signals.
+
+```nature
+fn notify(chan<sig_t> sig_ch, ...[int] signals)
+```
+
+#### stop()
+Stops the signal handler from sending signals to the channel.
+
+```nature
+fn stop(chan<sig_t> sig_ch)
+```
+
+### Usage Example
+
+```nature
+import os.signal
+
+fn main() {
+    var sig_ch = chan<signal.sig_t>{}
+
+    // Register signal handling
+    signal.notify(sig_ch, SIGINT, SIGTERM)
+
+    // Wait for signal
+    var sig = <-sig_ch
+
+    // Stop signal handling
+    signal.stop(sig_ch)
+}
+```
