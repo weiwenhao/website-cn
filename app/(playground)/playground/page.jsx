@@ -28,7 +28,7 @@ export default function Playground() {
     setOutput('Running...');
 
     try {
-      const response = await fetch('http://115.190.75.86:8888/api/playgrounds/run', {
+      const response = await fetch('https://api.nature-lang.cn/api/playgrounds/run', {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
