@@ -19,7 +19,7 @@ export function LandingNav() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Documents</NavigationMenuTrigger>
+          <NavigationMenuTrigger>文档</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {/* <ListItem
@@ -32,14 +32,14 @@ export function LandingNav() {
                 title="Syntax"
                 href="/docs/syntax"
               >
-                Syntax Documentation
+                语法文档
               </ListItem>
 
               <ListItem
                 title="Std Library"
                 href="/stds"
               >
-                Standard Library Documentation
+                标准库文档
               </ListItem>
             </ul>
           </NavigationMenuContent>
@@ -47,19 +47,21 @@ export function LandingNav() {
         <NavigationMenuItem>
           <Link href="/docs/contribute" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Contribute
+              贡献指南
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/news" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              News
+              新闻
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Projects</NavigationMenuTrigger>
+          <NavigationMenuTrigger>
+            项目列表
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               <ListItem
@@ -68,7 +70,7 @@ export function LandingNav() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Lightweight packaging tool
+                轻量打包工具
               </ListItem>
               <ListItem
                 title="Llama.n"
@@ -76,7 +78,7 @@ export function LandingNav() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Llama2 implementation in Nature language
+                Llama2 模型 nature 语言实现
               </ListItem>
               <ListItem
                 title="Tetris Game"
@@ -84,7 +86,7 @@ export function LandingNav() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Tetris game based on raylib, macOS only
+                 俄罗斯方块游戏，适用于 macOS
               </ListItem>
               <ListItem
                 title="Playground Server"
@@ -92,7 +94,7 @@ export function LandingNav() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Playground server API implementation
+                Playground 服务端 API 实现
               </ListItem>
             </ul>
           </NavigationMenuContent>

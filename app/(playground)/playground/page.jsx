@@ -28,7 +28,7 @@ export default function Playground() {
     setOutput('Running...');
 
     try {
-      const response = await fetch('https://api.nature-lang.cn/api/playgrounds/run', {
+      const response = await fetch('https://api.nature-lang.org/api/playgrounds/run', {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
@@ -65,13 +65,13 @@ export default function Playground() {
         <section className="flex-1 p-4 border-r overflow-auto">
           <div className="h-full flex flex-col">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Code Editor</h2>
+              <h2 className="text-lg font-semibold">代码编辑</h2>
               <Button
                 className="bg-nature-red hover:bg-nature-red/90"
                 onClick={runCode}
                 disabled={isLoading}
               >
-                {isLoading ? 'Running...' : 'Run'}
+                {isLoading ? '运行中...' : '运行'}
                 <Play />
               </Button>
             </div>
@@ -109,7 +109,7 @@ export default function Playground() {
         {/* Right side output area */}
         <section className="w-[45%] p-4 overflow-auto">
           <div className="h-full flex flex-col">
-            <h2 className="text-lg font-semibold mb-4">Output Results</h2>
+            <h2 className="text-lg font-semibold mb-4">运行结果</h2>
             <div className="flex-1 bg-muted rounded p-3 font-mono text-sm overflow-auto">
               {/* Code execution results will be displayed here */}
               <pre className="whitespace-pre-wrap">{output}</pre>

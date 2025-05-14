@@ -46,6 +46,13 @@ export default function RootLayout({
             </div>
             <div className="flex items-center gap-2">
               <Link
+                href="https://nature-lang.org"
+                className="p-2 hover:text-primary flex items-center justify-center"
+                style={{ fontWeight: 500, fontSize: 17 }}
+              >
+                <span className="inline-block align-middle">EN</span>
+              </Link>
+              <Link
                 href="https://github.com/nature-lang/nature"
                 target="_blank"
                 className="p-2 hover:text-primary"
@@ -66,7 +73,7 @@ export default function RootLayout({
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
-                <h3 className="font-semibold mb-3">About Creator</h3>
+                <h3 className="font-semibold mb-3">关于作者</h3>
                 <p className="text-sm text-muted-foreground">
                   I&apos;m Hacker.
                 </p>
@@ -94,7 +101,7 @@ export default function RootLayout({
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold mb-3">Quick Links</h3>
+                <h3 className="font-semibold mb-3">快速链接</h3>
                 <ul className="space-y-2">
                   <li>
                     <Link href="/docs/get-started" className="text-sm hover:text-primary">
@@ -119,7 +126,7 @@ export default function RootLayout({
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold mb-3">Social Media</h3>
+                <h3 className="font-semibold mb-3">社交媒体</h3>
                 <div className="flex items-center gap-4">
                   <Link
                     href="https://github.com/your-repo/nature"
@@ -136,7 +143,7 @@ export default function RootLayout({
                     <Twitter className="h-5 w-5" />
                   </Link>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">WeChat Group:</span>
+                    <span className="text-sm">微信:</span>
                     <span className="text-sm text-muted-foreground">nature-lang</span>
                   </div>
                 </div>

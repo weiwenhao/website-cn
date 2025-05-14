@@ -8,7 +8,7 @@ const CODE_EXAMPLES = {
   fib: `import fmt  
 
 fn fib(int n):int {
-    if (n <= 1) {
+    if n <= 1 {
         return n
     }
     return fib(n - 1) + fib(n - 2)
@@ -21,7 +21,7 @@ fn main() {
 
   http: `import http
 
-fn main():void! {
+fn main() {
     var app = http.server()
 
     app.get('/', fn(http.request_t req, ptr<http.response_t> res) {
@@ -55,15 +55,15 @@ fn delay_sum(int a, int b):int {
     return a + b
 }
 
-fn main():void! {
-  var fut = go delay_sum(1, 1) // eq: future_t<int> fut = @async(delay_sum(1, 1), 0)
+fn main() {
+  var fut = go delay_sum(1, 1) // eq: future_t<int> fut = @async(delay_sum(1, 1))
   var result = fut.await()
 
   println('result =', result)
 }`,
 
   error: `fn main() {
-     var result = rem(10, 0) catch e {
+    var result = rem(10, 0) catch e {
         println(e.msg())
         break 1
     }
@@ -84,16 +84,62 @@ fn rem(int dividend, int divisor):int! {
         is null -> -1
     }
 
-    assert(bar== -1) 
+    assert(bar == -1) 
 
     if foo is int {
         assert(foo == -1)
     }
 }`,
 
-channel: `import co
+  match: `fn main() {
+    int n = 3
+    match n {
+        1|2 -> println('one or two')
+        3 -> println('three') // here
+        _ -> println('something else')
+    }
 
-fn main():void! {
+    var res = match {
+        (n < 0) -> 1
+        _ -> 2
+    }
+    println(res) // 2
+}`,
+
+
+  interface: `type measurable = interface{
+	fn perimeter():int
+	fn area():int
+}
+
+type rectangle: measurable = struct{
+	int width
+	int height
+}
+
+fn rectangle.area():int {
+	return self.width * self.height
+}
+fn rectangle.perimeter():int {
+	return 2 * (self.width + self.height)
+}
+
+fn print_shape(measurable s) {
+    println(s.area(), s.perimeter())
+}
+
+fn main() {
+    var r = rectangle{width=3, height=4}
+    print_shape(r)
+
+    var r1 = new rectangle(width=15, height=18)
+    print_shape(r1)
+}
+`,
+
+  channel: `import co
+
+fn main() {
     var ch = chan_new<string>()
 
     go delay_send(ch)
@@ -139,15 +185,15 @@ export function CodeBlock() {
           language="js"
         >
           {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre 
-              className={className + " p-4 font-mono"} 
-              style={{ 
-                ...style, 
+            <pre
+              className={className + " p-4 font-mono"}
+              style={{
+                ...style,
                 backgroundColor: 'transparent',
                 margin: 0,
                 lineHeight: '1.4',
-                fontFamily: 'Operator Mono, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-                fontWeight: '500',  // 添加这一行来控制字体粗细
+                fontFamily: 'Operator Mono, IBM Plex Mono, JetBrains Mono, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
+                fontWeight: '400',  // 添加这一行来控制字体粗细
                 fontSize: '0.9rem'  // 或使用 style 属性
               }}
             >

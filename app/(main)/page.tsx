@@ -14,14 +14,19 @@ export default function Home() {
             <div className="flex flex-col gap-8">
               <div className="space-y-6">
                 <h1 className="text-5xl font-bold text-nature-red">
-                  Nature is...
+                  Nature ...
                 </h1>
 
                 <p className="text-2xl leading-relaxed text-gray-800 dark:text-gray-200">
-                  A general-purpose open-source <span className="font-semibold">programming language</span> and <span className="font-semibold">compiler</span> designed to provide developers with an{" "}
-                  <span className="font-semibold">elegant and concise</span> development experience, enabling them to build secure and reliable cross-platform software{" "}
-                  <span className="font-semibold">simply and efficiently</span>.
+                  通用开源编程语言与编译器，期望为开发者提供
+                  <span className="font-semibold">简洁优雅</span>
+                  的开发体验，能够
+                  <span className="font-semibold">简单高效</span>
+                  构建出安全可靠的跨平台软件。
                 </p>
+                <p></p>
+                <p></p>
+                <p></p>
               </div>
 
               <div className="flex items-center gap-6">
@@ -31,7 +36,7 @@ export default function Home() {
                   asChild
                 >
                   <Link href="/docs/get-started" rel="noopener noreferrer">
-                    Get Started
+                    快速开始
                   </Link>
                 </Button>
                 <span className="text-gray-600 dark:text-gray-400">or</span>
@@ -39,7 +44,7 @@ export default function Home() {
                   href="/playground"
                   className="text-nature-red hover:text-nature-red/90 text-lg font-medium hover:underline"
                 >
-                  Try in Browser
+                  在浏览器中尝试
                 </Link>
               </div>
             </div>
@@ -54,56 +59,57 @@ export default function Home() {
         {/* 主要特性 */}
         <div className="w-full bg-gray-50 dark:bg-gray-900">
           <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">Why Nature?</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">为什么选择 Nature?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold mb-4">Clean & Natural Syntax</h3>
-                <p className="text-gray-600 dark:text-gray-300">Clean, natural, and consistent syntax design with comprehensive type system support.</p>
+                <h3 className="text-xl font-semibold mb-4">简洁&自然</h3>
+                <p className="text-gray-600 dark:text-gray-300">简洁、自然、一致性的语法设计，即使编程初学者也能够轻松掌握，快速上手。</p>
               </div>
               <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold mb-4">Cross-Platform</h3>
-                <p className="text-gray-600 dark:text-gray-300">Independent compilation system supporting linux/darwin on amd64/arm64.</p>
+                <h3 className="text-xl font-semibold mb-4">交叉编译</h3>
+                <p className="text-gray-600 dark:text-gray-300">不依赖 llvm 和虚拟机，直接编译为目标平台机器码，并支持交叉编译</p>
               </div>
               <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold mb-4">High Performance</h3>
-                <p className="text-gray-600 dark:text-gray-300">Built-in coroutines with millions of context switches per second and efficient garbage collection.</p>
+                <h3 className="text-xl font-semibold mb-4">高性能</h3>
+                <p className="text-gray-600 dark:text-gray-300">高性能 GC 实现、高性能共享栈协程实现、纯 C 实现的 runtime</p>
               </div>
             </div>
+            <div className="text-center text-gray-400 mt-4">点击快速开始查看更多特性支持......</div>
           </section>
         </div>
 
         {/* 应用场景 */}
         <div className="w-full bg-white dark:bg-gray-800">
           <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">Perfect For</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">应用场景</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <Gamepad2 className="w-6 h-6 text-nature-red" />
-                  <h3 className="text-lg font-semibold">Game Development</h3>
+                  <h3 className="text-lg font-semibold">游戏开发</h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300">Game engines and game development</p>
+                <p className="text-gray-600 dark:text-gray-300">游戏引擎和游戏开发</p>
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <Bot className="w-6 h-6 text-nature-red" />
-                  <h3 className="text-lg font-semibold">Scientific Computing</h3>
+                  <h3 className="text-lg font-semibold">计算机科学</h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300">AI and scientific applications</p>
+                <p className="text-gray-600 dark:text-gray-300">AI 和 计算机科学应用</p>
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <Cog className="w-6 h-6 text-nature-red" />
-                  <h3 className="text-lg font-semibold">Systems Programming</h3>
+                  <h3 className="text-lg font-semibold">系统编程</h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300">Operating systems and IoT</p>
+                <p className="text-gray-600 dark:text-gray-300">操作系统和物联网</p>
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <Globe className="w-6 h-6 text-nature-red" />
-                  <h3 className="text-lg font-semibold">Web Development</h3>
+                  <h3 className="text-lg font-semibold">Web 开发</h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300">Modern web applications</p>
+                <p className="text-gray-600 dark:text-gray-300">现代网络应用程序</p>
               </div>
             </div>
           </section>
@@ -115,14 +121,14 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center mb-12">Supported By</h2>
 
             <div className="flex justify-center">
-              <Link 
-                href="https://www.jetbrains.com/" 
-                target="_blank" 
+              <Link
+                href="https://www.jetbrains.com/"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="transition-opacity hover:opacity-80"
               >
-                <img 
-                  src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png" 
+                <img
+                  src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png"
                   alt="JetBrains logo"
                   className="h-12"
                 />
