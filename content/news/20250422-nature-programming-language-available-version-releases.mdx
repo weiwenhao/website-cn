@@ -3,44 +3,44 @@ title: "Nature 0.5 Released, First Available Version"
 date: 2025-05-15
 ---
 
-With the release of version 0.5, the original design goals of the nature programming language have been accomplished, and the syntax API is basically stable and will not change significantly before version 1.0.
+随着 0.5 版本的发布，nature 编程语言最初的设计目标已经完成，语法 API 基本稳定，在 1.0 版本之前不会有大幅的变化。
 
-The current version of the nature source code supports compilation on the following target platforms
+当前版本 nature 源码支持编译的目标平台有
 - linux/amd64
 - linux/arm64
 - darwin/amd64
 - darwin/arm64
 
-nature includes a set of test cases and standard libraries to test the usability of basic functionality and syntax, and a small set of projects to test overall usability, but has not yet been tested in medium to large scale projects.
+nature 包含一组测试用例及标准库用来测试基本功能和语法的可用性，包含一组小型项目测试整体可用性，还未经过中大型的项目测试。
 
-The core work to follow will be to improve the usability of the nature programming language, including standard library refinement, performance optimization, user feedback collection, and bug fixes.
+后续的核心工作是提升 nature 编程语言的可用性，包括标准库完善、性能优化、收集用户反馈以及 bug 修复。
 
-installer [https://github.com/nature-lang/nature/releases](https://github.com/nature-lang/nature/releases)
+安装包 [https://github.com/nature-lang/nature/releases](https://github.com/nature-lang/nature/releases)
 
-### What's Changed
+### 相较于上一个版本的变化
 
-- Implement coroutines based on [hnes/libaco](https://github.com/hnes/libaco) and refactor runtime based on coroutines
-- GC is further improved and fully supports coroutines
-- Error handling refactoring based on coroutines, with try + catch syntax
-- Integration with [libuv](https://github.com/libuv/libuv) to handle network IO
-- type interface support
-- Panopticon refactoring and refinement
-- Compiling os supports darwin
-- Compiling arch supports arm64
-- See help via `nature -h`
-- Abandon preemptive scheduling in favor of collaborative scheduling (preemptive scheduling requires huge sacrifices)
-- LIR add safepoint to assist collaborative scheduling
-- Refactor method definition to use fn extend
-- Adaptation of array type declarations to use `[T;n]`
-- cptr is renamed to `anyptr`, `raw_ptr<T>` is renamed to `rawptr<T>`
-- channel and select support
-- match syntax support
-- Standard library adds http/fs/io/mem/process/unsafe/co.mutex/os.signal
-- strings Standard library refactoring based on fn extend
-- Use fn main as entry point
-- Remove template and add `#linkid` function tag to customize linker identifier
-- Use testar files for use case testing
-- Add built-in macros, e.g. `@sizeof(T)`
-- cmake add test case test_runtime_debug, support runtime debug
-- Official website refactoring and [playground](https://nature-lang.org/playground) support
-- lsp support [nature-lang/nls](https://github.com/nature-lang/nls)
+- 基于 [hnes/libaco](https://github.com/hnes/libaco) 实现 coroutine ，并基于 coroutine 重构 runtime
+- GC 进一步完善，并完全支持 coroutine
+- 基于 coroutine 的错误处理重构，语法支持 try + catch
+- 集成 [libuv](https://github.com/libuv/libuv) 处理网络 IO
+- 支持 type interface 
+- 泛型重构并完善
+- 编译 os 支持 darwin
+- 编译 arch 支持 arm64
+- 通过 `nature -h` 查看帮助
+- 放弃抢占式调度，采用协作式调度(抢占式调度需要做出巨大的牺牲)
+- LIR 增加 safepoint 辅助协作式调度
+- method 定义方式重构，采用 fn extend 的模式
+- 数组类型声明方式调整，使用 `[T;n]`
+- cptr 更名为 `anyptr`，`raw_ptr<T>` 更名为 `rawptr<T>`
+- channel 和 select 支持
+- match 语法支持
+- 标准库增加 http/fs/io/mem/process/unsafe/co.mutex/os.signal
+- strings 标准库基于 fn extend 重构
+- 使用 fn main 作为入口
+- 取消 template，增加 `#linkid` 函数标签自定义链接器标识
+- 使用 testar 文件进行用例测试
+- 添加内置宏，例如 `@sizeof(T)`
+- cmake 增加测试用例 test_runtime_debug，支持 runtime debug
+- 官网重构 及 [playground](https://nature-lang.org/playground) 支持
+- lsp 支持 [nature-lang/nls](https://github.com/nature-lang/nls)
