@@ -124,7 +124,7 @@ export default function RootLayout({
                 <h3 className="font-semibold mb-3">社交媒体</h3>
                 <div className="flex items-center gap-4">
                   <Link
-                    href="https://github.com/your-repo/nature"
+                    href="https://github.com/nature-lang/nature"
                     target="_blank"
                     className="hover:text-primary"
                   >
