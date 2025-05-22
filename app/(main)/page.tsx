@@ -120,7 +120,20 @@ export default function Home() {
           <section className="container mx-auto px-4 py-16">
             <h2 className="text-3xl font-bold text-center mb-12">Supported By</h2>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center gap-8">
+              <Link
+                href="https://github.com/linky6565"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2" 
+              >
+                <img
+                  src="https://github.com/linky6565.png"
+                  alt="linky6565 logo"
+                  className="h-12 w-12 rounded-full"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">linky6565</span>
+              </Link>
               <Link
                 href="https://www.jetbrains.com/"
                 target="_blank"
