@@ -20,7 +20,7 @@ rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Rel
 rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/darwin-arm64-toolchain.cmake && cmake --build build-runtime --target runtime
 
 # linux/amd64 架构，设备需要安装 x86_64-linux-musl-gcc 编译器
-rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-arm64-toolchain.cmake && cmake --build build-runtime --target runtime
+rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-amd64-toolchain.cmake && cmake --build build-runtime --target runtime
 
 # linux/arm64 架构，设备需要安装 aarch64-linux-musl-gcc 编译器
 rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-arm64-toolchain.cmake && cmake --build build-runtime --target runtime
