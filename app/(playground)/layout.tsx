@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import { Oxanium } from "next/font/google";
 import "@/globals.css";
-import Link from 'next/link';
-import { Github } from 'lucide-react';
-import Image from 'next/image';
-
-import { LandingNav } from "@/components/features/landing-nav";
-import { LanguageSwitcher } from "@/components/features/language-switcher";
 import { Header } from "@/components/features/header";
 
 const font = Oxanium({
