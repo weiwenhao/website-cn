@@ -108,7 +108,7 @@ export default function RootLayout({
                     <Twitter className="h-5 w-5" />
                   </Link>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">微信:</span>
+                    <span className="text-sm">微信讨论组:</span>
                     <span className="text-sm text-muted-foreground">nature-lang</span>
                   </div>
                 </div>
