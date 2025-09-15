@@ -1,0 +1,58 @@
+---
+title: "nature 0.6 发布，服务端应用的探索与实践"
+date: 2025-09-17
+---
+
+nature 0.6 版本以可用性为目标前进，借助 net、http、json、 dbdriver 等 package，nature 编程语言现在可以做的更多，尤其是在服务端的应用。
+
+随着标准库进一步完善以及大量的 bug 修复，nature 编程语言将够完成更加具有挑战性的项目!
+
+### 安装包
+
+[https://github.com/nature-lang/nature/releases](https://github.com/nature-lang/nature/releases)
+
+### 版本变化
+
+- linux_riscv64 编译 target 支持
+- const 支持
+- libc 标准库完善
+- net 标准库新增，包括 tcp/udp/tls/url/dns 模块
+- http client 标准库新增
+- json 与 reflect 标准库新增
+- crypto 机密库新增，包括 bcrypt/blowfish/hmac/md5/rsa/sha256 模块
+- base64 标准库新增
+- mysql/postgresql/redis 驱动 https://github.com/weiwenhao/dbdriver
+- sqlite 驱动 https://github.com/weiwenhao/nature-sqlite
+- [RESTful api 示例](https://github.com/weiwenhao/emoji-api) 包括 router/middleware/db pool/mail/JWT/config 模块
+- Github CI 支持 [@JustAnotherID](https://github.com/JustAnotherID)
+- zig 构建工具链支持 [@wzzc-dev](https://github.com/wzzc-dev)
+- 取消 catch/match 中的 break，使用最后一行表达式作为块返回值
+- testar 测试支持 arch/os/repeat 过滤
+- 使用 `list[1..5]` 替代 `list.slice(1, 5)` 进行 vec 切片
+- 类型转换内联优化
+- 支持通过反引号声明多行字符串
+- 将 nls 和 npkg 项目直接内置在 nature 仓库中，后续 issue 和代码调整直接在主仓库中进行
+- lsp 支持简单的代码提示
+- 修复 recycle type 异常
+- 修复各种 GC/寄存器分配/system ABI 相关 bug
+- 修复 u64 max 存储异常 [@JustAnotherID](https://github.com/JustAnotherID)
+- 修复 https://github.com/nature-lang/nature/issues/138
+- 修复 https://github.com/nature-lang/nature/issues/134
+- 修复 https://github.com/nature-lang/nature/issues/133
+- 修复 https://github.com/nature-lang/nature/issues/116
+- 修复 https://github.com/nature-lang/nature/issues/114
+- 修复 https://github.com/nature-lang/nature/issues/107
+- 修复 https://github.com/nature-lang/nature/issues/103
+- 修复 https://github.com/nature-lang/nature/issues/101
+- 修复 lsp https://github.com/nature-lang/nls/issues/1
+- 修复 lsp https://github.com/nature-lang/nls/issues/5
+- 修复 lsp https://github.com/nature-lang/nls/issues/4
+
+
+### 致谢
+
+感谢 [@JustAnotherID](https://github.com/JustAnotherID)  [@wzzc-dev](https://github.com/wzzc-dev) 对本次版本的代码贡献
+
+感谢 [@felixf4xu](https://github.com/felixf4xu) [@cn-lang](https://github.com/cn-lang) [@zhangchunlin](https://github.com/zhangchunlin) [@GAMIS65](https://github.com/GAMIS65)  的资金支持
+
+特别感谢 [@linky6565](https://github.com/linky6565) 的资金赞助，这对 nature 编程语言发展有着非常大的帮助！

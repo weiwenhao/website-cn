@@ -65,6 +65,22 @@ export function LandingNav() {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               <ListItem
+                title="Dbdriver"
+                href="https://github.com/weiwenhao/dbdriver"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                mysql/postgresql/redis 驱动
+              </ListItem>
+              <ListItem
+                title="Restful API"
+                href="https://github.com/weiwenhao/emoji-api"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                包括 router/middleware/jwt/db poo/mail 模块
+              </ListItem>
+              <ListItem
                 title="Parker"
                 href="https://github.com/weiwenhao/parker"
                 target="_blank"

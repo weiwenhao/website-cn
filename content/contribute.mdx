@@ -25,6 +25,8 @@ rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Rel
 # linux/arm64 架构，设备需要安装 aarch64-linux-musl-gcc 编译器
 rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-arm64-toolchain.cmake && cmake --build build-runtime --target runtime
 
+# linux/riscv64 架构，设备需要安装 riscv64-linux-musl-gcc 编译器
+rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-riscv64-toolchain.cmake && cmake --build build-runtime --target runtime
 ```
 
 编译 runtime 会生成 libruntime.a 自动放入到 lib 目录的对应架构中，如 `nature/lib/linux_arm64/libruntime.a`
@@ -329,9 +331,9 @@ src/cfg.c
 - 删除从入口块无法到达的基本块
 - 维护基本块之间的前驱和后继关系
 
-4. return/break check
+4. return check
 - return 语句检查：确保所有执行路径都有返回语句
-- break 语句检查：确保 match/catch 结构中有正确的 break 语句
+- ret 语句检查：确保 match/catch 结构中有正确的表达式退出
 
 ## SSA
 

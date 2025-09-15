@@ -33,7 +33,7 @@ export function Header() {
           <Github className="h-5 w-5" />
         </Link>
         <Button asChild variant="default" size="sm" className="bg-[#F35774] hover:bg-[#E34764] text-white">
-          <Link target="_blank" href="https://github.com/sponsors/weiwenhao" className="flex items-center gap-1.5">
+          <Link href="/docs/donate" className="flex items-center gap-1.5">
             <Heart className="h-4 w-4" />
             <span>捐赠</span>
           </Link>
