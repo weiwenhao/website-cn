@@ -73,12 +73,12 @@ export function LandingNav() {
                 mysql/postgresql/redis 驱动
               </ListItem>
               <ListItem
-                title="Restful API"
+                title="Web Framework"
                 href="https://github.com/weiwenhao/emoji-api"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                包括 router/middleware/jwt/db poo/mail 模块
+                虽然是 RESTful api example, 但可以作为 web framework 使用
               </ListItem>
               <ListItem
                 title="Parker"
@@ -102,7 +102,7 @@ export function LandingNav() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                 俄罗斯方块游戏，适用于 macOS
+                俄罗斯方块游戏，适用于 macOS
               </ListItem>
               <ListItem
                 title="Playground Server"
