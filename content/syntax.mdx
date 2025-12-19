@@ -664,8 +664,8 @@ type person_t = struct {
 
 // 结构体初始化，结构体默认在栈上初始化。
 var p = person_t{
-    name = 'Alice',
-    age = 25
+    name: 'Alice',
+    age: 25
 }
 
 //  使用 new 可以在堆上初始化， 并获取结构体指针
@@ -1283,7 +1283,7 @@ fn print_shape(measurable<i64> s) {
 
 fn main() {
 	// 值传递
-	var r = rectangle{width=3, height=4}  
+	var r = rectangle{width: 3, height: 4}  
 	print_shape(r)  
 
 	// 指针引用传递
@@ -1620,8 +1620,8 @@ fn pair<T, U>.swap():(U, T) {
 fn main() {
     // 创建泛型实例
     var p = pair<int, string>{
-        first = 42,
-        second = "hello"
+        first: 42,
+        second: "hello"
     }
     
     // 调用泛型方法

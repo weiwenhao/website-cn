@@ -1,0 +1,35 @@
+---
+title: "nature 0.7 发布，完成首次性能优化"
+date: 2025-12-18
+---
+
+nature v0.7 通过对 TCP/UDP/HTTP、CPU、string、GC、closure 等核心模块进行系统性优化，性能得到了大幅提升。在基准测试中，nature 展现出了超越预期的强劲实力，并且仍有进一步优化的空间。
+
+### 安装包
+
+https://github.com/nature-lang/nature/releases/tag/v0.7.0
+
+### 版本变化
+- closure 实现方式重构，删除 JIT 模式 closure
+- gc 清理逻辑优化，增加 needzero 区分 span 是否需要清理
+- string 常量化处理，string as vec 会发生深度复制
+- http server 增加连接池
+- memory allocator 性能优化
+- libuv 使用方式重构，删除 multi threading loop，使用 global loop
+- tcp 库性能优化，增加连接池
+- udp 去除 libuv API 使用 C API 实现
+- LIR BCC 指令汇编实现优化
+- LIR safepoint 指令汇编实现优化，基于全局 flag 判断是否需要 GC 
+- LIR stack 指令汇编实现优化，使用 sp 寄存器代替 fp 寄存器
+- arm64/riscv64 增加基于 MOV 指令的临时变量消除
+- 结构体实例化方式变更，赋值符号由 `=` 变更为 `:` https://github.com/nature-lang/nature/issues/174
+- 编辑器 NLS 模块开发体验优化，增加语言配置文件、struct 补全、自动 import、模块建议等 https://github.com/nature-lang/nature/pull/178
+
+
+### 致谢
+
+感谢 [@arjendevos](https://github.com/arjendevos) 对本次版本的代码贡献
+
+感谢 [@mmachatschek](https://github.com/mmachatschek) [@zhangchunlin](https://github.com/zhangchunlin) [@Angluca](https://github.com/Angluca) [@nunu886](https://github.com/nunu886)  的资金支持
+
+特别感谢 [@linky6565](https://github.com/linky6565) 的资金赞助，这对 nature 编程语言发展有着非常大的帮助！

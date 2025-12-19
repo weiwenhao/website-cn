@@ -25,7 +25,7 @@ rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Rel
 # linux/arm64 架构，设备需要安装 aarch64-linux-musl-gcc 编译器
 rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-arm64-toolchain.cmake && cmake --build build-runtime --target runtime
 
-# linux/riscv64 架构，设备需要安装 riscv64-linux-musl-gcc 编译器
+# linux/riscv64 架构，设备需要安装 riscv64-linux-musl-gcc 编器
 rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-riscv64-toolchain.cmake && cmake --build build-runtime --target runtime
 ```
 
@@ -33,6 +33,7 @@ rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Rel
 
 ### 编译源码
 
+> 源码编译依赖 libruntime.a，根据实际需要手动进行编译。
 
 ```sh
 # 使用 build-release 目录作为编译目录, 如果安装了跨平台编译器，则可以通过 TOOLCHAIN_FILE 指定编译架构，如果需要静态编译同样需要设置 DCMAKE_TOOLCHAIN_FILE
