@@ -123,7 +123,8 @@ export default function Home() {
           <section className="container mx-auto px-4 py-16">
             <h2 className="text-3xl font-bold text-center mb-12">Supported By</h2>
 
-            <div className="flex justify-center items-center gap-8">
+            <div className="flex justify-center items-center gap-8 my-8 py-4">
+              <span className="text-sm text-gray-700 dark:text-gray-300">特别赞助: </span>
               <Link
                 href="https://github.com/linky6565"
                 target="_blank"
@@ -137,6 +138,9 @@ export default function Home() {
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">linky6565</span>
               </Link>
+            </div>
+
+            <div className="flex justify-center items-center gap-8 my-8">
               <Link
                 href="https://github.com/cn-lang"
                 target="_blank"
@@ -150,12 +154,11 @@ export default function Home() {
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">cn-lang</span>
               </Link>
-
               <Link
                 href="https://github.com/zhangchunlin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2" 
+                className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
               >
                 <img
                   src="https://github.com/zhangchunlin.png"
@@ -163,6 +166,19 @@ export default function Home() {
                   className="h-12 w-12 rounded-full"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">zhangchunlin</span>
+              </Link>
+              <Link
+                href="https://github.com/mmachatschek"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
+              >
+                <img
+                  src="https://github.com/mmachatschek.png"
+                  alt="mmachatschek logo"
+                  className="h-12 w-12 rounded-full"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">mmachatschek</span>
               </Link>
             </div>
           </section>
