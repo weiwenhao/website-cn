@@ -18,11 +18,7 @@ export default function Home() {
                 </h1>
 
                 <p className="text-2xl leading-relaxed text-gray-800 dark:text-gray-200">
-                  通用开源编程语言与编译器，期望为开发者提供
-                  <span className="font-semibold">简洁优雅</span>
-                  的开发体验，能够
-                  <span className="font-semibold">简单高效</span>
-                  构建出安全可靠的跨平台软件。
+                  通用系统型编程语言与编译器，期望用<span className="font-semibold">简洁优雅</span>的方式构建高性能、安全可靠、跨平台软件。
                 </p>
                 <p></p>
                 <p></p>

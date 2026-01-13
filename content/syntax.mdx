@@ -1197,9 +1197,9 @@ bool is_null = foo is null  // false
 
 // 在条件语句中使用类型检查时, 如果可以通过逻辑判断推导 foo 的具体类型，则会在编译时触发自动类型断言
 
-if foo is int {
-	// auto as: foo = foo as int
-    println("foo is an integer", foo + 1)
+if foo is int v {
+	// auto as: var v = foo as int
+    println("foo is an integer", v + 1)
 }
 
 // x 无法进行自动类型推断
@@ -1215,8 +1215,8 @@ match 语法对 union type 进行了特殊优化，可以快速的进行类型�
 ```nature
 int? foo = null
 int result = match foo {
-    is int -> foo        // auto: foo = foo as int
-    is null -> -1        // auto: foo = foo as null
+    is int v -> v  // auto: var v = foo as int
+    is null -> -1
 }
 ```
 
@@ -1324,20 +1324,20 @@ fn rectangle.update(i64 i) {
 
 ```nature
 fn use_com(combination c):int {  
-    if c is square {  
-        // auto as: square c = c as square, c is interface  
-        c.unique()  
+    if c is square s {  
+        // auto as: var s = c as square, c is interface  
+        s.unique()  
         return 1  
     }  
-    if c is ptr<square> {  
-        // auto as: ptr<square> c = c as ptr<square>  
-        c.unique()  
+    if c is ptr<square> s {  
+        // auto as: var s = c as ptr<square>  
+        s.unique()  
         return 2  
     }  
     return 0  
 }
 
-// 同样支持 match is
+// also supports match is
 fn use_com(combination c):int {  
     return match c {  
         is square -> 10  
@@ -1351,8 +1351,8 @@ interface 支持 nullable
 
 ```nature
 fn use(testable? test) {  
-    if (test is testable) { // test = test as testable  
-        println('testable value is', test.nice())  
+    if (test is testable v) { // var v = test as testable  
+        println('testable value is', v.nice())  
     } else {  
         println('test not testable')  
     }  
@@ -1472,13 +1472,13 @@ match {
 
 ### 自动断言
 
-对于联合类型，可以使用 `is` 进行类型匹配，当 match subject 是 var 时，匹配成功后会自动进行类型断言
+对于联合类型，可以使用 `is` 进行类型匹配，并且类型的后面可以添加变量进行自动推导
 
 ```nature
 any value = 2.33
 var result = match value {
     is int -> 0.0
-    is float -> value  // auto as: var value = value as float
+    is float v -> v  // auto as: var value = value as float
     _ -> 0.0
 }
 ```
