@@ -59,6 +59,13 @@ export function LandingNav() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
+          <Link href="/blog" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              博客
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
           <NavigationMenuTrigger>
             项目列表
           </NavigationMenuTrigger>
