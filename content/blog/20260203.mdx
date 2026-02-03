@@ -1,25 +1,22 @@
 ---
-title: "一开始只是想加一个 enum"
+title: "一开始也只是想加一个 enum"
 date: 2026-02-03
 ---
 
 
-[Nature 编程语言](https://nature-lang.cn/)一直计划添加 enum 类型，毕竟 Go 没有 enum 是一直被诟病的问题，而 Rust 的 enum 设计如此强大，所以我有些纠结是否需要在 enum 的基础上进行 tagged union 支持。最终我选择先设计一个基础的 enum，后续若有需求再扩展为类似 Rust 形式的 tagged union。这是基础语法设计
+Nature 编程语言一直计划支持 enum 结构，但是由于没有思考好是添加类似 C 一样的基础 enum 还是类似 Rust 一样强大的 enum，所以这个功能一直被搁置着。最近想通了，我可以先设计一个基础的 enum，后续若有需求进一步扩展不就行了。这是基础语法设计
 
 ```nature
-type color = enum{
+type color = enum {
     RED = 1, // Counting starts from 1
     GREEN,
     BLUE,
 }
 
 // 自定义基础类型
-type color = enum:i32{
-    RED = 1, // Counting starts from 1
-    GREEN,
-    BLUE,
-}
+type color = enum:i32 {}
 
+// 可以使用 match 进行穷尽检查, 支持 impl
 fn color.to_string(self):string {
 	match self {
         color.RED -> 'red'
@@ -33,38 +30,32 @@ var c = color.RED
 print(c.to_string())
 ```
 
-但完成基础 enum 开发后，我忽然有点贪心，现在 AI 这么厉害 (๑•̀ㅂ•́)و✧ 不如直接让 AI 进一步扩展 enum 支持 tagged union 好了，于是我参考 Rust、Swift 设计出了这样的语法
+但完成基础 enum 开发后，我又开始贪了! 现在 AI 这么厉害 (๑•̀ㅂ•́)و✧ 不如直接让 AI 一步到位，支持类似 Rust 中的高级 enum 用法支持，于是我参考 Rust、Swift 设计出了这样的语法
 
 ```js
-type option = enum{  
+type option = enum {  
     some(int),  // 只支持 tuple 组合，不支持 struct
     none,  
 }  
   
 fn main() {  
     var opt = option.some(100)  
+    var opt2 = option.none  
     var value = match opt {  
         option.some(v) -> v  
         option.none -> -1  
     }  
     assert(value == 100)  
-  
-    var opt2 = option.none  
-    value = match opt2 {  
-       option.some(v) -> v  
-       option.none -> -1  
-    }  
-    assert(value == -1)  
 }
 ```
 
-经过一天一夜的努力，AI 耗光了我 Antigravity 两个账号的 Claude Opus 4.5 周使用限额，却连一个能编译成功的用例都没跑出来 🤦‍♂️，看来这种复杂任务对它来说还是有些吃力。
+经过一天一夜的努力，AI 成功耗光了我 Antigravity 两个账号的 Claude Opus 4.5 周使用限额，但是连一个能编译成功的用例都没跑出来 🤦‍♂️，看来这种复杂任务对它来说还是有些吃力。
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20260203211650846.png)
 
-不过 AI 已经写了不少代码，经过我又一天的修修补补，终于成功运行起来。但是经过这两天的接触，我越发觉得这种设计在 Nature 中不够协调，尤其是类似 `write(string)` 这样的表达方式非常的奇怪，Nature 中找不到任何的语法能够对应这种表达方式。并且增加 基于 enum 的 tagged union 后，Nature 整体的学习曲线会进一步提升，这与 Nature 简洁优雅的设计理念相冲突。于是我狠下心来，打算直接放弃这个功能，毕竟 AI 写的代码丢掉我也不心疼 🚮
+不过鉴于 AI 已经写了不少代码，经过我又一天的修修补补，终于成功运行起来。但是经过这两天的接触，我越发觉得这种设计在 Nature 中不够协调，尤其是类似 `write(string)` 这样的表达方式非常的奇怪，Nature 中找不到任何的语法能够对应这种表达方式。并且增加 基于 Nature 整体的学习曲线会进一步提升，这与 Nature 简洁优雅的设计理念相冲突。于是我狠下心来，打算直接放弃这个功能，毕竟 AI 写的代码丢掉我也不心疼 🚮
 
-但还是有些不甘心，于是我继续调研所有支持 sum type 的编程语言，希望能从中找到一些灵感，比如 Haskell, Ocam, Swift, Kotlin, Zig 等等，这里不得不提 Rust 的 enum 设计，基于其灵活的 struct 设计，配合 match 语法使用非常自然。
+不过还是有些不甘心的，有空的时候我继续调研所有支持 sum type 的编程语言，希望能从中找到一些灵感，比如 Haskell, Ocam, Swift, Kotlin, Zig 等等，这里不得不提 Rust 的 enum 设计，基于其灵活的 struct 设计，配合 match 语法使用非常自然 👍。
 
 ```rust
 enum Message {
@@ -76,22 +67,14 @@ enum Message {
 
 
 match msg {
-    Message::Quit => {
-        println!("Quit variant has no data.");
-    }
-    Message::Move { x, y } => {
-        println!("Move to x: {}, y: {}", x, y);
-    }
-    Message::Write(text) => {
-        println!("Text message: {}", text);
-    }
-    Message::ChangeColor(r, g, b) => {
-        println!("Change color to R:{}, G:{}, B:{}", r, g, b);
-    }
+    Message::Quit => println!("Quit variant has no data."),
+    Message::Move { x, y } => println!("Move to x: {}, y: {}", x, y),
+    Message::Write(text) => println!("Text message: {}", text),
+    Message::ChangeColor(r, g, b) => println!("Change color to R:{}, G:{}, B:{}", r, g, b),
 }
 ```
 
-虽然 Nature 仅采用了 tuple 模式，与 Swift 类似。我可以解释这是 enum + union + tuple 组合而成的语法设计，但还是比较突兀。并且有一个关键问题，Nature 中已经存在了简单的 union 类型设计，这本质就是一种简化的 sum type，nature 的 `Option<T>` 和 `Result<T, E>` 也是基于该 union 设计，语法示例如下
+虽然 Nature 仅采用了 tuple 模式，与 Swift 类似。我可以解释这是 enum + union + tuple 组合而成的语法设计，但还是比较突兀。并且有一个关键问题，Nature 中已经有类似 TypeScript 的 union 类型设计，这种 union 本质就是一种简化的 sum type，nature 的 `Option<T>` 和 `Result<T, E>` 也是基于此设计，语法示例如下
 
 ```js
 type shape = int|float
@@ -112,11 +95,11 @@ fn main() {
 }
 ```
 
-增加 sum type 模式的 enum 和已有的 union 语法在表达上存在冲突，并且无法使用 if 匹配 enum，比如 Rust 中的 `if let Some(u) = temp` ， 而 Nature 中并没有类似的解构方式，反而基于 union 的 is 可以进行解构，比如 `if s is int v`。
+可以看到通过 is 关键字可以对 union 进行自动解构，这是已有的语法，类似于 Rust 中的 `if let Some(u) = temp`。但是 Nature 中的 is 关键字仅适用于 union 类型，如果 sum type enum 想要兼容这个语法需要进行额外的工作。总结来说 sum type enum 在 Nature 中并不是那么自然优雅! 甚至和已有的 union 存在一定的语义冲突。
 
-于是我重新思考如何设计一个更加自然的 tagged union 语法。在参考了大量的编程语言后，最终决定还是进一步增强现有的 union，而不是基于 enum 从新设计。现有的 union 类型无法应对复杂场景，比如 `type shape = int|int|(int, int)|foo_t` 这类存在重复类型的情况，虽然可以通过定义 struct 解决，但终究还是过于繁琐。
+于是我重新思考如何设计一个更加自然优雅的 sum type 支持。在参考了大量的编程语言后，最终决定还是进一步增强现有的 union，而不是基于 enum。 现有的 union 类型无法应对复杂场景，比如 `type shape = int|int|(int, int)|foo_t` 这类存在重复类型的情况，虽然可以通过定义 struct 解决，但终究还是过于繁琐。
 
-为现有的 union 的增加 tag 不仅够解决相关问题，并且得到一个完整的 sum type 设计，第一版语法设计类似于 haskell
+其实解决办法到这里已经呼之欲出了，只需要**为现有的 union 的增加 tag** 构成的 tagged union 不仅够解决相关问题，还能得到一个完整的 sum type 设计，第一版语法设计类似于 haskell
 
 ```nature
 type nullable<T> = 
@@ -124,9 +107,9 @@ type nullable<T> =
 | ok(T)
 ```
 
-语法上虽然简洁，但是存在一个严重的问题，`|` 表达式不是封闭的，ok(T) 和 none 在语义上具有全局性，不受 nullable 的约束。也就是 `nullable.none` 和 `none` 的区别。
+语法上虽然简洁，但是存在一个严重的问题，**`|` 关键字不是封闭的，ok(T) 和 none 在语义上具有全局性，不受 nullable 的约束**。也就是 `nullable.none` 和 `none` 的区别。
 
-类似 struct/enum 使用的 `{}` 声明方式则是封闭的且具有约束性。并且进一步简化了 tagged union 的初始化方式，对 tuple 类型可以自然的进行解构、以及 match 穷尽检查等等。最终得到了下面的 tagged union 设计
+类似 struct/enum 使用的 `{}` 声明方式则是封闭的且具有约束性。所以使用 `union{}` 来声明 tagged union 是可选的方式，并且我还进一步简化了 tagged union 的初始化方式，对 tuple 类型可以自动进行解构、match 穷尽检查等等。最终得到了下面的设计
 
 ```nature
 type ellipse_t = struct{  
@@ -157,17 +140,18 @@ if s is shape.ellipse v {
 	println(v.rx, v.ry)
 }
 
-// nature 的 tup 支持结构赋值，等同于 if s is shape.rectangle v 
-// s is shape.rectangle (x, y) 是等效的。
-// s is shape.rectangle(x, y) 同上
+// nature 的 tupe 支持解构赋值，等同于 
+// if s is shape.rectangle v 
+// s is shape.rectangle(x, y) 省略空格的方式也是支持的
 if s2 is shape.rectangle (x, y) {
 	// auto insert var (x, y) = s as shape.rectangle
 }
 
-var v = match s { // match 对 union tag 会进行穷尽检查
+ // match 对 tagged union/union/enum 类型都会进行穷尽检查
+var v = match s {
 	is m.shape.circle v -> v * PI * PI
 	is shape.square v -> v * v
-	is shape.rectangle(width, height) -> width * height // tuple 自动解构
+	is shape.rectangle(width, height) -> width * height 
 	is shape.ellipse v -> v.rx * v.r * PI
 	is shape.point -> 0
 }
@@ -195,8 +179,6 @@ fn main() {
     var r = result<int>.some(123)  
     if r is result.some v {  
         assert(v == 123)  
-    } else {  
-        assert(false)  
     }
     
     r = result<int>.some(352)  
