@@ -4,7 +4,7 @@ date: 2026-02-03
 ---
 
 
-[Nature 编程语言](https://nature-lang.cn/)一直计划添加 enum 类型，毕竟 Go 没有 enum 是一直被诟病的问题，而 Rust 的 enum 设计如此强大，所以我有些纠结是否需要在 enum 上设计 tagged union 支持。最终我选择先设计一个基础的 enum，后续若有需求再扩展为类似 Rust 形式的 tagged union。这是基础语法设计
+[Nature 编程语言](https://nature-lang.cn/)一直计划添加 enum 类型，毕竟 Go 没有 enum 是一直被诟病的问题，而 Rust 的 enum 设计如此强大，所以我有些纠结是否需要在 enum 的基础上进行 tagged union 支持。最终我选择先设计一个基础的 enum，后续若有需求再扩展为类似 Rust 形式的 tagged union。这是基础语法设计
 
 ```nature
 type color = enum{
@@ -91,7 +91,7 @@ match msg {
 }
 ```
 
-虽然 Nature 仅采用了 tuple 模式，与 Swift 类似。我可以解释这是 enum + union + tuple 组合而成的语法设计，但还是比较突兀。并且有一个关键问题，Nature 中已经存在了简单的 union 类型设计，这本质就是一种简化的 sub type，nature 的 `Option<T>` 和 `Result<T, E>` 也是基于该 union 设计，语法示例如下
+虽然 Nature 仅采用了 tuple 模式，与 Swift 类似。我可以解释这是 enum + union + tuple 组合而成的语法设计，但还是比较突兀。并且有一个关键问题，Nature 中已经存在了简单的 union 类型设计，这本质就是一种简化的 sum type，nature 的 `Option<T>` 和 `Result<T, E>` 也是基于该 union 设计，语法示例如下
 
 ```js
 type shape = int|float
@@ -126,7 +126,7 @@ type nullable<T> =
 
 语法上虽然简洁，但是存在一个严重的问题，`|` 表达式不是封闭的，ok(T) 和 none 在语义上具有全局性，不受 nullable 的约束。也就是 `nullable.none` 和 `none` 的区别。
 
-类似 struct/enum 使用的 `{}` 声明方式则是封闭的且具有约束性，因此得到了如下的语法设计。并且进一步简化了 tagged union 的初始化方式，对 tuple 类型可以自然的进行解构、以及 match 穷尽检查等等。
+类似 struct/enum 使用的 `{}` 声明方式则是封闭的且具有约束性。并且进一步简化了 tagged union 的初始化方式，对 tuple 类型可以自然的进行解构、以及 match 穷尽检查等等。最终得到了下面的 tagged union 设计
 
 ```nature
 type ellipse_t = struct{  
