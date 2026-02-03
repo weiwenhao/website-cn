@@ -4,7 +4,7 @@ date: 2026-02-03
 ---
 
 
-[Nature 编程语言](https://nature-lang.cn/)一直计划添加 enum 类型，毕竟 Go 没有 enum 是一直被诟病的问题，而 Rust 的 enum 设计如此强大，所以我有些纠结是否需要在 enum 上扩展出 ADT 结构。最终我选择先设计一个基础的 enum，后续若有需求再扩展为 ADT 形式的 enum。这是基础语法设计
+[Nature 编程语言](https://nature-lang.cn/)一直计划添加 enum 类型，毕竟 Go 没有 enum 是一直被诟病的问题，而 Rust 的 enum 设计如此强大，所以我有些纠结是否需要在 enum 上设计 tagged union 支持。最终我选择先设计一个基础的 enum，后续若有需求再扩展为类似 Rust 形式的 tagged union。这是基础语法设计
 
 ```nature
 type color = enum{
@@ -33,7 +33,7 @@ var c = color.RED
 print(c.to_string())
 ```
 
-但完成基础 enum 开发后，我忽然有点贪心，现在 AI 这么厉害 (๑•̀ㅂ•́)و✧ 不如直接让 AI 把 ADT enum 也加上好了，于是我参考 Rust、Swift 设计出了这样的语法
+但完成基础 enum 开发后，我忽然有点贪心，现在 AI 这么厉害 (๑•̀ㅂ•́)و✧ 不如直接让 AI 进一步扩展 enum 支持 tagged union 好了，于是我参考 Rust、Swift 设计出了这样的语法
 
 ```js
 type option = enum{  
@@ -58,13 +58,13 @@ fn main() {
 }
 ```
 
-AI 经过一天一夜的努力，Claude Opus 4.5 耗光了我 Antigravity 两个账号的周使用限额，却连一个能编译成功的用例都没跑出来 🤦‍♂️，看来这种复杂任务对它来说还是有些吃力。
+经过一天一夜的努力，AI 耗光了我 Antigravity 两个账号的 Claude Opus 4.5 周使用限额，却连一个能编译成功的用例都没跑出来 🤦‍♂️，看来这种复杂任务对它来说还是有些吃力。
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20260203211650846.png)
 
-不过 AI 已经写了不少代码，经过我又一天的修修补补，终于成功运行起来。但是经过这两天的接触，我越发觉得这种设计在 Nature 中不够协调，尤其是类似 `write(string)` 这样的表达方式非常的奇怪，Nature 中找不到任何的语法能够对应这种表达方式。并且增加 ADT enum 后，Nature 整体的学习曲线会进一步提升，这与 Nature 简洁优雅的设计理念相冲突。于是我狠下心来，打算直接放弃这个功能，毕竟 AI 写的代码丢掉我也不心疼 🚮
+不过 AI 已经写了不少代码，经过我又一天的修修补补，终于成功运行起来。但是经过这两天的接触，我越发觉得这种设计在 Nature 中不够协调，尤其是类似 `write(string)` 这样的表达方式非常的奇怪，Nature 中找不到任何的语法能够对应这种表达方式。并且增加 基于 enum 的 tagged union 后，Nature 整体的学习曲线会进一步提升，这与 Nature 简洁优雅的设计理念相冲突。于是我狠下心来，打算直接放弃这个功能，毕竟 AI 写的代码丢掉我也不心疼 🚮
 
-但还是有些不甘心，于是我继续调研所有支持 ADT 的编程语言，希望能从中找到一些灵感，比如 Haskell, Ocam, Swift, Kotlin, Zig 等等，这里不得不提 Rust 的 ADT enum 设计，基于其灵活的 struct 设计，配合 match 语法使用非常自然。
+但还是有些不甘心，于是我继续调研所有支持 sum type 的编程语言，希望能从中找到一些灵感，比如 Haskell, Ocam, Swift, Kotlin, Zig 等等，这里不得不提 Rust 的 enum 设计，基于其灵活的 struct 设计，配合 match 语法使用非常自然。
 
 ```rust
 enum Message {
@@ -91,7 +91,7 @@ match msg {
 }
 ```
 
-虽然 Nature 仅采用了 tuple 模式，与 Swift 类似。我可以解释这是 enum + union + tuple 组合而成的语法设计，但还是比较突兀。并且有一个关键问题，Nature 中已经存在了简单的 union 类型设计，这本质就是一种简化的 ADT，nature 的 `Option<T>` 和 `Result<T, E>` 也是基于该 union 设计，语法示例如下
+虽然 Nature 仅采用了 tuple 模式，与 Swift 类似。我可以解释这是 enum + union + tuple 组合而成的语法设计，但还是比较突兀。并且有一个关键问题，Nature 中已经存在了简单的 union 类型设计，这本质就是一种简化的 sub type，nature 的 `Option<T>` 和 `Result<T, E>` 也是基于该 union 设计，语法示例如下
 
 ```js
 type shape = int|float
@@ -112,11 +112,11 @@ fn main() {
 }
 ```
 
-增加 ADT enum 和已有的 union 语法在表达上存在冲突，并且无法使用 if 匹配 ADT enum，比如 Rust 中的 `if let Some(u) = temp` ， 而 Nature 中并没有类似的解构方式，反而基于 union 的 is 可以进行解构，比如 `if s is int v`。
+增加 sum type 模式的 enum 和已有的 union 语法在表达上存在冲突，并且无法使用 if 匹配 enum，比如 Rust 中的 `if let Some(u) = temp` ， 而 Nature 中并没有类似的解构方式，反而基于 union 的 is 可以进行解构，比如 `if s is int v`。
 
-于是我重新思考如何设计一个更加自然的 ADT 语法。在参考了大量的编程语言后，最终决定还是进一步增强现有的 union，而不是基于 enum 从新设计。现有的 union 类型无法应对复杂场景，比如 `type shape = int|int|(int, int)|foo_t` 这类存在重复类型的情况，虽然可以通过定义 struct 解决，但终究还是过于繁琐。
+于是我重新思考如何设计一个更加自然的 tagged union 语法。在参考了大量的编程语言后，最终决定还是进一步增强现有的 union，而不是基于 enum 从新设计。现有的 union 类型无法应对复杂场景，比如 `type shape = int|int|(int, int)|foo_t` 这类存在重复类型的情况，虽然可以通过定义 struct 解决，但终究还是过于繁琐。
 
-为现有的 union 的增加 tag 不仅够解决相关问题，并且得到一个完整的 ADT 类型，第一版语法设计类似于 haskell
+为现有的 union 的增加 tag 不仅够解决相关问题，并且得到一个完整的 sum type 设计，第一版语法设计类似于 haskell
 
 ```nature
 type nullable<T> = 
@@ -126,7 +126,7 @@ type nullable<T> =
 
 语法上虽然简洁，但是存在一个严重的问题，`|` 表达式不是封闭的，ok(T) 和 none 在语义上具有全局性，不受 nullable 的约束。也就是 `nullable.none` 和 `none` 的区别。
 
-类似 struct/enum 使用的 `{}` 声明方式则是封闭的且具有约束性，因此得到了如下的语法设计，我称之为 tagged union。并且简化了 tagged union 的初始化方式，对 tuple 类型可以自然的进行解构、以及 match 穷尽检查等等。
+类似 struct/enum 使用的 `{}` 声明方式则是封闭的且具有约束性，因此得到了如下的语法设计。并且进一步简化了 tagged union 的初始化方式，对 tuple 类型可以自然的进行解构、以及 match 穷尽检查等等。
 
 ```nature
 type ellipse_t = struct{  
@@ -174,7 +174,7 @@ var v = match s { // match 对 union tag 会进行穷尽检查
 
 ```
 
-将类型设为 void 可以很自然的表示仅使用标签无需关联值的情况，Zig 的 ADT 也采用了类似策略。tagged union 同样支持泛型和 impl
+将类型设为 void 可以很自然的表示仅使用标签无需关联值的情况，Zig 的 enum(union) 也采用了类似策略。tagged union 同样支持泛型和 impl
 
 ```nature
 type result<T> = union{  
