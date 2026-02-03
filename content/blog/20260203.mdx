@@ -185,7 +185,7 @@ type result<T> = union{
 fn result.to_string():string {
     return match self {
         is result.some -> 'some'
-        if result.none -> 'none'
+        is result.none -> 'none'
     }
 }
 
