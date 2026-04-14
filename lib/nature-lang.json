@@ -60,7 +60,7 @@
       "patterns": [
         {
           "name": "keyword.declaration.nature",
-          "match": "\\b(var|type|fn|import|new)\\b"
+          "match": "\\b(var|type|fn|import|new|const|test)\\b"
         },
         {
           "name": "keyword.control.nature",
@@ -92,8 +92,7 @@
         },
         {
           "name": "storage.type.composite.nature",
-          "match": "\\b(struct|chan|arr|vec|map|set|tup|ptr|rawptr|enum|union)\\b"
-        }
+          "match": "\\b(struct|chan|arr|vec|map|set|tup|ptr|ref|enum|union|interface)\\b"        }
       ]
     },
     "functions": {

@@ -10,11 +10,11 @@ const CODE_EXAMPLES = {
 fn main() {
     var app = new()
 
-    app.use(fn(ptr<ctx_t> c):void! {
+    app.use(fn(ref<ctx_t> c):void! {
         c.next()
     })
 
-    app.get('/hello/:msg', fn(ptr<ctx_t> c):void! {
+    app.get('/hello/:msg', fn(ref<ctx_t> c):void! {
         return c.json(200, {'message': 'ok', 'data': 'hello ' + c.param('msg')})
     })
 

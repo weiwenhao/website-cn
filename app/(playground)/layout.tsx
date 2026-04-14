@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "@/globals.css";
 import { Header } from "@/components/features/header";
+import { SiteFooter } from "@/components/features/site-footer";
 
 const font = Outfit({
   weight: "400",
@@ -29,6 +30,8 @@ export default function RootLayout({
         <main className="flex-1">
           {children}
         </main>
+
+        <SiteFooter />
       </body>
     </html>
   );
