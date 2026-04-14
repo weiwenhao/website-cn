@@ -91,7 +91,6 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-8 border-t pt-4 text-center text-sm text-muted-foreground">
-          <span>备案号：</span>
           <a
             href="https://beian.miit.gov.cn/"
             target="_blank"
