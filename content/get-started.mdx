@@ -20,24 +20,24 @@
   
 
 ## 概况
-nature 编程语言已经达到早期可用版本，语法 API 基本稳定，在 1.0 版本之前不会有大幅的变化，后续版本会添加一些必要的语法，如 enum，三元运算符，struct label 等。
+nax 编程语言已经达到早期可用版本，语法 API 基本稳定，在 1.0 版本之前不会有大幅的变化，后续版本会添加一些必要的语法，如 enum，三元运算符，struct label 等。
 
 待完成的关键特性有可控内存分配器，LLM 编码适配，DSL 测试框架，GUI 适配，WASM3.0 适配。
 
 当前版本编译目标架构包含 linux_amd64、linux_arm64、linux_riscv64、darwin_amd64、darwin_arm64。
 
-nature 包含一组测试用例和标准库用来测试基本功能和语法的可用性，包含一组中小型项目测试整体可用性，还未经过大型的项目测试。
+nax 包含一组测试用例和标准库用来测试基本功能和语法的可用性，包含一组中小型项目测试整体可用性，还未经过大型的项目测试。
 
 
 ## 安装
 
-1️⃣ 在 [https://github.com/nature-lang/nature/releases](https://github.com/nature-lang/nature/releases) 下载适用于您系统的二进制压缩包并解压。
+1️⃣ 在 [https://github.com/naxlang/nax/releases](https://github.com/naxlang/nax/releases) 下载适用于您系统的二进制压缩包并解压。
 
 
-2️⃣ 将 nature 文件夹移动到 `/usr/local` 目录下。如果需要将 nature 安装在其他目录，请手动设置 NATURE_ROOT 环境变量指向 nature 所在目录
+2️⃣ 将 nax 文件夹移动到 `/usr/local` 目录下。如果需要将 nax 安装在其他目录，请手动设置 NAX_ROOT 环境变量指向 nax 所在目录
 
 ```sh
-/usr/local/nature/
+/usr/local/nax/
 ├── LICENSE-APACHE
 ├── LICENSE-MIT
 ├── VERSION
@@ -47,29 +47,29 @@ nature 包含一组测试用例和标准库用来测试基本功能和语法的�
 ```
 
 
-3️⃣ 将 `/usr/local/nature/bin` 目录加入到系统环境变量中，例如 `cat ~/.zshrc`
+3️⃣ 将 `/usr/local/nax/bin` 目录加入到系统环境变量中，例如 `cat ~/.zshrc`
 
 ```sh
 ...
-export PATH="/usr/local/nature/bin:$PATH"
+export PATH="/usr/local/nax/bin:$PATH"
 ...
 ```
 
-4️⃣ 运行命令 `nature --version` 查看当前版本
+4️⃣ 运行命令 `nax --version` 查看当前版本
 
 ```sh
-> nature --version
-nature vx.x.x - release build 1970-01-01
+> nax --version
+nax vx.x.x - release build 1970-01-01
 ```
 
-5️⃣ 运行命令 `nature -h` 查看帮助
+5️⃣ 运行命令 `nax -h` 查看帮助
 
 ```sh
-> nature -h
-Nature Programming Language Compiler vx.x.x
+> nax -h
+Nax Programming Language Compiler vx.x.x
 
 Usage:
-  nature [command] [flags] [arguments]
+  nax [command] [flags] [arguments]
 ...
 ```
 
@@ -77,31 +77,31 @@ Usage:
 
 创建 main.n 文件
 
-```nature  
+```nax  
 import fmt  
   
 fn main() {  
-    fmt.printf('hello nature')
+    fmt.printf('hello nax')
 }  
 ```
 
 编译并运行编二进制文件 main
 
 ```sh
-> nature build main.n && ./main
-hello nature
+> nax build main.n && ./main
+hello nax
 ```
 
 指定编译目标平台与架构 
 
 ```sh
-> nature build --target darwin_amd64 main.n
+> nax build --target darwin_amd64 main.n
 ```
 
 指定输出二进制文件名称为 hello
 
 ```sh
-> nature build -o hello main.n
+> nax build -o hello main.n
 ```
 
 
@@ -119,28 +119,28 @@ Llama2 推理模型实现 https://github.com/weiwenhao/llama.n
 
 基于 raylib 实现的俄罗斯方块 https://github.com/weiwenhao/tetris
 
-更多语法示例 https://github.com/nature-lang/nature/tree/master/tests/features/cases
+更多语法示例 https://github.com/naxlang/nax/tree/master/tests/features/cases
 
 ## 编辑器支持
 
-lsp server `nls` 已经和 nature 安装包一起安装在 /usr/local/nature/bin 目录中，
+lsp server `nls` 已经和 nax 安装包一起安装在 /usr/local/nax/bin 目录中，
 
 ``` sh
-ls -lh /usr/local/nature/bin
+ls -lh /usr/local/nax/bin
 total 44696
--rwxr-xr-x@ 1 root  wheel   764K Feb 24 13:18 nature
+-rwxr-xr-x@ 1 root  wheel   764K Feb 24 13:18 nax
 -rwxr-xr-x@ 1 root  wheel   6.1M Feb 24 13:20 nls
 -rwxr-xr-x@ 1 root  wheel    15M Feb 24 13:20 npkg
 ```
 
-在 vscode 扩展商店搜索 nature language 下载 lsp 客户端后即可使用
+在 vscode 扩展商店搜索 nax language 下载 lsp 客户端后即可使用
 
 ##  深入学习
 
-语法文档 [https://nature-lang.org/docs/syntax](https://nature-lang.org/docs/syntax)
+语法文档 [https://naxlang.org/docs/syntax](https://naxlang.org/docs/syntax)
 
-标准库文档 [https://nature-lang.org/stds](https://nature-lang.org/stds/co)
+标准库文档 [https://naxlang.org/stds](https://naxlang.org/stds/co)
 
-在线试用 https://nature-lang.org/playground
+在线试用 https://naxlang.org/playground
 
-贡献指南 https://nature-lang.org/docs/contribute
+贡献指南 https://naxlang.org/docs/contribute

@@ -1,15 +1,15 @@
 ---
-title: "Nature 编程语言集成 WebView"
+title: "Nax 编程语言集成 WebView"
 date: 2026-01-21
 ---
 
-一位开发者尝试在 nature 编程语言中集成 WebView（项目地址：[https://github.com/wzzc-dev/nature-webview](https://github.com/wzzc-dev/nature-webview)），采用类似 Rust Tauri 的集成方式，最终打包完成后可以得到体积小巧、轻量化的可执行桌面程序。
+一位开发者尝试在 nax 编程语言中集成 WebView（项目地址：[https://github.com/wzzc-dev/nature-webview](https://github.com/wzzc-dev/nature-webview)），采用类似 Rust Tauri 的集成方式，最终打包完成后可以得到体积小巧、轻量化的可执行桌面程序。
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20260122170329099.png)
 
-这个简单的桌面程序就是由 nature + webview 打包而来，在 macos arm64 上只有 680KB 的大小，下面是一个更加简单的 hello world 代码示例
+这个简单的桌面程序就是由 nax + webview 打包而来，在 macos arm64 上只有 680KB 的大小，下面是一个更加简单的 hello world 代码示例
 
-```nature
+```nax
 import webview as w
 import webview.{webview_t}
 import libc.{cstr, to_cfn}
@@ -41,7 +41,7 @@ fn main() {
       <html>
           <body>
               <script>setInterval(() => {window.interval_callback();}, 10);</script>
-              <h1>Hello, Nature!</h1>
+              <h1>Hello, Nax!</h1>
           </body>
       </html>`
 
@@ -53,12 +53,12 @@ fn main() {
 
 ```
 
-nature 是一款基于全局协程模型的编程语言，它与 WebView 的兼容性并不理想。起初该方案完全无法运行，nature-webview 的作者与我进行了沟通，
-我认为这是一项非常有意义的工作，是 nature 核心 GUI 特性的重要环节，因此我着手排查并解决导致运行失败的问题，经过一个周末努力，主要问题都被解决，我迫不及待的将其分享出来!
+nax 是一款基于全局协程模型的编程语言，它与 WebView 的兼容性并不理想。起初该方案完全无法运行，nature-webview 的作者与我进行了沟通，
+我认为这是一项非常有意义的工作，是 nax 核心 GUI 特性的重要环节，因此我着手排查并解决导致运行失败的问题，经过一个周末努力，主要问题都被解决，我迫不及待的将其分享出来!
 
 ## WebView 必须运行在 t0 系统栈 + 系统线程中
 
-在 macOS 系统上，编译完成后程序虽能正常启动，但通过 JS 回调 nature 时却发生了崩溃，且这个崩溃的调用栈非常深，难以追溯。即便通过 Debug 方式构建 WebView，依旧无法获取完整的调用栈。
+在 macOS 系统上，编译完成后程序虽能正常启动，但通过 JS 回调 nax 时却发生了崩溃，且这个崩溃的调用栈非常深，难以追溯。即便通过 Debug 方式构建 WebView，依旧无法获取完整的调用栈。
 
 最终发现这是因为 **WebView 动态依赖 WebKit 库，而 WebKit 库无法追踪调用栈**。经过多次尝试后偶然发现了 macos 的崩溃报告，我发现其中包含了完整的堆栈追踪日志！原来我一直忽略了如此重要的信息。 
 
@@ -79,9 +79,9 @@ Thread 0 Crashed::  Dispatch queue: com.apple.main-thread
 
 根据日志可以判断这是一个通过类似 assert 抛出来的断点类型的异常，并且发生在内存分配中，说明这极有可能和运行环境相关。
 
-于是我尝试使用 C + WebView 进行对比测试并复现问题，nature 是运行在协程和协程栈中，所以通过 c 库的 mcontext + mmap stack 模拟 nature 的运行模式，果然重现了错误。到这里已经大概猜测是 WebKit 会进行运行时栈检测，并且是通过  pthread_get_stackaddr_np 的方式直接读取线程默认栈。
+于是我尝试使用 C + WebView 进行对比测试并复现问题，nax 是运行在协程和协程栈中，所以通过 c 库的 mcontext + mmap stack 模拟 nax 的运行模式，果然重现了错误。到这里已经大概猜测是 WebKit 会进行运行时栈检测，并且是通过  pthread_get_stackaddr_np 的方式直接读取线程默认栈。
 
-这是一个棘手的问题，如果需要兼容 WebView 需要对 nature 的基础架构进行一定改动。到目前为止都还只是猜测，为了证实测测我去下载了一个多 G 的 WebKit 代码定位堆栈追踪中的函数。最终定位到了下面的关键逻辑
+这是一个棘手的问题，如果需要兼容 WebView 需要对 nax 的基础架构进行一定改动。到目前为止都还只是猜测，为了证实测测我去下载了一个多 G 的 WebKit 代码定位堆栈追踪中的函数。最终定位到了下面的关键逻辑
 
 ```c++
 ALWAYS_INLINE void* LocalAllocator::allocate(JSC::Heap& heap, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
@@ -100,30 +100,30 @@ ALWAYS_INLINE void* LocalAllocator::allocate(JSC::Heap& heap, size_t cellSize, G
 
 这个函数的结构和堆栈追踪中显示的一致，虽然有版本变动带来的影响，但是大概率就是该函数导致了崩溃，进一步追踪发现其中的 sanitizeStackForVM 函数果然使用了 pthread_get_stackaddr_np 来获取栈信息并进行 assert 判断。
 
-问题到这里基本已经确定，可以尝试解决该问题。过去我知道 UI 必须在系统默认线程上渲染，但是没想到有些 UI 库对栈的要求也如此严格。**由于 nature 的协程运行在共享栈中，所以解决起来也比较简单，直接拿系统栈作为共享栈使用即可，不过系统栈还需要驱动 procesor 运行，所以我暂时拿其中一半系统栈来作为协程的共享栈。**
+问题到这里基本已经确定，可以尝试解决该问题。过去我知道 UI 必须在系统默认线程上渲染，但是没想到有些 UI 库对栈的要求也如此严格。**由于 nax 的协程运行在共享栈中，所以解决起来也比较简单，直接拿系统栈作为共享栈使用即可，不过系统栈还需要驱动 procesor 运行，所以我暂时拿其中一半系统栈来作为协程的共享栈。**
 
 当然这是一个临时解决方案，在较新的 macos 26.2 系统中并不会发生类似的崩溃，以后也许可以继续使用 mmap 进行栈分配。
 
 ## WebView 必须使用 glibc
 
-由于 macos 系统发行版本单一，并且强制要求使用动态库链接，所以 nature 在 macos 上没有遇到编译问题，但是在 linux 上则出现了该问题。
+由于 macos 系统发行版本单一，并且强制要求使用动态库链接，所以 nax 在 macos 上没有遇到编译问题，但是在 linux 上则出现了该问题。
 
-nature 在 linux 系统上基于 musl 进行纯静态编译，libruntime.a + libuv.a + libc.a 是 nature 依赖的核心，这三件套都是 musl libc 纯静态编译的，所以跨平台性很好，一次编译到处运行。
+nax 在 linux 系统上基于 musl 进行纯静态编译，libruntime.a + libuv.a + libc.a 是 nax 依赖的核心，这三件套都是 musl libc 纯静态编译的，所以跨平台性很好，一次编译到处运行。
 
-但 **WebView 在 linux 上依赖的 webkit 和 gtk 必须基于 glibc 动态编译**，这和 nature 现在的编译理念产生了严重的冲突。动态编译的 webkit 和 gtk 在不同的 linux 发行版本上也有着兼容问题。难道这无法解决么？还真不行，Rust 的 tarui 在 linux 系统上也同样有着这样的兼容困扰。
+但 **WebView 在 linux 上依赖的 webkit 和 gtk 必须基于 glibc 动态编译**，这和 nax 现在的编译理念产生了严重的冲突。动态编译的 webkit 和 gtk 在不同的 linux 发行版本上也有着兼容问题。难道这无法解决么？还真不行，Rust 的 tarui 在 linux 系统上也同样有着这样的兼容困扰。
 
-既然现在 webkit 和 gtk 直接打破了静态编译的幻想，必须动态编译，必须依赖 glibc，牺牲一定的跨平台性，那 nature 索性直接放弃静态编译和交叉编译的思路，直接使用 glibc 进行动态编译好了。
+既然现在 webkit 和 gtk 直接打破了静态编译的幻想，必须动态编译，必须依赖 glibc，牺牲一定的跨平台性，那 nax 索性直接放弃静态编译和交叉编译的思路，直接使用 glibc 进行动态编译好了。
 
-使用系统自带的链接器 ld 将 nature 依赖的静态库代码和 webkit 相关库进行动静态库混合链接后，终于在 ubuntu 22.04 desktop 上运行成功。
+使用系统自带的链接器 ld 将 nax 依赖的静态库代码和 webkit 相关库进行动静态库混合链接后，终于在 ubuntu 22.04 desktop 上运行成功。
 
->nature 手写的链接器只实现了静态编译部分，所以动态编译时需要通过 --ld /usr/local/ld 指定系统链接器。
+>nax 手写的链接器只实现了静态编译部分，所以动态编译时需要通过 --ld /usr/local/ld 指定系统链接器。
 
-为了更好的兼容性 nature build 的 --ldflags 参数还需要进行调整，在识别到传递 -lc 参数后，会自动去掉 libc.a 的依赖。有一个比较神奇的地方在于 musl libc 工具链编译的 libruntime.a 和 libuv.a 能够和 glibc 库直接混合链接使用。
+为了更好的兼容性 nax build 的 --ldflags 参数还需要进行调整，在识别到传递 -lc 参数后，会自动去掉 libc.a 的依赖。有一个比较神奇的地方在于 musl libc 工具链编译的 libruntime.a 和 libuv.a 能够和 glibc 库直接混合链接使用。
 
-最终得到的令人眼花缭乱的编译参数 😄，nature 并不依赖于 gcc 工具链，所以需要在 ldflags 中处理 crtendS 这样的初始化文件。
+最终得到的令人眼花缭乱的编译参数 😄，nax 并不依赖于 gcc 工具链，所以需要在 ldflags 中处理 crtendS 这样的初始化文件。
 
 ```
-nature build --ld '/usr/bin/ld' --ldflags "/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o --dynamic-linker=/lib64/ld-linux-x86-64.so.2 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11 --whole-archive /usr/local/lib/libwebview.a --no-whole-archive -lwebkit2gtk-4.1 -lgtk-3 -lgdk-3 -lz -lpangocairo-1.0 -lcairo-gobject -lgdk_pixbuf-2.0 -latk-1.0 -lpango-1.0 -lcairo -lharfbuzz -lsoup-3.0 -lgio-2.0 -lgmodule-2.0 -ljavascriptcoregtk-4.1 -lgobject-2.0 -lglib-2.0 -lstdc++ -lgcc_s -lpthread -lc" test.n --verbose
+nax build --ld '/usr/bin/ld' --ldflags "/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o --dynamic-linker=/lib64/ld-linux-x86-64.so.2 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11 --whole-archive /usr/local/lib/libwebview.a --no-whole-archive -lwebkit2gtk-4.1 -lgtk-3 -lgdk-3 -lz -lpangocairo-1.0 -lcairo-gobject -lgdk_pixbuf-2.0 -latk-1.0 -lpango-1.0 -lcairo -lharfbuzz -lsoup-3.0 -lgio-2.0 -lgmodule-2.0 -ljavascriptcoregtk-4.1 -lgobject-2.0 -lglib-2.0 -lstdc++ -lgcc_s -lpthread -lc" test.n --verbose
 ```
 
 
@@ -135,30 +135,30 @@ nature build --ld '/usr/bin/ld' --ldflags "/usr/lib/gcc/x86_64-linux-gnu/11/crtb
 w.run(window) // blocking coroutine!
 ```
 
-经过上面的适配，webview 成功在协程中运行，如果你足够了解协程的运行原理，你就会知道这一行阻塞操作会占用核心线程都控制权，这导致在该核心线程上的协程调度器和其他协程永远都不会运行。但这还不够致命，nature 可以轻易的通过创建新的线程来解决这个问题。**真正的问题是阻塞系统调用会导致该线程无法进入 STW 状态，从而阻塞整个 GC，这才是真正无解且致命的问题。**
+经过上面的适配，webview 成功在协程中运行，如果你足够了解协程的运行原理，你就会知道这一行阻塞操作会占用核心线程都控制权，这导致在该核心线程上的协程调度器和其他协程永远都不会运行。但这还不够致命，nax 可以轻易的通过创建新的线程来解决这个问题。**真正的问题是阻塞系统调用会导致该线程无法进入 STW 状态，从而阻塞整个 GC，这才是真正无解且致命的问题。**
 
-nature 采用了协作式的调度方案，意味着更多的控制权交在了开发者手上，为了更友好的 GUI 体验，也许应该尝试一些不同的方案。于是最终使用了一个比较 hack 的方式解决了该问题。
+nax 采用了协作式的调度方案，意味着更多的控制权交在了开发者手上，为了更友好的 GUI 体验，也许应该尝试一些不同的方案。于是最终使用了一个比较 hack 的方式解决了该问题。
 
-```nature
+```nax
 w.bind(window, "interval_callback".to_cstr(), to_cfn(co.yield as anyptr), 0)
 
 var html = `
   <html>
 	  <body>
 		  <script>setInterval(() => {window.interval_callback();}, 10);</script>
-		  <h1>Hello, Nature!</h1>
+		  <h1>Hello, Nax!</h1>
 	  </body>
   </html>`
 ```
 
-**我们在 js 代码中创建了一个定时器，每 10ms 调用一次 nature 函数绑定，该函数绑定会 yield 当前协程将控制权交还给协程调度器。** 通过这种方式不需要调整任何的 nature 编译器让整个协程调度器能够正常运转，代价大概就是需要 10ms 的延迟，而不是按需调度罢了。但是至少不会产生 GC 问题。
+**我们在 js 代码中创建了一个定时器，每 10ms 调用一次 nax 函数绑定，该函数绑定会 yield 当前协程将控制权交还给协程调度器。** 通过这种方式不需要调整任何的 nax 编译器让整个协程调度器能够正常运转，代价大概就是需要 10ms 的延迟，而不是按需调度罢了。但是至少不会产生 GC 问题。
 
 
-## C/C++ 回调 nature fn
+## C/C++ 回调 nax fn
 
-C/C++ 是不安全非托管的函数能够回调 nature 函数吗？原则上不行，比如 golang 不允许，因为 golang 的 C 代码和 go 代码运行在了不同的栈中，所以无法直接调用。
+C/C++ 是不安全非托管的函数能够回调 nax 函数吗？原则上不行，比如 golang 不允许，因为 golang 的 C 代码和 go 代码运行在了不同的栈中，所以无法直接调用。
 
-而 **nature 和 C 代码在同一个共享栈中运行**，所以回调能够正常触发。但在当前的设计中，nature 没有考虑过作为回调被 C 代码调用，所以 GC 不能正确的识别该混合调用模式。但这还算好解决，我们可以通过追溯栈帧获取整个栈上的函数调用链条并进行 GC root mark, C 在大多数情况下同样遵循该栈帧规则。
+而 **nax 和 C 代码在同一个共享栈中运行**，所以回调能够正常触发。但在当前的设计中，nax 没有考虑过作为回调被 C 代码调用，所以 GC 不能正确的识别该混合调用模式。但这还算好解决，我们可以通过追溯栈帧获取整个栈上的函数调用链条并进行 GC root mark, C 在大多数情况下同样遵循该栈帧规则。
 
 另外一个问题是闭包问题
 
@@ -182,19 +182,19 @@ fn main() {
 
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20260121020009894.png)
-所以如果直接将 nature 中的 global fn 通过参数进行传递时，该参数是一个 16byte 的奇怪数据，C 并不知道 fn 的地址是什么，所以还需要从闭包中提取 fn 地址传递给 C。这里的 libc.to_cfn 做了一个简单的工作，就是直接抛弃 env ptr(全局函数的 env ptr 总是为 null)并从中提取 fn ptr 传递给 C 函数。
+所以如果直接将 nax 中的 global fn 通过参数进行传递时，该参数是一个 16byte 的奇怪数据，C 并不知道 fn 的地址是什么，所以还需要从闭包中提取 fn 地址传递给 C。这里的 libc.to_cfn 做了一个简单的工作，就是直接抛弃 env ptr(全局函数的 env ptr 总是为 null)并从中提取 fn ptr 传递给 C 函数。
 
-```nature
+```nax
 w.bind(window, "interval_callback".to_cstr(), libc.to_cfn(interval_callback as anyptr), 0)
 ```
 
 
 ## 总结
 
-到这里已知的问题都得到了解决，虽然方案上比较妥协，但是最终还是让 nature 编程语言成功集成了 WebView，并且能够达到和 C + webview 一样的原生性能体验，同时也能够享受 GC 编程语言带来的安全性和协程的便利性。而 WebView 是一个典型的 C/C++ UI 库的示例，可以采用同样的方式集成类似 sokol/ImGui 等 UI 库。
+到这里已知的问题都得到了解决，虽然方案上比较妥协，但是最终还是让 nax 编程语言成功集成了 WebView，并且能够达到和 C + webview 一样的原生性能体验，同时也能够享受 GC 编程语言带来的安全性和协程的便利性。而 WebView 是一个典型的 C/C++ UI 库的示例，可以采用同样的方式集成类似 sokol/ImGui 等 UI 库。
 
-https://nature-lang.cn/news/20260115 就如上一篇文章最后提到的，可控内存分配器和 unsafe 裸函数支持是原本的 GUI 支持策略基础，但是未料到共享栈模式的协程和 C/C++ 的兼容性如此优秀，直接就完成了适配。不过这种妥协不会是最终的解决方案，unsafe 裸函数和可控内存分配模式的工作会继续推动。到时候 nautre 的 main 函数可以选择独立于协程调度系统采取单独的线程和栈运行，让 nature 更加适应原生的 GUI 开发。
+https://nature-lang.cn/news/20260115 就如上一篇文章最后提到的，可控内存分配器和 unsafe 裸函数支持是原本的 GUI 支持策略基础，但是未料到共享栈模式的协程和 C/C++ 的兼容性如此优秀，直接就完成了适配。不过这种妥协不会是最终的解决方案，unsafe 裸函数和可控内存分配模式的工作会继续推动。到时候 nautre 的 main 函数可以选择独立于协程调度系统采取单独的线程和栈运行，让 nax 更加适应原生的 GUI 开发。
 
-当然图形化操作系统 windows 同样是 GUI 支持重要一个环节，我将会进行看进行支持，由于调整了 nature 的源码，所以需要等到 0.7.3 版本发布时才能体验 nature-webview，在这期间我会使用 nature 结合 webview 开发一个小项目进一步测试可用性。
+当然图形化操作系统 windows 同样是 GUI 支持重要一个环节，我将会进行看进行支持，由于调整了 nax 的源码，所以需要等到 0.7.3 版本发布时才能体验 nature-webview，在这期间我会使用 nax 结合 webview 开发一个小项目进一步测试可用性。
 
-如果你计划使用 nature 进行开源项目开发或者集成现有的组件，可以通过 github issue 或者微信联系我，我会为你提供技术指导以及快速 bug 修复。
+如果你计划使用 nax 进行开源项目开发或者集成现有的组件，可以通过 github issue 或者微信联系我，我会为你提供技术指导以及快速 bug 修复。

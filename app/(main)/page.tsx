@@ -13,8 +13,8 @@ export default function Home() {
             {/* 左侧内容 */}
             <div className="flex flex-col gap-8">
               <div className="space-y-6">
-                <h1 className="text-5xl font-bold text-nature-red">
-                  Nature ...
+                <h1 className="text-5xl font-bold text-nax-red">
+                  Nax ...
                 </h1>
 
                 <p className="text-2xl leading-relaxed text-gray-800 dark:text-gray-200">
@@ -28,7 +28,7 @@ export default function Home() {
               <div className="flex items-center gap-6">
                 <Button
                   size="lg"
-                  className="bg-nature-red hover:bg-nature-red/80 text-white px-8 py-6 text-lg rounded-md shadow-lg flex items-center gap-2"
+                  className="bg-nax-red hover:bg-nax-red/80 text-white px-8 py-6 text-lg rounded-md shadow-lg flex items-center gap-2"
                   asChild
                 >
                   <Link href="/docs/get-started" rel="noopener noreferrer">
@@ -38,7 +38,7 @@ export default function Home() {
                 <span className="text-gray-600 dark:text-gray-400">or</span>
                 <Link
                   href="/playground"
-                  className="text-nature-red hover:text-nature-red/90 text-lg font-medium hover:underline"
+                  className="text-nax-red hover:text-nax-red/90 text-lg font-medium hover:underline"
                 >
                   在浏览器中尝试
                 </Link>
@@ -55,7 +55,7 @@ export default function Home() {
         {/* 主要特性 */}
         <div className="w-full bg-gray-50 dark:bg-gray-900">
           <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">为什么选择 Nature?</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">为什么选择 Nax?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
                 <h3 className="text-xl font-semibold mb-4">轻量&简洁&自然</h3>
@@ -81,7 +81,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Globe className="w-6 h-6 text-nature-red" />
+                  <Globe className="w-6 h-6 text-nax-red" />
                   <h3 className="text-lg font-semibold">服务端应用</h3>
                 </div>
                 <p className="text-gray-600 dark:text-gray-300">API、命令行、MCP 服务、网络中间件</p>
@@ -89,7 +89,7 @@ export default function Home() {
 
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Cog className="w-6 h-6 text-nature-red" />
+                  <Cog className="w-6 h-6 text-nax-red" />
                   <h3 className="text-lg font-semibold">系统编程</h3>
                 </div>
                 <p className="text-gray-600 dark:text-gray-300">操作系统、物联网、容器系统</p>
@@ -97,7 +97,7 @@ export default function Home() {
 
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Gamepad2 className="w-6 h-6 text-nature-red" />
+                  <Gamepad2 className="w-6 h-6 text-nax-red" />
                   <h3 className="text-lg font-semibold">游戏开发</h3>
                 </div>
                 <p className="text-gray-600 dark:text-gray-300">游戏引擎和游戏开发</p>
@@ -105,7 +105,7 @@ export default function Home() {
 
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Infinity className="w-6 h-6 text-nature-red" />
+                  <Infinity className="w-6 h-6 text-nax-red" />
                   <h3 className="text-lg font-semibold">探索可能性</h3>
                 </div>
                 <p className="text-gray-600 dark:text-gray-300">数据库、编程教学、GUI、计算机科学 ...</p>

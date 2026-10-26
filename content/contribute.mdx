@@ -1,8 +1,8 @@
-# 贡献指南 —— 如何实现 nature 编程语言
+# 贡献指南 —— 如何实现 nax 编程语言
 
 ## 源码编译
 
-nature 编译器使用纯 C 语言编写，基于 C11 规范，GCC 版本大 11。linux runtime 基于 musl libc 静态库编译。使用 cmake 作为构建工具, cmake 版本大于 3.22
+nax 编译器使用纯 C 语言编写，基于 C11 规范，GCC 版本大 11。linux runtime 基于 musl libc 静态库编译。使用 cmake 作为构建工具, cmake 版本大于 3.22
 
 当前版本发布使用的编译环境
 
@@ -29,7 +29,7 @@ rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Rel
 rm -rf build-runtime && cmake -B build-runtime -S runtime -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/linux-riscv64-toolchain.cmake && cmake --build build-runtime --target runtime
 ```
 
-编译 runtime 会生成 libruntime.a 自动放入到 lib 目录的对应架构中，如 `nature/lib/linux_arm64/libruntime.a`
+编译 runtime 会生成 libruntime.a 自动放入到 lib 目录的对应架构中，如 `nax/lib/linux_arm64/libruntime.a`
 
 ### 编译源码
 
@@ -46,7 +46,7 @@ cmake --build build-release
 # 测试
 cmake --build build-release --target test
 
-# 安装, 默认使用 /usr/loca/nature 作为安装目录，可能需要增加 sudo 权限
+# 安装, 默认使用 /usr/loca/nax 作为安装目录，可能需要增加 sudo 权限
 cmake --build build-release --target install
 
 # 打包，生成的压缩包在 release 目录
@@ -98,14 +98,14 @@ tests/features 中有三种类型的源码测试方式，自行参考 tests 目�
 
 ## Git 分支管理
 
-nature 相关仓库都采用 [Github Flow](https://docs.github.com/en/get-started/using-github/github-flow) 作为工作流程。
+nax 相关仓库都采用 [Github Flow](https://docs.github.com/en/get-started/using-github/github-flow) 作为工作流程。
 
 既 master 分支总是保持最新的经过测试的代码，相关的 feature/bug fixed 都基于 master checkout， 开发完成后 PR 到 master 并删除功能分支。
 
 
 ## 如何贡献代码?
 
-nature 编程语言使用 github 作为主代码仓库，目前没有委员会等机构。 开发决定、PR 合并、Review、Release 由项目发起人 [weiwenhao](https://github.com/weiwenhao) 负责。
+nax 编程语言使用 github 作为主代码仓库，目前没有委员会等机构。 开发决定、PR 合并、Review、Release 由项目发起人 [weiwenhao](https://github.com/weiwenhao) 负责。
 
 Feature/Refactor/Std Library/复杂 Bug Fixed 类型的代码贡献需要先在 Github Issue 或者邮件中提出想法并进行讨论，讨论通过后，再进行开发提交 PR。简单的 Bug Fixed 可以直接提交 PR。
 
@@ -114,7 +114,7 @@ Feature/Std Library/Bug Fixed 开发完成后需要添加测试用例进行测�
 
 ## DeepWiki
 
-https://deepwiki.com/nature-lang/nature 参考 deepwiki 和后续的章节以了解 nature 的源码结构和运行流程
+https://deepwiki.com/naxlang/nax 参考 deepwiki 和后续的章节以了解 nax 的源码结构和运行流程
 
 ## 目录结构
 
@@ -161,7 +161,7 @@ https://deepwiki.com/nature-lang/nature 参考 deepwiki 和后续的章节以了
 │   ├── error.h          # 错误处理定义
 │   ├── linear.h         # AST to LIR 编译逻辑
 │   ├── lir.h            # 低级 IR 定义
-│   ├── module.h         # nature 按模块进行编译, 这是模块相关类型定义
+│   ├── module.h         # nax 按模块进行编译, 这是模块相关类型定义
 │   ├── package.h        # 包管理定义
 │   ├── ssa.h            # SSA 形式定义
 │   └── types.h          # 基础类型定义
@@ -190,13 +190,13 @@ https://deepwiki.com/nature-lang/nature 参考 deepwiki 和后续的章节以了
     ├── string_view.h     # 字符串视图
     ├── table.h           # hash 表(废弃，请使用 sc_map 替代)
     ├── toml.h            # TOML 配置解析
-    ├── type.h            # runtime/compiler 共同依赖的 nature 类型定义和反射类型实现
+    ├── type.h            # runtime/compiler 共同依赖的 nax 类型定义和反射类型实现
     └── ymal              # YAML 解析相关
 ```
 
 ## 编译流程
 
-nature 的 [lsp](https://github.com/nature-lang/nls) 使用 rust 编程语言实现，其有和 nature compiler 一样的前端逻辑实现，如果你更熟悉 rust 可以直接参考 nature lsp 源码。
+nax 的 [lsp](https://github.com/naxlang/nls) 使用 rust 编程语言实现，其有和 nax compiler 一样的前端逻辑实现，如果你更熟悉 rust 可以直接参考 nax lsp 源码。
 
 ### 编译器前端
 
@@ -247,7 +247,7 @@ src/syntax/parser.c
 
 表达式解析采用运算符 Precedence Climbing 算法，通过 parser_expr() 和 parser_precedence_expr() 实现，parser_expr 包含了几个特殊的 expr, 如 go/match/fndef/struct_new
 
-使用 PARSER_ASSERTF 进行错误检查和报错，目前编译器还没有实现错误恢复机制，[lsp](https://github.com/nature-lang/nls) 已经实现了相关的错误恢复机制，能够继续向后解析。
+使用 PARSER_ASSERTF 进行错误检查和报错，目前编译器还没有实现错误恢复机制，[lsp](https://github.com/naxlang/nls) 已经实现了相关的错误恢复机制，能够继续向后解析。
 
 有歧义的符号会进行 lookhead 解析确定语意。
 
@@ -303,7 +303,7 @@ src/linear.c
 闭包编译使用了基于 JIT 的方式，简化了编译流程，且调用者（Caller）不需要关心闭包的引用环境。如下图
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20250227134520874.png)
 
-Nature 要求变量在初始化时必须赋值，但在结构体初始化上有所宽松，会为大部分类型赋默认值：
+Nax 要求变量在初始化时必须赋值，但在结构体初始化上有所宽松，会为大部分类型赋默认值：
 - int 的默认值是 0
 - string 的默认值是空字符串 ''
 - vec/map/set 的默认值是对应的空容器
@@ -360,11 +360,11 @@ SSA 形式的主要特点是每个变量只被赋值一次，这样可以
 2. 便于进行后续的代码优化
 3. 使得变量的定义和使用关系更加清晰
 
-目前 nature 编译器还没有开始进行基于 SSA 形式的优化。 
+目前 nax 编译器还没有开始进行基于 SSA 形式的优化。 
 
 SSA 示例 1:
 
-```nature
+```nax
 int foo = 1
 foo = foo + 2
 if (true) {
@@ -380,7 +380,7 @@ println(foo)
 
 SSA 示例 2:
 
-```nature
+```nax
 int foo = 0
 for (int i = 0; i <= 100; i+=1) {
  if ((i % 2) == 0) {
@@ -407,7 +407,7 @@ lower 主要负责将 LIR 转换为 AMD64/ARM64 架构特定的指令形式，�
 
 数组参数传递的特殊处理:
 
-C 语言中的数组作为函数参数时，会自动退化为指针，实际上传递的是数组的首地址。而在 nature 编程语言中，希望数组参数采用值传递的方式（即复制整个数组的内容）。为了实现这一点，在处理函数调用参数时（Lower Call Args）
+C 语言中的数组作为函数参数时，会自动退化为指针，实际上传递的是数组的首地址。而在 nax 编程语言中，希望数组参数采用值传递的方式（即复制整个数组的内容）。为了实现这一点，在处理函数调用参数时（Lower Call Args）
 
 1. 在栈上分配一块与原数组大小相同的空间
 2. 将原数组的内容完整复制到这块栈空间中
@@ -421,7 +421,7 @@ src/register
 
 寄存器分配是将程序中的变量映射到物理寄存器的过程，由于寄存器数量有限但访问速度快，合理的寄存器分配对程序性能影响很大。
 
-Nature 编译器采用线性扫描算法基于 SSA 形式的 LIR 进行寄存器分配。主要参考了两篇论文
+Nax 编译器采用线性扫描算法基于 SSA 形式的 LIR 进行寄存器分配。主要参考了两篇论文
 
 1. Linear Scan Register Allocation for the Java HotSpot Client Compiler. —— Wimmer, C.
 2. Linear Scan Register Allocation on SSA Form，ssa —— Christian Wimmer Michael Franz 
@@ -486,7 +486,7 @@ encodings 主要负责将汇编指令编码为机器码，并处理符号重定�
 ## Linker
 src/binary/elf/linker.c#elf_exe_file_format —— elf 链接器实现
 
-链接器将负责多个 object/archive 文件合并成一个可执行文件。nature 的链接器是一个简单实现，主要实现了静态链接功能，工作流程
+链接器将负责多个 object/archive 文件合并成一个可执行文件。nax 的链接器是一个简单实现，主要实现了静态链接功能，工作流程
 
 - elf_resolve_common_symbols : 处理 COMMON 符号，将其分配到 .bss 段
 - elf_build_got_entries : 构建 GOT/PLT 表项，处理动态链接相关的重定位
@@ -504,7 +504,7 @@ src/binary/elf/linker.c#elf_exe_file_format —— elf 链接器实现
 
 runtime/processor.c#sched_init
 
-nature 的 sched 是一个类似 golang GMP 调度模型的简单实现，是围绕着 Processor + Coroutine 的调度模型实现。
+nax 的 sched 是一个类似 golang GMP 调度模型的简单实现，是围绕着 Processor + Coroutine 的调度模型实现。
 
 
 ### 核心组件
@@ -526,8 +526,8 @@ nature 的 sched 是一个类似 golang GMP 调度模型的简单实现，是围
 
 ### Tips
 1. 基于 safepoint 进行协作式 yield，safepoint 插入在函数结尾和函数调用之前，所以如果遇到长时间 for 循环且没有函数调用时会导致其他协程无法正常调度，且无法进行 GC
-2. nature 目前基本没有实现协程调度器，协程创建完成后就会均衡的固定在 Processor 中
-3. nature 的协程使用共享栈协程实现，所以 nature 拥有更加轻量的协程栈，以及创建速度和切换速度。协程共享栈示意图如下
+2. nax 目前基本没有实现协程调度器，协程创建完成后就会均衡的固定在 Processor 中
+3. nax 的协程使用共享栈协程实现，所以 nax 拥有更加轻量的协程栈，以及创建速度和切换速度。协程共享栈示意图如下
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20250227145536207.png)
 
@@ -535,7 +535,7 @@ nature 的 sched 是一个类似 golang GMP 调度模型的简单实现，是围
 
 - 如果 valid_sz 的位置确定 ， align_retpt - 0xn 得到的 offset 等于 save_stack.ptr + valid_sz - 0xn 的值。
 
-4. 共享栈带来的一个严重的问题，栈指针会随着协程 yield 而无法被其他协程读取，所以 nature 中通过 `&q` 获取的是 `rawptr<T>` 类似，一个没有经过验证的 unsafe pointer，通过逃逸分析，或者栈转换也许可以解决这个问题，但 nature 目前都没有实现。如果你可以保证不会发生 coroutine yield 你可以 rawptr，如果不确定，则需要主动将数据在堆中分配。
+4. 共享栈带来的一个严重的问题，栈指针会随着协程 yield 而无法被其他协程读取，所以 nax 中通过 `&q` 获取的是 `rawptr<T>` 类似，一个没有经过验证的 unsafe pointer，通过逃逸分析，或者栈转换也许可以解决这个问题，但 nax 目前都没有实现。如果你可以保证不会发生 coroutine yield 你可以 rawptr，如果不确定，则需要主动将数据在堆中分配。
 
 
 ## Runtime GC
@@ -561,7 +561,7 @@ b.bar = a.bar // Write: 修改 b.bar 的指向
 
 - collector 是垃圾收集器，收集并清理用户程序没有使用的 obj。
 
-Nature 编译器使用三色标记(Tri-color marking gc)，示例如下
+Nax 编译器使用三色标记(Tri-color marking gc)，示例如下
 
 ![https://upload.wikimedia.org/wikipedia/commons/1/1d/Animation_of_tri-color_garbage_collection.gif](https://upload.wikimedia.org/wikipedia/commons/1/1d/Animation_of_tri-color_garbage_collection.gif)
 
@@ -573,7 +573,7 @@ Nature 编译器使用三色标记(Tri-color marking gc)，示例如下
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20250227181856310.png)
 
-将增量 GC 技术扩展到多核多线程时，可以得到一种在大多数时候都可以并发执行的增量 GC 技术。这也是 golang 和 nature 采取的 GC 方法。
+将增量 GC 技术扩展到多核多线程时，可以得到一种在大多数时候都可以并发执行的增量 GC 技术。这也是 golang 和 nax 采取的 GC 方法。
 
 虽然每一个线程都会阻塞 mutaotr, 但是在多线程视角下，总会有一个线程下的用户程序在进行处理。所以在多线程下，我们对 STW(stop the world) 的定义需要进行修改，只有当 collector 会在同一时间阻塞所有的线程时，才能称为 STW。比如上图就有两次 STW。
 
@@ -700,7 +700,7 @@ a.foo 指向的 obj 即使是白色也没有关系，因为 a 指向的 obj 一�
 
 ### 混合写屏障
 
-golang 在 1.8 版本实现了[基于 Dijkstra + Yuasa 的混合写屏障](https://github.com/golang/proposal/blob/master/design/17503-eliminate-rescan.md)，nature 也同样采取了这样的方式。基于混合写屏障，我们可以实现非常短暂的 STW 的并发 GC。
+golang 在 1.8 版本实现了[基于 Dijkstra + Yuasa 的混合写屏障](https://github.com/golang/proposal/blob/master/design/17503-eliminate-rescan.md)，nax 也同样采取了这样的方式。基于混合写屏障，我们可以实现非常短暂的 STW 的并发 GC。
 
 混合写屏障继承了两者的最优属性，运行在 mark 开始阶段并发扫描 root，并且在 mark 结束后保证 root 为黑色。
 
@@ -745,24 +745,24 @@ atomic write_barrier(slot, ptr):
 
 - 混合写屏障则只需要在 mark 开始之前 STW 开启写屏障即可，后续的 mark 都是多线程并发的。
 
-nature 虽然采用了混合写屏障，但是还是需要两个阶段 STW，当然这两个阶段的 STW 耗时非常短。
+nax 虽然采用了混合写屏障，但是还是需要两个阶段 STW，当然这两个阶段的 STW 耗时非常短。
 
 ## Runtime Allocator
 
 runtime/allocator.c#rti_gc_malloc
 
-allocator 组件负责向操作系统申请内存， nature 的内存分配器直接参考 golang 实现，并进行了一定的简化。结构如图
+allocator 组件负责向操作系统申请内存， nax 的内存分配器直接参考 golang 实现，并进行了一定的简化。结构如图
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20250227180015798.png)
 
-在底层，nature 使用 mmap 函数向操作系统申请内存，collector 完成后通过 madvise 函数将内存归还给操作系统。
+在底层，nax 使用 mmap 函数向操作系统申请内存，collector 完成后通过 madvise 函数将内存归还给操作系统。
 
 ![](https://raw.githubusercontent.com/weiwenhao/pictures/main/20250227185730849.png)
 
 
 ## Runtime Libuv
 
-[libuv](https://github.com/libuv/libuv) 是一个跨平台的异步 I/O 库，nature 使用 libuv 处理网络 IO。 
+[libuv](https://github.com/libuv/libuv) 是一个跨平台的异步 I/O 库，nax 使用 libuv 处理网络 IO。 
 
 在 runtime 实现中，为每一个 share processor (cpu count)创建了一个 event loop 用来处理异步 I/O 事件。但是由于 libuv 不是线程安全的，这与协程的思想是冲突的，所以在使用 libuv 的时候需要注意，避免跨 share processor 使用 libuv event_loop。
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export function LanguageSwitcher() {
   const pathname = usePathname();
-  const chineseSiteBaseUrl = "https://nature-lang.org";
+  const chineseSiteBaseUrl = "https://naxlang.org";
 
   // Construct the target URL by combining the base URL of the Chinese site
   // with the current path from the English site.

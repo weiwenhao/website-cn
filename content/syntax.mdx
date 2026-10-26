@@ -2,9 +2,9 @@
 
 ## 源码结构
 
-nature 源码以 .n 作为扩展名称，例如 main.n，以下是一个简单程序示例
+nax 源码以 .n 作为扩展名称，例如 main.n，以下是一个简单程序示例
 
-```nature showLineNumbers
+```nax showLineNumbers
 import fmt // import 模块导入，fmt 模块是标准库的字符串格式化模块
 
 fn main() { // fn 用于函数声明，main 函数作为程序的执行入口
@@ -16,7 +16,7 @@ fn main() { // fn 用于函数声明，main 函数作为程序的执行入口
 
 > 只有 fn、import、var、const、type 这几种语句可以直接在文件顶层声明，并具有全局作用域，能够被其他模块进行引用，其他语句，如 if、for、return 等只能在函数作用域内进行声明。 
 
-```nature
+```nax
 import fmt
 
 var global_v = 1
@@ -44,7 +44,7 @@ if true { // x 不允许在全局作用域中声明 if 语句
 
 自动类型推导
 
-```nature
+```nax
 var foo = 1 // v 声明变量 foo 并赋值，foo 类型自动推导为 int  
   
 var foo = 1 // x 同一作用域下，不允许重复声明变量  
@@ -56,7 +56,7 @@ if (true) {
 
 不使用类型推导，直接声明变量的类型
 
-```nature
+```nax
 int foo = 1 // v
 u8 foo2 = 1 // v 字面量自动类型推导
 
@@ -77,7 +77,7 @@ i16 f3 // x 变量声明必须赋值
 
 复合类型变量定义
 
-```nature
+```nax
 string bar = '' // v 请使用这种方式声明一个空的字符串
 
 [int] baz = [] // v 声明空 vec
@@ -105,7 +105,7 @@ bar = null // x 不允许将 null 赋值给任何类型复合类型或者简单�
 
 如何赋值为 null？
 
-```nature
+```nax
 // 方式 1 nullable
 string? s = null
 s = 'i am string'
@@ -124,7 +124,7 @@ any s3 = null // any 是一种特殊类型的 union,默认包含任意类型
 
 ## 常量
 
-```nature
+```nax
 const PI = 3.14 // v float 类型，常量定义不能声明类型，编译器会自动进行推导
 const STR = 'hello world' // v 字符串类型
 const INDEX = 1 // v int 类型
@@ -142,7 +142,7 @@ const RESULT = test() // x 常量定义只支持字面量 integer/float/string/b
 
 ### if 语法
 
-```nature
+```nax
 if condition {
     // 当 condition 为 true 时执行的代码
 } else {
@@ -154,7 +154,7 @@ condition 的类型必须是 bool
 
 可以使用 else 语法来检查多个条件，示例
 
-```nature
+```nax
 int foo = 23
 
 if foo > 100 {
@@ -168,13 +168,13 @@ if foo > 100 {
 
 ### for 语法
 
-`for` 语句用于循环执行代码块。nature 语言中的 `for` 语句有三种主要形式：经典循环、条件循环和迭代循环。
+`for` 语句用于循环执行代码块。nax 语言中的 `for` 语句有三种主要形式：经典循环、条件循环和迭代循环。
 
 #### 经典循环
 
 经典循环用于执行固定次数的循环。基本语法如下：
 
-```nature
+```nax
 var sum = 0
 for int i = 1; i <= 100; i += 1 {
     sum += i
@@ -183,14 +183,14 @@ println('1 +..+100 = ', sum)
 ```
 
 
-> ❗️注意：Nature 中没有 `++` 语法，请使用 `i+=1` 代替 `i++`。`for` 后面的表达式不需要括号包裹。
+> ❗️注意：Nax 中没有 `++` 语法，请使用 `i+=1` 代替 `i++`。`for` 后面的表达式不需要括号包裹。
 
 
 #### 条件循环
 
 条件循环用于根据条件执行循环，类似于 C 语言中的 `while` 表达式。基本语法如下
 
-```nature
+```nax
 var sum = 0
 var i = 0
 for i <= 100 {
@@ -208,7 +208,7 @@ println('1 +..+100 = ', sum)
 
 遍历 vec
 
-```nature
+```nax
 var list = [1, 1, 2, 3, 5, 8, 13, 21]
 for v in list {
     println(v)
@@ -217,7 +217,7 @@ for v in list {
 
 遍历 map
 
-```nature
+```nax
 var m = {1:10, 2:20, 3:30, 4:40}
 for k in m {
     println(k)
@@ -228,7 +228,7 @@ for k in m {
 
 同时遍历键和值，对于 vec 来说 k 就是 index
 
-```nature
+```nax
 for k,v in m {
     println(k, v)
 }
@@ -236,7 +236,7 @@ for k,v in m {
 
 遍历 channel
 
-```nature
+```nax
 // example: var ch = chan_new<int>()
 // yield 直到 ch.recv() 收到消息唤醒当前 coroutine
 for v in ch {
@@ -251,13 +251,13 @@ for v in ch {
 
 ## 函数
 
-函数是 nature 中的一等公民，其可以像作为值传递。nature 支持多种函数定义和使用方式。
+函数是 nax 中的一等公民，其可以像作为值传递。nax 支持多种函数定义和使用方式。
 
 ### 函数定义
 
 基本函数定义语法如下
 
-```nature
+```nax
 fn function_name(parameter_list):return_type {
     // 函数体
 }
@@ -265,7 +265,7 @@ fn function_name(parameter_list):return_type {
 
 一个简单的加法函数
 
-```nature
+```nax
 fn sum(int a, int b):int {
     return a + b
 }
@@ -273,9 +273,9 @@ fn sum(int a, int b):int {
 
 ### 匿名函数
 
-nature 支持匿名函数，并会对匿名函数进行闭包处理。
+nax 支持匿名函数，并会对匿名函数进行闭包处理。
 
-```nature
+```nax
 fn main() {
 	int c = 3
 	
@@ -291,7 +291,7 @@ fn main() {
 
 函数支持可变数量的参数,使用 固定格式 `...` + `vec<T>` 创建一个可变参数
 
-```nature
+```nax
 fn sum(...[int] numbers):int {
     var result = 0
     for v in numbers {
@@ -307,7 +307,7 @@ println(sum(1, 2, 3, 4, 5))
 
 支持在函数调用时解构参数
 
-```nature
+```nax
 fn printf(string fmt, ...[any] args) {
     var str = sprintf(fmt, ...args)
     print(str)
@@ -316,9 +316,9 @@ fn printf(string fmt, ...[any] args) {
 
 ### 多返回值
 
-nature 编程语言并不支持多返回值，但是可以使用 tuple 解构语法模拟多返回值，后续也会对 tuple 数据结构进行更加详细的介绍
+nax 编程语言并不支持多返回值，但是可以使用 tuple 解构语法模拟多返回值，后续也会对 tuple 数据结构进行更加详细的介绍
 
-```nature
+```nax
 fn divide(int a, int b):(int, int) {
     return (a / b, a % b)
 }
@@ -331,7 +331,7 @@ var (quotient, remainder) = divide(10, 3)
 
 使用 fn 声明函数类型，函数类型通常可以省略参数名称。
 
-```nature
+```nax
 type calc_fn = fn(int,int):int  // 声明 fn 类型
   
 fn apply(calc_fn f, int x, int y):int {  
@@ -349,9 +349,9 @@ fn main() {
 
 ### 补充说明
 
-nature 中的函数必须显式声明函数的参数类型和返回类型。如果函数不需要返回值，可以省略返回类型声明，也可以使用 void 类型声明该函数无返回值
+nax 中的函数必须显式声明函数的参数类型和返回类型。如果函数不需要返回值，可以省略返回类型声明，也可以使用 void 类型声明该函数无返回值
 
-```nature
+```nax
 fn print() { // v
 }
 
@@ -360,9 +360,9 @@ fn print():void { // v
 }
 ```
 
-nature 编程语言总是使用类型前置，包括返回值的类型。如果你认为 return_type 放在参数的后面是类型后置，让你有些混乱，那你可以这么理解
+nax 编程语言总是使用类型前置，包括返回值的类型。如果你认为 return_type 放在参数的后面是类型后置，让你有些混乱，那你可以这么理解
 
-```nature
+```nax
 // 这是返回值类型后置
 func sum(a int, b int) (c int) {  
     c = a + b  
@@ -382,14 +382,14 @@ fn sum(int a, int b):(int c) {
 
 单行注释
 
-```nature
+```nax
 // 这是一个单行注释
 var str = `hello world` // 这也是一个单行注释
 ```
 
 多行注释
 
-```nature
+```nax
 /*
 这是一个多行注释
 可以跨越多行
@@ -448,7 +448,7 @@ var str = `hello world`
 
 ### 类型定义
 
-```nature
+```nax
 type my_int = int
 
 type person_t = struct{
@@ -485,7 +485,7 @@ type throwable = interface{} // 接口定义，后续有详细介绍
 
 - `as` 除了用于类型转换外还用于 union、any 类型断言
 
-```nature
+```nax
 int i = 42.5 as int  // 浮点数转整数
 
 [u8] bytes = "hello" as [u8]  // 字符串转 vec
@@ -503,7 +503,7 @@ int baz = bar as myint // int -> myint
 
 字面量在绝大多数场景中支持隐式类型转换，如果无法识别具体类型则默认为 int 或 float 类型。
 
-```nature
+```nax
 f32 a = 1.1 // 自动推导转换
 f64 b = 2.2 // 自动推导转换
 any c = 1.1 // 无法推导，默认为 float 类型
@@ -516,7 +516,7 @@ any g = 1 // 无法推导，默认为 int 类型
 
 ### 类型扩展
 
-nature 支持对内置类型和自定义类型进行 method 扩展。
+nax 支持对内置类型和自定义类型进行 method 扩展。
 
 **内置类型**
 
@@ -524,7 +524,7 @@ nature 支持对内置类型和自定义类型进行 method 扩展。
 
 **内置类型 extend**
 
-```nature
+```nax
 fn string.find_char(u8 char, int after):int {
     int len = self.len()
     for int k = after; k < len; k += 1 {
@@ -538,7 +538,7 @@ fn string.find_char(u8 char, int after):int {
 
 **自定义类型 extend**
 
-```nature
+```nax
 type square = struct {
     int length
     int width
@@ -564,7 +564,7 @@ fn box<T>.area():T{
 
 如果是 struct/int/float 等默认存储在栈上的类型，self 总是引用其安全指针，也就是 `ptr<T>`。那如何调用类型扩展方法？
 
-```nature
+```nax
 // 对于 string 来说这很简单, string 存储在堆中，所以可以直接进行调用
 var str = 'hello world'
 var c = str.find_char()
@@ -576,7 +576,7 @@ var a = s.area() // self is ptr<square>
 
 **但如果有一个在栈上分配的数据类型想要调用类型扩展函数怎么办？**
 
-```nature
+```nax
 var s = square{}
 
 // 如果 method 不会进行跨线程引用，也许我们可以通过 as 转换出一个非安全的指针欺骗编译器
@@ -592,7 +592,7 @@ var s = square{}
 
 但到处都是 @sla 宏会让人有些烦躁，所以最终我们可以这样！
 
-```nature
+```nax
 var s = square{}
 
 s.area() // v eq @sla(s).area()
@@ -646,7 +646,7 @@ s.area() // v eq @sla(s).area()
 
 &  获取的地址类型是 `rawptr<T>` ，rawptr 是 unsafe 的裸指针，允许为 null。指针可能会悬空或者指向无效的内存区域。需要开发者自己保证指针安全性，因为仅在必要情况下，如和 C 语言这样的内存不安全语言交互时使用裸指针。
 
-nature 编程语言开发中推荐使用 new 关键字进行 GC 堆分配获取安全指针。
+nax 编程语言开发中推荐使用 new 关键字进行 GC 堆分配获取安全指针。
 
 ## 结构体
 
@@ -654,7 +654,7 @@ nature 编程语言开发中推荐使用 new 关键字进行 GC 堆分配获取�
 
 ### 基本语法
 
-```nature
+```nax
 // 结构体声明
 type person_t = struct {
     string name
@@ -677,7 +677,7 @@ p2.name = 'Tom'  // 自动解引用
 
 struct 默认值只支持简单的常量，不支持闭包，函数调用等复杂默认值。
 
-```nature
+```nax
 type sub_t = struct{
 	var name = 'alice' // 存在默认值时支持类型自动推导
 }
@@ -698,7 +698,7 @@ var p = person_t{}
 
 ### 嵌套与组合
 
-```nature
+```nax
 type outer = struct {
     int x
     rect r = rect{} 
@@ -726,9 +726,9 @@ type dog = struct {
 ## 数据结构
 ### string
 
-字符串是 nature 语言的内置数据类型，数据存储在堆上。字符串和动态数组 `[u8]` 在堆上的存储结构一致，所以字符串与 `[u8]` 之间可以进行任意的类型转换。
+字符串是 nax 语言的内置数据类型，数据存储在堆上。字符串和动态数组 `[u8]` 在堆上的存储结构一致，所以字符串与 `[u8]` 之间可以进行任意的类型转换。
 
-```nature
+```nax
 string s1 = 'hello world' // 非特殊情况直接使用单引号声明字符串
 string s2 = "hello world"
 string s3 = `hello 
@@ -760,7 +760,7 @@ for v in s1 {
 
 由于单引号也用于声明字符串，所以如果需要获取字符串的 char 类型，可以通过以下几种方式
 
-```nature
+```nax
 // 方式 1 通过常量定义
 const A = 97
 const B = 99
@@ -773,7 +773,7 @@ u8 c2 = '@'[0]
 
 字符串的更多操作可以调用标准库中字符串处理库 `import strings`
 
-```nature
+```nax
 import strings
 
 fn main() {
@@ -793,9 +793,9 @@ fn main() {
 
 ### vec
 
-vec 是 nature 的内置动态数组类型，支持动态扩容，存储在堆上。并发调用不安全，需要主动加锁。
+vec 是 nax 的内置动态数组类型，支持动态扩容，存储在堆上。并发调用不安全，需要主动加锁。
 
-```nature
+```nax
 // 声明与初始化
 [int] list = [1, 2, 3]        // 语法 1：推荐使用 [T] 声明
 vec<int> list2 = [1, 2, 3]    // 语法 2：使用 vec<T> 声明
@@ -844,9 +844,9 @@ for index,value in list {
 
 ### map
 
-map 是 nature 的内置映射表类型，用于存储键值对。并发调用不安全，需要主动加锁。
+map 是 nax 的内置映射表类型，用于存储键值对。并发调用不安全，需要主动加锁。
 
-```nature
+```nax
 // 声明与初始化
 var m3 = {'a': 1, 'b': 2}              // 类型推导
 {string:int} m1 = {'a': 1, 'b': 2}     // 使用 {T:T} 声明
@@ -880,9 +880,9 @@ for k, v in m1 {              // 同时遍历键和值
 
 ### set
 
-set 是 nature 的内置集合类型，用于存储唯一的元素。set 存储在堆上，元素不允许重复。并发调用不安全，需要主动加锁。
+set 是 nax 的内置集合类型，用于存储唯一的元素。set 存储在堆上，元素不允许重复。并发调用不安全，需要主动加锁。
 
-```nature
+```nax
 // 声明与初始化
 {int} s1 = {-32, -64, 13}     // 使用 {T} 声明
 set<int> s3 = {1, 2, 3}       // 使用 set<T> 声明
@@ -906,10 +906,10 @@ for v in s1 {
 
 ### tup
 
-tuple 是 nature 的内置类型，用于将一组不同类型的数据聚合在一个结构中。tuple 存储在堆上，在栈上只保存指针。
+tuple 是 nax 的内置类型，用于将一组不同类型的数据聚合在一个结构中。tuple 存储在堆上，在栈上只保存指针。
 
 
-```nature
+```nax
 var tup = (1, 1.1, true) // v 声明并赋值，多个元素使用逗号分隔
 
 var tup = (1) // x tuple 中至少需要包含两个元素，否则无法区分是表达式还是 tup
@@ -924,7 +924,7 @@ tup[0] = 2 // v 修改 tuple 中的值
 
 tup 支持解构赋值
 
-```nature
+```nax
 
 // v 值允许通过 var 进行自动类型推导来连续创建多个变量
 var (foo, bar, car) = (1, 2, true)
@@ -959,7 +959,7 @@ var (list[0], list[1]) = (2, 4)
 
 arr 是定长数组，和 c 语言中的数据结构一致。
 
-```nature
+```nax
 [u8;3] array = [1, 2, 3] // 声明一个长度为 3，元素为 u8 类型的数组
 array[0] = 12
 array[1] = 24
@@ -968,7 +968,7 @@ var a = array[7]
 
 arr 默认在栈上或者数据结构中进行内存分配，vec 则在堆上进行分配。从 size 计算上可以体现
 
-```nature
+```nax
 type t1 = struct {
     [u8;12] array
 }
@@ -982,7 +982,7 @@ type t2 = struct {
 var size = @sizeof(t2) // vec is pointer size = 8byte
 ```
 
-和 c 语言不同的一点是，在 nature 中使用 array 作为参数时基于值传递。
+和 c 语言不同的一点是，在 nax 中使用 array 作为参数时基于值传递。
 
 ## 错误处理
 
@@ -990,7 +990,7 @@ var size = @sizeof(t2) // vec is pointer size = 8byte
 
 throw 语法使用示例
 
-```nature
+```nax
 // x 错误使用方式, can't use throw stmt in a fn without an errable! declaration. example: fn rem(...):void!
 fn rem(int dividend, int divisor):int {
 	throw errorf('....')
@@ -1007,7 +1007,7 @@ fn rem(int dividend, int divisor):int! {
 
 可以使用 catch 语法捕获错误
 
-```nature
+```nax
 var result = rem(10, 0) catch e { // e 实现了 throwable interface, 可以调用相关 method
     println(e.msg())
     1 // catch body 的最后一行表达式具备值传递的效果，可以将 1 赋值给 result
@@ -1016,7 +1016,7 @@ var result = rem(10, 0) catch e { // e 实现了 throwable interface, 可以调�
 
 也可以使用 try catch 来捕获多行表达式错误
 
-```nature
+```nax
 try {
     var a = 1
     var b = a + 1
@@ -1029,7 +1029,7 @@ try {
 
 error 如果没有被捕获，会随着函数调用栈向上传递，直到被协程调度器捕获并退出程序。
 
-```nature
+```nax
 fn bar():void! {
     throw errorf('error in bar')
 }
@@ -1045,26 +1045,26 @@ fn main():void! {
 
 编译并运行会得到错误追踪栈
 
-```nature
-coroutine 'main' uncaught error: 'error in bar' at nature-test/main.n:2:22
+```nax
+coroutine 'main' uncaught error: 'error in bar' at nax-test/main.n:2:22
 stack backtrace:
 0:	main.bar
-		at nature-test/main.n:2:22
+		at nax-test/main.n:2:22
 1:	main.foo
-		at nature-test/main.n:6:11
+		at nax-test/main.n:6:11
 2:	main.main
-		at nature-test/main.n:10:11
+		at nax-test/main.n:10:11
 ```
 
 > main 函数作为程序统一入口默认会添加 `errable(!)` ，不需要额外声明
 
 ### 设计思路
 
-nature 的错误处理是基于类似 Rust 的 `Result<T,E>` 的设计思路，但是实际表现和语法 api 设计上更加贴近 try + catch + throw 的模式。
+nax 的错误处理是基于类似 Rust 的 `Result<T,E>` 的设计思路，但是实际表现和语法 api 设计上更加贴近 try + catch + throw 的模式。
 
 与 Rust 进行类比
 
-```nature
+```nax
 
 // int! 等同于 rust 中的 Result<int,err>
 // int? 等同于 rust 中的 Option<int>
@@ -1099,13 +1099,13 @@ fn main() {
 }
 ```
 
-由于 nature 会自动进行错误解构并向上传递，所以在大多数时候并不需要每一个层级都进行错误处理，仅仅在真的需要的时候进行 catch 处理。
+由于 nax 会自动进行错误解构并向上传递，所以在大多数时候并不需要每一个层级都进行错误处理，仅仅在真的需要的时候进行 catch 处理。
 
 ### throwable
 
 throwable 是内置的 interface，throw 关键字后面的表达式必须实现该 interface。
 
-```nature
+```nax
 import fmt
 
 type throwable = interface{  
@@ -1132,18 +1132,18 @@ fn errorf(string format, ...[any] args):ptr<errort> {
 
 panic 是一种特殊错误类型，panic 不会随着函数调用链自动传递，而是会直接导致程序崩溃退出。 最常见如索引越界
 
-```nature
+```nax
 var list = [1, 2, 3]
 var a = list[4] 
 ```
 
 编译并运行会得到错误
 
-`coroutine 'main' panic: 'index out of vec [4] with length 3' at nature-test/main.n:3:18`
+`coroutine 'main' panic: 'index out of vec [4] with length 3' at nax-test/main.n:3:18`
 
 panic 也可以 catch 或者 try catch 捕获，但是由于 panic 不会沿着调用链传递，所以必须立刻捕获而不能在调用链的上层函数中进行捕获
 
-```nature
+```nax
 // panic 捕获方式与 error 相同
 var a = list[4] catch e {
     println(e.msg())
@@ -1156,11 +1156,11 @@ panic('failed')
 
 ## 联合类型
 
-联合类型（Union Types）允许一个变量持有多种可能的类型之一，nature 提供了灵活的联合类型系统。
+联合类型（Union Types）允许一个变量持有多种可能的类型之一，nax 提供了灵活的联合类型系统。
 
 基本语法
 
-```nature
+```nax
 // 使用 | 运算符来声明多个类型的联合
 type nullable<T> = T|null  // 可空类型
 type number = int|float    // 数值类型
@@ -1172,7 +1172,7 @@ type number = int|float    // 数值类型
 
 nullable 基于 union type 实现，由于比较常用，所以进行语法优化，使用 `?` 符号可以快速声明 nullable 类型
 
-```nature
+```nax
 int? foo = null        // 等同于 nullable<int> foo = null
 string? bar = "hello"  // 等同于 nullable<string> bar = "hello"
 ```
@@ -1181,7 +1181,7 @@ string? bar = "hello"  // 等同于 nullable<string> bar = "hello"
 
 类型断言使用和类型转换一样的 as 语法
 
-```nature
+```nax
 int? foo = 42
 int val = foo as int  // 将联合类型断言为具体类型
 ```
@@ -1190,7 +1190,7 @@ int val = foo as int  // 将联合类型断言为具体类型
 
 is 语法用于检查联合类型当前存储的类型
 
-```nature
+```nax
 int? foo = 42
 bool is_int = foo is int    // true
 bool is_null = foo is null  // false
@@ -1212,7 +1212,7 @@ if !(foo is null) {
 
 match 语法对 union type 进行了特殊优化，可以快速的进行类型匹配以及自动断言。
 
-```nature
+```nax
 int? foo = null
 int result = match foo {
     is int v -> v  // auto: var v = foo as int
@@ -1224,7 +1224,7 @@ int result = match foo {
 
 any 是一种特殊的 union type，其可以包含任意类型。并且小范围的联合类型可以赋值给包含这些类型的大范围联合类型，any 包含最大的类型范围
 
-```nature
+```nax
 any foo = 1
 int? bar = null
 foo = bar // v
@@ -1238,7 +1238,7 @@ nullable2 bar2 = bar // v, nullable2 包含更大的类型范围
 
 声明方式
 
-```nature
+```nax
 type measurable = interface{  
     fn area():int  
     fn perimeter():int
@@ -1253,7 +1253,7 @@ type measurable<T> = interface{
 
 完整声明示例
 
-```nature
+```nax
 type measurable<T> = interface{  
     fn perimeter():T  
     fn area():T  
@@ -1276,7 +1276,7 @@ fn rectangle.perimeter():i64 {
 
 接口可以作为函数参数，只要实现了该接口就能通过函数参数示例
 
-```nature
+```nax
 fn print_shape(measurable<i64> s) {  
     println(s.area(), s.perimeter())  
 }
@@ -1294,7 +1294,7 @@ fn main() {
 
 传递的参数如果是 ptr，将会自动解构 ptr 包含的类型是否实现了 measurable，type 可以实现多个 interface，多个 interface 之间使用 `,` 分隔
 
-```nature
+```nax
 type measurable<T> = interface{  
     fn perimeter():T  
     fn area():T  
@@ -1322,7 +1322,7 @@ fn rectangle.update(i64 i) {
 
 可以通过 `is` 判断 interface 的具体类型
 
-```nature
+```nax
 fn use_com(combination c):int {  
     if c is square s {  
         // auto as: var s = c as square, c is interface  
@@ -1349,7 +1349,7 @@ fn use_com(combination c):int {
 
 interface 支持 nullable
 
-```nature
+```nax
 fn use(testable? test) {  
     if (test is testable v) { // var v = test as testable  
         println('testable value is', v.nice())  
@@ -1359,11 +1359,11 @@ fn use(testable? test) {
 }
 ```
 
-接口也可以作为泛型约束使用，在后续的泛型章节介绍。nature 编程语言不支持鸭子类型，必须主动声明实现某个接口。
+接口也可以作为泛型约束使用，在后续的泛型章节介绍。nax 编程语言不支持鸭子类型，必须主动声明实现某个接口。
 
 接口支持组合快速声明
 
-```nature
+```nax
 type measurable<T> = interface{  
     fn perimeter():T  
     fn area():T  
@@ -1384,7 +1384,7 @@ type square:combination = i64
 
 由于存在组合关系，所以如果 square 实现了接口 combination，则其默认也实现了接口 measurable 和 updatable。如下面的示例
 
-```nature
+```nax
 type measurable<T> = interface{  
     fn perimeter():T  
     fn area():T  
@@ -1418,13 +1418,13 @@ fn main():void! {
 
 ## 模式匹配
 
-nature 提供了强大的模式匹配功能，通过 `match` 表达式可以实现复杂的条件分支逻辑。
+nax 提供了强大的模式匹配功能，通过 `match` 表达式可以实现复杂的条件分支逻辑。
 
 ### 基本语法
 
 match 表达式的基本语法如下：
 
-```nature
+```nax
 match subject {
     pattern1 -> expression1
     pattern2 -> expression2
@@ -1437,7 +1437,7 @@ match subject {
 
 可以直接匹配字面量值
 
-```nature
+```nax
 var a = 12
 match a {
     1 -> println('one')
@@ -1449,7 +1449,7 @@ match a {
 
 支持字符串匹配
 
-```nature
+```nax
 match 'hello world' {
     'hello' -> println('greeting')
     'hello world' -> println('full greeting')  // 匹配成功
@@ -1461,7 +1461,7 @@ match 'hello world' {
 
 可以不携带 subject，此时只要 pattern  表达式的结果为 true 就能进行匹配，但只会匹配第一个结果为 true 的表达式并执行对应的 body
 
-```nature
+```nax
 match {
     12 > 0 && 0 > 0 -> println('case 1')
     (13|(1|2)) == 15 -> println('case 2')  // 匹配成功
@@ -1474,7 +1474,7 @@ match {
 
 对于联合类型，可以使用 `is` 进行类型匹配，并且类型的后面可以添加变量进行自动推导
 
-```nature
+```nax
 any value = 2.33
 var result = match value {
     is int -> 0.0
@@ -1489,7 +1489,7 @@ result 的类型会根据第一个分支的返回类型进行自动推导。
 
 match 分支中可以使用代码块，最后一行表达式将会作为块作用域的返回值
 
-```nature
+```nax
 fn main() {  
     string result = match {  
         (12 > 13) -> {  
@@ -1512,7 +1512,7 @@ fn main() {
 
 基本语法使用 `<T>` 来声明类型参数，其中 T 是类型参数名称。可以声明多个类型参数，多个参数之间用逗号分隔。
 
-```nature
+```nax
 // 单个类型参数
 type box<T> = struct {
     T value
@@ -1531,7 +1531,7 @@ type list<T> = [T]         // 泛型数组类型
 
 类型参数支持嵌套
 
-```nature
+```nax
 type wrapper<T> = struct {
     box<T> inner    // 嵌套使用泛型类型
 }
@@ -1544,7 +1544,7 @@ var w = wrapper<int>{
 
 ### 泛型函数
 
-```nature
+```nax
 // 泛型函数声明
 fn sum<T>(T a, T b):T {
     return a + b
@@ -1572,11 +1572,11 @@ fn box<T>.get<U>():U { // x method 暂不支持泛型参数
 
 ### 泛型约束
 
-> nature 的泛型约束暂时还不完善，只会验证传递给泛型的参数是否满足泛型约束声明的类型，而没有验证在泛型函数使用中是否满足泛型约束的使用，在后续的更新中会解决这个问题。
+> nax 的泛型约束暂时还不完善，只会验证传递给泛型的参数是否满足泛型约束声明的类型，而没有验证在泛型函数使用中是否满足泛型约束的使用，在后续的更新中会解决这个问题。
 
-nature 的泛型约束支持三种类型，三种类型约束不允许相互组合，只能选取一种类型约束方式
+nax 的泛型约束支持三种类型，三种类型约束不允许相互组合，只能选取一种类型约束方式
 
-```nature
+```nax
 // union 约束
 type test_union = int|bool|float  
   
@@ -1605,7 +1605,7 @@ fn test<T:test_interface&test_interface2>(T param) {
 
 ### 使用示例
 
-```nature
+```nax
 // 定义泛型结构体
 type pair<T, U> = struct {
     T first
@@ -1638,13 +1638,13 @@ fn main() {
 
 使用 `go` 关键字
 
-```nature
+```nax
 var fut = go sum(1, 2)  // 创建一个共享协程
 ```
 
 使用 `@async` 宏, 可以携带 flag 参数来定义协程的行为
 
-```nature
+```nax
 var fut = @async(sum(1, 2), co.SAME)  // SAME 表示新的协程和当前协程共用 processor
 ```
 
@@ -1652,7 +1652,7 @@ var fut = @async(sum(1, 2), co.SAME)  // SAME 表示新的协程和当前协程�
 
 协程创建后会返回一个 future 对象， 此时协程已经在运行中，但是不会阻塞当前协程，可以通过 `await()` 方法阻塞并等待协程执行完成并获取返回值：
 
-```nature
+```nax
 import co // 标准库 co 包含一些协程常用函数
 
 fn sum(int a, int b):int {
@@ -1674,7 +1674,7 @@ fn main() {
 
 mutex（互斥锁）是一种并发控制机制，用于保护共享资源，确保在同一时刻只有一个协程可以访问被保护的资源。
 
-```nature
+```nax
 import co.mutex as m
 
 // 创建互斥锁
@@ -1694,7 +1694,7 @@ mu.unlock()
 
 协程中的错误也可以通过 `catch` 语法捕获
 
-```nature
+```nax
 fn div(int a, int b):int! {
     if b == 0 {
         throw errorf("division by zero")
@@ -1716,11 +1716,11 @@ fn main() {
 
 ## channel
 
-channel 是 nature 提供的协程间通信的机制，用于在不同协程之间安全地传递数据。
+channel 是 nax 提供的协程间通信的机制，用于在不同协程之间安全地传递数据。
 
 ### 基本用法
 
-```nature
+```nax
 // 创建无缓冲 channel
 var ch = chan_new<int>()      // 创建传递 int 类型数据的 channel
 var ch_str = chan_new<string>() // 创建传递 string 类型数据的 channel
@@ -1739,7 +1739,7 @@ var msg = ch_str.recv()
 
 channel 状态
 
-```nature
+```nax
 ch.close()                    // 关闭 channel
 bool closed = ch.is_closed()  // 判断协程 是否关闭
 var ok = ch.is_successful()   //  在协程关闭状态下可以检查最近的读取或者写入操作是否成功
@@ -1749,7 +1749,7 @@ var ok = ch.is_successful()   //  在协程关闭状态下可以检查最近的�
 
 channel recv 操作支持使用 for iterator 迭代
 
-```nature
+```nax
 fn handle(chan<int> ch) {  
     for v in ch { // 编译器会自动调用 recv 并 yield 直到接收到数据
         println('recv v ->', v)  
@@ -1765,7 +1765,7 @@ fn handle(chan<int> ch) {
 
 select 语句用于同时监听多个 channel 的操作，语法结构类似于 match，但只用于 channel 操作。
 
-```nature
+```nax
 select {
     ch1.on_recv() -> msg {
         // 处理从 ch1 接收到的数据
@@ -1787,7 +1787,7 @@ select 会自动 catch closed error，可以通过 `ch.is_successful()` 检查�
 
 **简单的生产者消费者模式**
 
-```nature
+```nax
 // 生产者
 go (fn(chan<int> ch):void! {
     ch.send(42)
@@ -1799,7 +1799,7 @@ var value = ch.recv()
 
 **使用带缓冲 channel 实现限流器**
 
-```nature
+```nax
 var limiter = chan_new<u8>(10)  // 最多允许 10 个并发任务
 for u8 i = 0; i < 100; i+=1 {
     limiter.send(i)             // 获取令牌
@@ -1812,7 +1812,7 @@ for u8 i = 0; i < 100; i+=1 {
 
 **使用 select 实现超时控制**
 
-```nature
+```nax
 var ch = chan_new<string>()
 var timeout = chan_new<bool>()
 
@@ -1828,9 +1828,9 @@ select {
 
 ## 内置宏
 
-nature 编程语言使用 @ 符号进行宏调用，当前版本并不支持自定义宏。但内置了一些必须的宏函数
+nax 编程语言使用 @ 符号进行宏调用，当前版本并不支持自定义宏。但内置了一些必须的宏函数
 
-```nature
+```nax
 var size = @sizeof(i8) // sizeof 读取类型占用栈内存
 
 type double = f64
@@ -1852,7 +1852,7 @@ var a = @default(T) // 初始化默认值, 可以用于泛型中的默认值赋�
 
 `#linkid` 标签用于自定义函数的链接器符号名称
 
-```nature
+```nax
 #linkid print_message
 fn log(string message):void {
     // 函数实现
@@ -1863,18 +1863,18 @@ fn log(string message):void {
 
 linkid 最常用的方式是声明 c 语言中的头文件，比如
 
-```nature
+```nax
 #linkid sleep  
 fn sleep(int second)
 ```
 
-当函数没有 body 时，nature 将该函数视为模板函数，可以直接在 nature 代码中进行调用。链接器会去查找对应的 sleep 符号所在的位置进行正确的引导调用。
+当函数没有 body 时，nax 将该函数视为模板函数，可以直接在 nax 代码中进行调用。链接器会去查找对应的 sleep 符号所在的位置进行正确的引导调用。
 
 ### \#local
 
 `#local` 标签用于标记函数的可见性，表明该函数仅在当前模块内可见
 
-```nature
+```nax
 #local
 fn internal_helper():void {
     // 函数实现
@@ -1886,13 +1886,13 @@ fn internal_helper():void {
 
 ## 模块
 
-模块是 nature 中组织代码基本单位。每个 `.n` 文件都是一个独立的模块。
+模块是 nax 中组织代码基本单位。每个 `.n` 文件都是一个独立的模块。
 
 ### main 模块
 
-每个 nature 程序必须包含一个 `main` 函数作为程序入口点
+每个 nax 程序必须包含一个 `main` 函数作为程序入口点
 
-```nature
+```nax
 // main.n
 import fmt
 
@@ -1901,13 +1901,13 @@ fn main() {
 }
 ```
 
-编译指令中指定的入口文件则会视为 main 模块，如 `nature build main.n` 
+编译指令中指定的入口文件则会视为 main 模块，如 `nax build main.n` 
 
 ### import
 
 使用 import 关键字可以导入其他模块或者标准库
 
-```nature
+```nax
 // 基本导入，默认截取 user 作为模块 ident
 import "user.n"
 
@@ -1930,7 +1930,7 @@ fn main() {
 
 ## 包管理
 
-nature 安装包中内置了 npkg 程序作为包管理软件，npkg 需要配合 package.toml 进行使用。
+nax 安装包中内置了 npkg 程序作为包管理软件，npkg 需要配合 package.toml 进行使用。
 ### package.toml
 
 在项目根目录下创建 `package.toml` 可以自动启用包管理功能，该文件来定义项目信息和依赖
@@ -1953,10 +1953,10 @@ local_pkg = { type = "local", version = "v1.0.0", path = "./local" }
 
 ### 依赖管理
 
-在 package.toml 所在目录使用 `npkg sync` 命令同步依赖管理中的 package。package 会被同步到 $HOME/.nature/package 目录。
+在 package.toml 所在目录使用 `npkg sync` 命令同步依赖管理中的 package。package 会被同步到 $HOME/.nax/package 目录。
 
 ```sh
-$HOME/.nature/package
+$HOME/.nax/package
 ├── caches
 └── sources
     ├── jihulab.com.nature-lang.os@v1.0.1
@@ -1972,9 +1972,9 @@ $HOME/.nature/package
 
 ### 导入语法
 
-nature 将文件名称作为 module ident
+nax 将文件名称作为 module ident
 
-```nature
+```nax
 import rand                    // 导入包的主模块（等同于 import rand.main）
 import rand.utils.seed         // 导入指定模块，也就是 rand/utils/seed.n 文件
 import rand.utils.seed as s    // 自定义模块名称
@@ -2010,7 +2010,7 @@ rand_v2 = { type = "git", version = "v2.0", url = "jihulab.com/nature-lang/rand"
 
 然后使用不同的名称导入
 
-```nature
+```nax
 import rand_v1
 import rand_v2
 ```
@@ -2019,19 +2019,19 @@ import rand_v2
 
 ## 和 C 语言交互
 
-除了 nature 内置的 libc/libuv 库以外，我们也可以在 package.toml 引用其他的静态库文件，编译器会自动链接相关架构的静态库文件。在 nature 代码中通过 `#linkid` 标签声明对应的函数模板并调用即可。链接器会自动进行正确的链接。
+除了 nax 内置的 libc/libuv 库以外，我们也可以在 package.toml 引用其他的静态库文件，编译器会自动链接相关架构的静态库文件。在 nax 代码中通过 `#linkid` 标签声明对应的函数模板并调用即可。链接器会自动进行正确的链接。
 
-不仅仅是 C 语言，只要是能够生成静态库的编程语言，nature 都能够方便的与之交互。但 nature 是基于 musl libc 进行静态编译的，所以静态库也需要基于 musl libc 进行纯 static 编译。推荐使用 musl-gcc 组件来编译静态库。
+不仅仅是 C 语言，只要是能够生成静态库的编程语言，nax 都能够方便的与之交互。但 nax 是基于 musl libc 进行静态编译的，所以静态库也需要基于 musl libc 进行纯 static 编译。推荐使用 musl-gcc 组件来编译静态库。
 
-由于 nature 可以自定义链接器和链接参数，所以也可以通过链接参数进行静态库的引用，如
+由于 nax 可以自定义链接器和链接参数，所以也可以通过链接参数进行静态库的引用，如
 
 ```sh
-nature build --ld '/usr/bin/ld' --ldflags '-nostdlib -static -lm -luv' main.n
+nax build --ld '/usr/bin/ld' --ldflags '-nostdlib -static -lm -luv' main.n
 ```
 
-nature 默认集成了 musl libc 和 macOS C 库，可以直接使用相关函数，通过 `import libc`  直接调用相关函数即可
+nax 默认集成了 musl libc 和 macOS C 库，可以直接使用相关函数，通过 `import libc`  直接调用相关函数即可
 
-```nature
+```nax
 import libc
 
 fn main() {
@@ -2055,7 +2055,7 @@ libz = {
 
 使用 `#linkid` 标签和函数模板来声明需要调用的 C 函数 id 和相关参数
 
-```nature
+```nax
 #linkid gzopen
 fn gzopen(anyptr fname, anyptr mode):anyptr
 
@@ -2065,7 +2065,7 @@ fn sleep(int second)
 
 调用示例
 
-```nature
+```nax
 // zlib.n
 #linkid gzopen
 fn gzopen(anyptr fname, anyptr mode):anyptr
@@ -2086,9 +2086,9 @@ fn main() {
 
 ### 类型映射
 
-nature 与 C 语言的类型映射关系
+nax 与 C 语言的类型映射关系
 
-| nature 类型   | C 类型             | 说明                                             |
+| nax 类型   | C 类型             | 说明                                             |
 | ----------- | ---------------- | ---------------------------------------------- |
 | anyptr      | uintptr          | 通用指针类型                                         |
 | `rawptr<T>` | T*               | 类型化指针                                          |
@@ -2101,35 +2101,35 @@ nature 与 C 语言的类型映射关系
 | f32         | float            | 32位浮点                                          |
 | f64         | double           | 64位浮点                                          |
 | `[T;n]`     | `T[n]`           | 固定长度数组，N为编译时常量                                 |
-| struct      | struct           | nature struct 与 c 语言 struct 采用相关对齐方式及 ABI 处理方式 |
+| struct      | struct           | nax struct 与 c 语言 struct 采用相关对齐方式及 ABI 处理方式 |
 
 获取 c 语言字符串以及指针
 
-```nature
+```nax
 import libc
 
 var str = "hello"
 libc.cstr ptr = str.to_cstr()  // 获取字符串地址
-string str2 = ptr.to_string() // cstr 转换为 nature 字符串
+string str2 = ptr.to_string() // cstr 转换为 nax 字符串
 
 // 获取 rawptr 类型
 rawptr<tm_t> time_ptr = &time_info
 
 // 获取 anyptr 类型
-// 任何 nature 类型(除了浮点型)都可以转换为 anyptr 类型
+// 任何 nax 类型(除了浮点型)都可以转换为 anyptr 类型
 anyptr c_ptr = time_info as anyptr 
 ```
 
 ### 注意事项
 
-- c 语言是内存不安全的，所以需要格外注意内存相关问题。使用 rawptr 和 anyptr 可以轻易的绕开 nature 编程语言的安全检查
-- nature 编程语言是基于协作式调度的，当调用阻塞的 c 函数，如 sleep、read、write 等，会导致 nature 调度器阻塞。调度器阻塞会导致其他协程无法运行，并且无法进行 GC 处理。
+- c 语言是内存不安全的，所以需要格外注意内存相关问题。使用 rawptr 和 anyptr 可以轻易的绕开 nax 编程语言的安全检查
+- nax 编程语言是基于协作式调度的，当调用阻塞的 c 函数，如 sleep、read、write 等，会导致 nax 调度器阻塞。调度器阻塞会导致其他协程无法运行，并且无法进行 GC 处理。
 
 ## 格式化
 
-nature fmt 工具还未进行开发，所以需要进行一些简单的编写约定。
+nax fmt 工具还未进行开发，所以需要进行一些简单的编写约定。
 
-```nature
+```nax
 var bar = '' // stmt 结尾不需要携带 ; 
 
 var global_v = 12 // 除了常量定义以外，其他任何 ident 都推荐小写下划线分词(包括文件名称)

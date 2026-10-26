@@ -46,7 +46,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
-                  href="https://github.com/nature-lang/nature/tree/master/tests/features/cases"
+                  href="https://github.com/naxlang/nax/tree/master/tests/features/cases"
                   className="text-sm hover:text-primary"
                 >
                   Examples
@@ -69,7 +69,7 @@ export function SiteFooter() {
             <h3 className="font-semibold mb-3">社交媒体</h3>
             <div className="flex items-center gap-4">
               <Link
-                href="https://github.com/nature-lang/nature"
+                href="https://github.com/naxlang/nax"
                 target="_blank"
                 className="hover:text-primary"
               >

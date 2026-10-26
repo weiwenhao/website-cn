@@ -101,7 +101,7 @@ export function LandingNav() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Llama2 模型 nature 语言实现
+                Llama2 模型 nax 语言实现
               </ListItem>
               <ListItem
                 title="Tetris Game"
