@@ -10,10 +10,15 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import fs from 'fs';
 
 
+// 作为 naxlang.org/cn 的子站部署时设置 BASE_PATH=/cn，其余情况保持根路径
+const basePath = process.env.BASE_PATH || ''
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configure `pageExtensions` to include markdown and MDX files
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  basePath,
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
   // Optionally, add any other Next.js config below
 }
 

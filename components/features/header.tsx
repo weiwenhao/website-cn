@@ -11,7 +11,7 @@ export function Header() {
       <div className="flex items-center gap-8">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/logo.svg"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH}/logo.svg`}
             alt="Nax Logo"
             width={32}
             height={32}
