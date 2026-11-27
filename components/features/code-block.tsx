@@ -1,232 +1,176 @@
 'use client';
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Highlight, themes } from "prism-react-renderer"
+import Link from "next/link";
+import { CodeSnippet } from "@/components/features/home/code-snippet";
+import { EXAMPLES } from "@/components/features/home/examples";
 
-const CODE_EXAMPLES = {
-  http: `import emoji.services.api.{new, ctx_t} // package: https://github.com/weiwenhao/emoji-api
+export type Mode = "n" | "x";
 
-fn main() {
-    var app = new()
+const MODES: Mode[] = ["n", "x"];
 
-    app.use(fn(ref<ctx_t> c):void! {
-        c.next()
-    })
-
-    app.get('/hello/:msg', fn(ref<ctx_t> c):void! {
-        return c.json(200, {'message': 'ok', 'data': 'hello ' + c.param('msg')})
-    })
-
-    app.listen(8888)
-}`,
-
-  fib: `import fmt  
-
-fn fib(int n):int {
-    if n <= 1 {
-        return n
-    }
-    return fib(n - 1) + fib(n - 2)
-}
-
-fn main() {
-    var result = fib(10)
-    fmt.printf('result=%d', result)
-}`,
-
-
-  generics: `type box<T, U> = struct {
-	T width
-	U length
-}
-  
-fn box<T, U>.perimeter():T {
-    return (self.width + self.length as T) * 2
-}
-
-fn main() {
-    var b = box<i16, i32>{width: 10, length: 20}
-    println('perimeter =', b.perimeter())
-}`,
-
-  coroutine: `import co
-
-fn delay_sum(int a, int b):int {
-    co.sleep(1000)
-
-    return a + b
-}
-
-fn main() {
-  var fut = go delay_sum(1, 1) // eq: future_t<int> fut = @async(delay_sum(1, 1))
-  var result = fut.await()
-
-  println('result =', result)
-}`,
-
-  error: `fn main() {
-    var result = rem(10, 0) catch e {
-        println(e.msg())
-        1
-    }
-    println(result)
-}
-
-fn rem(int dividend, int divisor):int! {
-	if divisor == 0 {
-		throw errorf('divisor cannot zero')
-	}
-	return dividend % divisor
-}`,
-
-  nullable: `fn main() {
-    int? foo = null
-    int bar = match foo {
-        is int v -> v // auto assert
-        is null -> -1
-    }
-
-    assert(bar == -1) 
-
-    if foo is int v {
-        assert(v == -1)
-    }
-}`,
-
-  match: `fn main() {
-    int n = 3
-    match n {
-        1|2 -> println('one or two')
-        3 -> println('three') // here
-        _ -> println('something else')
-    }
-
-    var res = match {
-        (n < 0) -> 1
-        _ -> 2
-    }
-    println(res) // 2
-}`,
-
-
-  interface: `type measurable = interface{
-	fn perimeter():int
-	fn area():int
-}
-
-type rectangle: measurable = struct{
-	int width
-	int height
-}
-
-fn rectangle.area():int {
-	return self.width * self.height
-}
-fn rectangle.perimeter():int {
-	return 2 * (self.width + self.height)
-}
-
-fn print_shape(measurable s) {
-    println(s.area(), s.perimeter())
-}
-
-fn main() {
-    var r = rectangle{width: 3, height: 4}
-    print_shape(r)
-
-    var r1 = new rectangle(width=15, height=18)
-    print_shape(r1)
-}
-`,
-
-  channel: `import co
-
-fn main() {
-    var ch = chan_new<string>()
-
-    go delay_send(ch)
-
-    select{
-        ch.on_recv() -> msg {
-            println('recv msg =', msg)
-        }
-    }
-}
-
-fn delay_send(chan<string> ch):void! {
-    co.sleep(1000)
-    ch.send('hello ch')
-}`,
-
-  json: `import json
-
-type book_t = struct{
-    string title
-    string author
-}
-
-fn main() {
-    var str = \`{"title":"杀死一只知更鸟","author":"Harper Lee"}\`
-
-    var book = json.deserialize<book_t>(str)
-
-    println(book.title, book.author) // 杀死一只知更鸟 Harper Lee
-}`
-
-
+// The tabs of each run mode, labeled with the example ids from examples.ts, left in English. The five in the middle are
+// language features that both modes support, so they appear in both lists in the same order. The last tab shows how the
+// mode calls the other one.
+const SHARED = ["error", "nullable", "match", "generics", "interface"];
+const IDS: Record<Mode, string[]> = {
+  n: ["http", "coroutine", "channel", "json", ...SHARED, "interop"],
+  x: ["arena", "heap", "vec", "libc", ...SHARED, "interop"],
 };
 
-type CodeExample = keyof typeof CODE_EXAMPLES;
+const find = (mode: Mode, id: string) => EXAMPLES.find((e) => e.id === id && e.file.endsWith(`.${mode}`))!;
 
-export function CodeBlock() {
-  const [activeExample, setActiveExample] = useState<CodeExample>("http");
+// n is the light editor, x the dark one; the hero switches both together.
+const THEME = {
+  n: {
+    snippet: "light" as const,
+    frame: "border-black/10 bg-white shadow-[0_40px_90px_-30px_rgba(70,12,10,0.55)]",
+    line: "border-[#EFEFED]",
+    dot: "bg-[#DEDEDA]",
+    bar: "bg-[#F4F3F0]",
+    file: "text-[#6B6A67] hover:text-[#111111]",
+    fileOn: "bg-white text-[#111111]",
+    copy: "text-[#6B6A67] hover:text-[#111111]",
+    tabs: "bg-white",
+    tab: "text-[#6B6A67] hover:text-[#111111]",
+    tabOn: "font-medium text-[#111111]",
+    underline: "bg-nax-red",
+    scroll: "[scrollbar-color:#D4D4D0_transparent]",
+    out: "bg-[#FBFBFA]",
+    cmd: "text-[#6B6A67]",
+    prompt: "text-[#9A9894]",
+    result: "text-[#111111]",
+  },
+  x: {
+    snippet: "dark" as const,
+    frame: "border-white/10 bg-[#171718] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.75)]",
+    line: "border-white/[0.08]",
+    dot: "bg-white/15",
+    bar: "bg-[#0E0E0F]",
+    file: "text-zinc-500 hover:text-zinc-200",
+    fileOn: "bg-[#171718] text-white",
+    copy: "text-zinc-400 hover:text-white",
+    tabs: "bg-[#171718]",
+    tab: "text-zinc-400 hover:text-white",
+    tabOn: "font-medium text-white",
+    underline: "bg-nax-red",
+    scroll: "[scrollbar-color:#3A3A3E_transparent]",
+    out: "bg-[#121213]",
+    cmd: "text-zinc-400",
+    prompt: "text-zinc-600",
+    result: "text-zinc-100",
+  },
+};
+
+// The hero code window. The two file tabs on top are the run modes (the suffix decides the mode) and switch the whole hero;
+// below them is one tab per example of the chosen mode, the program, and its real output.
+export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (mode: Mode) => void }) {
+  // each mode remembers the example tab that was open last
+  const [picked, setPicked] = useState<Record<Mode, string>>({ n: IDS.n[0], x: IDS.x[0] });
+  const [copied, setCopied] = useState(false);
+  const t = THEME[mode];
+  const activeId = picked[mode];
+  const example = find(mode, activeId);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(example.code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      // clipboard may be unavailable; the code stays selectable
+    }
+  };
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="flex flex-wrap gap-2 p-4 border-b bg-white dark:bg-gray-950">
-        {Object.keys(CODE_EXAMPLES).map((example) => (
-          <Button
-            key={example}
-            variant={activeExample === example ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setActiveExample(example as CodeExample)}
-            className={activeExample === example ? "bg-nax-red hover:bg-nax-red/90 text-white" : ""}
+    <div className={`overflow-hidden rounded-xl border transition-colors duration-500 ${t.frame}`}>
+      <div className={`flex h-11 items-stretch border-b pl-4 pr-3 transition-colors duration-500 ${t.line} ${t.bar}`}>
+        <div className="mr-4 hidden items-center gap-1.5 sm:flex" aria-hidden>
+          <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
+          <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
+          <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
+        </div>
+        <div role="tablist" aria-label="运行模式" className="flex items-stretch">
+          {MODES.map((m) => {
+            const selected = m === mode;
+            return (
+              <button
+                key={m}
+                role="tab"
+                type="button"
+                aria-selected={selected}
+                onClick={() => onModeChange(m)}
+                className={`relative -mb-px flex items-center border-x border-t-2 px-5 font-mono text-[13px] transition-colors duration-300 ${
+                  selected ? `${t.line} border-t-nax-red ${t.fileOn}` : `border-transparent ${t.file}`
+                }`}
+              >
+                main<span className="text-nax-red">.{m}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="ml-auto flex items-center gap-2 self-center">
+          {/* like the copy button, the link is on every example; the program is handed to the playground in the URL hash,
+              the examples it cannot run (a server that never exits, everything in x) open it empty-handed */}
+          <Link
+            href={example.browser ? `/playground#code=${encodeURIComponent(example.code)}` : "/playground"}
+            className={`rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
           >
-            {example}
-          </Button>
-        ))}
+            在浏览器中尝试
+          </Link>
+          <button
+            type="button"
+            onClick={copy}
+            className={`rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
+          >
+            {copied ? "已复制" : "复制"}
+          </button>
+        </div>
       </div>
-      <div className="h-[320px] overflow-y-auto bg-white no-scrollbar">
-        <Highlight
-          theme={themes.github}
-          code={CODE_EXAMPLES[activeExample]}
-          language="js"
-        >
-          {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre
-              className={className + " p-4 font-mono"}
-              style={{
-                ...style,
-                backgroundColor: 'transparent',
-                margin: 0,
-                lineHeight: '1.4',
-                fontFamily: 'Operator Mono, IBM Plex Mono, JetBrains Mono, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-                fontWeight: '400',  // 添加这一行来控制字体粗细
-                fontSize: '0.9rem'  // 或使用 style 属性
-              }}
+
+      <div
+        role="tablist"
+        aria-label="语法示例"
+        className={`flex flex-wrap border-b px-2 transition-colors duration-500 ${t.line} ${t.tabs}`}
+      >
+        {IDS[mode].map((id) => {
+          const selected = id === activeId;
+          return (
+            <button
+              key={id}
+              role="tab"
+              type="button"
+              id={`hero-tab-${mode}-${id}`}
+              aria-selected={selected}
+              aria-controls="hero-panel"
+              onClick={() => setPicked((p) => ({ ...p, [mode]: id }))}
+              className={`relative px-2.5 py-2.5 text-[13px] transition-colors ${selected ? t.tabOn : t.tab}`}
             >
-              {tokens.map((line, i) => (
-                <div key={i} {...getLineProps({ line })}>
-                  {line.map((token, key) => (
-                    <span key={key} {...getTokenProps({ token })} />
-                  ))}
-                </div>
-              ))}
-            </pre>
-          )}
-        </Highlight>
+              {id}
+              {selected && <span aria-hidden className={`absolute inset-x-2.5 -bottom-px h-[2px] ${t.underline}`} />}
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        role="tabpanel"
+        id="hero-panel"
+        aria-labelledby={`hero-tab-${mode}-${activeId}`}
+        className={`h-[376px] overflow-auto px-5 py-4 [scrollbar-width:thin] ${t.scroll}`}
+      >
+        <CodeSnippet code={example.code} theme={t.snippet} className="text-[13px] leading-[1.75]" />
+      </div>
+
+      <div
+        className={`min-h-[84px] border-t px-5 py-3 font-mono text-[12.5px] leading-6 transition-colors duration-500 ${t.line} ${t.out}`}
+      >
+        <div className={t.cmd}>
+          <span className={`select-none ${t.prompt}`}>$ </span>
+          {example.cmd}
+        </div>
+        {example.output && <div className={`mt-0.5 whitespace-pre ${t.result}`}>{example.output}</div>}
       </div>
     </div>
   );
-} 
+}

@@ -1,201 +1,115 @@
-import { Button } from "@/components/ui/button";
-import { CodeBlock } from "@/components/features/code-block";
-import { Gamepad2, Infinity, Cog, Globe } from "lucide-react";
-import Link from "next/link";
+import { Outfit } from "next/font/google";
+import { Benchmarks } from "@/components/features/home/bench";
+import { Hero } from "@/components/features/home/hero";
+import {
+  Features,
+  Pillars,
+  ProjectList,
+  SectionHead,
+  Sponsors,
+  UseCases,
+} from "@/components/features/home/sections";
+
+// The layout loads Outfit at weight 400 only. The landing page needs the heavier weights for its headings.
+const font = Outfit({ weight: ["400", "500", "600", "700"], subsets: ["latin"] });
+
+// Outfit only covers Latin glyphs, so name the CJK faces explicitly instead of leaving it to the browser default.
+const CJK = '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif';
+
+// Hero entrance: one short fade-up per block. The ring of the special sponsor shows the whole spectrum, and
+// the spectrum flows along it. All of it is skipped when the visitor prefers reduced motion.
+const MOTION = `
+.nax-rainbow {
+  background-image: linear-gradient(90deg, #ED4845, #F59E0B, #FACC15, #22C55E, #06B6D4, #3B82F6, #8B5CF6, #EC4899, #ED4845);
+  background-size: 150px 100%;
+  background-repeat: repeat-x;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes nax-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  .nax-rise {
+    animation: nax-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+  @keyframes nax-flow {
+    to { background-position: 150px 0; }
+  }
+  .nax-rainbow {
+    animation: nax-flow 4s linear infinite;
+  }
+}
+`;
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <main>
-        {/* hero */}
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* 左侧内容 */}
-            <div className="flex flex-col gap-8">
-              <div className="space-y-6">
-                <h1 className="text-5xl font-bold text-nax-red">
-                  Nax ...
-                </h1>
+    <div
+      className={`${font.className} overflow-x-clip bg-white text-[#2F3437]`}
+      style={{ fontFamily: `${font.style.fontFamily}, ${CJK}` }}
+    >
+      <style>{MOTION}</style>
 
-                <p className="text-2xl leading-relaxed text-gray-800 dark:text-gray-200">
-                  通用系统型编程语言与编译器，期望用<span className="font-semibold">简洁优雅</span>的方式构建高性能、安全可靠、跨平台软件。
-                </p>
-                <p></p>
-                <p></p>
-                <p></p>
-              </div>
+      <Hero />
 
-              <div className="flex items-center gap-6">
-                <Button
-                  size="lg"
-                  className="bg-nax-red hover:bg-nax-red/80 text-white px-8 py-6 text-lg rounded-md shadow-lg flex items-center gap-2"
-                  asChild
-                >
-                  <Link href="/docs/get-started" rel="noopener noreferrer">
-                    快速开始
-                  </Link>
-                </Button>
-                <span className="text-gray-600 dark:text-gray-400">or</span>
-                <Link
-                  href="/playground"
-                  className="text-nax-red hover:text-nax-red/90 text-lg font-medium hover:underline"
-                >
-                  在浏览器中尝试
-                </Link>
-              </div>
-            </div>
-
-            {/* 右侧代码展示 */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow">
-              <CodeBlock />
-            </div>
+      {/* 01 pillars: the red band continues the red panel of the hero */}
+      <section className="bg-[#D93A36] py-20 lg:py-28">
+        <div className="container mx-auto px-4">
+          <SectionHead index="01" title="为什么选择 Nax?" tone="red" />
+          <div className="mt-14">
+            <Pillars />
           </div>
         </div>
+      </section>
 
-        {/* 主要特性 */}
-        <div className="w-full bg-gray-50 dark:bg-gray-900">
-          <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">为什么选择 Nax?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold mb-4">轻量&简洁&自然</h3>
-                <p className="text-gray-600 dark:text-gray-300">轻量、简洁、一致性的语法设计，轻松掌握并快速上手使用</p>
-              </div>
-              <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold mb-4">安全可靠</h3>
-                <p className="text-gray-600 dark:text-gray-300">强类型、静态分析与编译、内存安全、异常处理，轻松编写安全可靠的软件</p>
-              </div>
-              <div className="p-6 rounded-lg border bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold mb-4">高性能</h3>
-                <p className="text-gray-600 dark:text-gray-300">高性能 GC 实现、高性能共享栈协程实现、基于 libuv 的网络 IO、使用纯 C 实现的 runtime</p>
-              </div>
-            </div>
-            <div className="text-center text-gray-400 mt-4">点击快速开始查看更多特性支持......</div>
-          </section>
+      {/* 02 benchmarks */}
+      <section className="bg-[#111112] py-20 text-white lg:py-28">
+        <div className="container mx-auto px-4">
+          <SectionHead
+            index="02"
+            title="基准测试"
+            lead="与 Go、Rust、Node.js 在同一环境下对比。Nax 以红色标出，数值轴均从零开始。"
+            tone="ink"
+          />
+          <div className="mt-14">
+            <Benchmarks />
+          </div>
         </div>
+      </section>
 
-        {/* 应用场景 */}
-        <div className="w-full bg-white dark:bg-gray-800">
-          <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">应用场景</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <Globe className="w-6 h-6 text-nax-red" />
-                  <h3 className="text-lg font-semibold">服务端应用</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">API、命令行、MCP 服务、网络中间件</p>
-              </div>
-
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <Cog className="w-6 h-6 text-nax-red" />
-                  <h3 className="text-lg font-semibold">系统编程</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">操作系统、物联网、容器系统</p>
-              </div>
-
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <Gamepad2 className="w-6 h-6 text-nax-red" />
-                  <h3 className="text-lg font-semibold">游戏开发</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">游戏引擎和游戏开发</p>
-              </div>
-
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <Infinity className="w-6 h-6 text-nax-red" />
-                  <h3 className="text-lg font-semibold">探索可能性</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">数据库、编程教学、GUI、计算机科学 ...</p>
-              </div>
-            </div>
-          </section>
+      {/* 03 features */}
+      <section className="bg-[#F6F5F2] py-20 lg:py-28">
+        <div className="container mx-auto px-4">
+          <SectionHead index="03" title="语言特性" />
+          <div className="mt-14">
+            <Features />
+          </div>
         </div>
+      </section>
 
-        {/* 赞助商部分 */}
-        <div className="w-full bg-gray-50 dark:bg-gray-900">
-          <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">Supported By</h2>
-
-            <div className="my-8 flex flex-col items-center gap-6 py-4">
-              <span className="text-sm text-gray-700 dark:text-gray-300">特别赞助</span>
-              <Link
-                href="https://github.com/linky6565"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
-              >
-                <img
-                  src="https://github.com/linky6565.png"
-                  alt="linky6565 logo"
-                  className="h-12 w-12 rounded-full"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">linky6565</span>
-              </Link>
-            </div>
-
-            <div className="my-8 flex flex-col items-center gap-6">
-              <span className="text-sm text-gray-700 dark:text-gray-300">普通赞助</span>
-              <div className="flex flex-wrap justify-center items-center gap-8">
-                <Link
-                  href="https://github.com/cn-lang"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
-                >
-                  <img
-                    src="https://github.com/cn-lang.png"
-                    alt="cn-lang logo"
-                    className="h-12 w-12 rounded-full"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">cn-lang</span>
-                </Link>
-                <Link
-                  href="https://github.com/zhangchunlin"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
-                >
-                  <img
-                    src="https://github.com/zhangchunlin.png"
-                    alt="zhangchunlin logo"
-                    className="h-12 w-12 rounded-full"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">zhangchunlin</span>
-                </Link>
-                <Link
-                  href="https://github.com/mmachatschek"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
-                >
-                  <img
-                    src="https://github.com/mmachatschek.png"
-                    alt="mmachatschek logo"
-                    className="h-12 w-12 rounded-full"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">mmachatschek</span>
-                </Link>
-                <Link
-                  href="https://github.com/infinilabs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-80 flex flex-row items-center gap-2"
-                >
-                  <img
-                    src="https://github.com/infinilabs.png"
-                    alt="infinilabs logo"
-                    className="h-12 w-12 rounded-full"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">infinilabs</span>
-                </Link>
-              </div>
-            </div>
-          </section>
+      {/* 04 use cases and projects */}
+      <section className="py-20 lg:py-28">
+        <div className="container mx-auto px-4">
+          <SectionHead index="04" title="应用场景" />
+          <div className="mt-14">
+            <UseCases />
+          </div>
+          <h3 className="mt-20 text-2xl font-bold text-[#111112]">使用 Nax 构建的项目</h3>
+          <div className="mt-6">
+            <ProjectList />
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* 05 sponsors */}
+      <section className="bg-[#F6F5F2] py-20 lg:py-24">
+        <div className="container mx-auto px-4">
+          <SectionHead index="05" title="Sponsors" />
+          <div className="mt-12">
+            <Sponsors />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
