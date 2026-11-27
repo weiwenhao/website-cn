@@ -5,7 +5,7 @@ export type Example = {
   cmd: string;
   output: string;
   code: string;
-  // The playground builds one main.n and runs it for a few seconds, so only a self-contained program that ends can be tried there.
+  // The playground builds one main.n or main.x and runs it for a few seconds, so only a self-contained program that ends can be tried there.
   browser?: boolean;
 };
 
@@ -30,6 +30,7 @@ fn main() {
   {
     id: "arena",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "nax 42",
     code: `// memory comes from an arena allocator
@@ -238,6 +239,7 @@ fn main() {
   {
     id: "heap",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "3 4",
     code: `// allocate on the heap, release by hand
@@ -257,6 +259,7 @@ fn main() {
   {
     id: "vec",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "4 12 100",
     code: `// a vec whose memory comes from an allocator
@@ -274,6 +277,7 @@ fn main() {
   {
     id: "libc",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "12.000000",
     code: `// call a C function directly
@@ -287,6 +291,7 @@ fn main() {
   {
     id: "error",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "divisor cannot be zero\n1",
     code: `errdef DIVIDE_BY_ZERO 'divisor cannot be zero'
@@ -309,6 +314,7 @@ fn main() {
   {
     id: "nullable",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "-1\n42",
     code: `fn main() {
@@ -328,6 +334,7 @@ fn main() {
   {
     id: "match",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "three\n2",
     code: `fn main() {
@@ -348,6 +355,7 @@ fn main() {
   {
     id: "generics",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "perimeter = 60",
     code: `type box<T, U> = struct {
@@ -367,6 +375,7 @@ fn main() {
   {
     id: "interface",
     file: "main.x",
+    browser: true,
     cmd: "nax build main.x && ./main",
     output: "12 14",
     code: `type measurable = interface{

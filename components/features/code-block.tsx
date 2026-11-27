@@ -138,10 +138,14 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
           })}
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
-          {/* only show the playground link when this example can actually run in the single-file .n playground */}
+          {/* only show the playground link when this example can run in the single-file playground */}
           {example.browser && (
             <Link
-              href={`/playground#code=${encodeURIComponent(example.code)}`}
+              href={
+                mode === "x"
+                  ? `/playground#mode=x&code=${encodeURIComponent(example.code)}`
+                  : `/playground#code=${encodeURIComponent(example.code)}`
+              }
               className={`whitespace-nowrap rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
             >
               在浏览器中尝试

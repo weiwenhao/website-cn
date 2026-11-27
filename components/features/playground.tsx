@@ -5,49 +5,97 @@ import CodeMirror from "@uiw/react-codemirror";
 import { Play } from "lucide-react";
 import { MONO, naxEditor } from "@/components/features/nax-codemirror";
 
+type Mode = "n" | "x";
+
+const MODES: Mode[] = ["n", "x"];
+
 // The playground server runs on its own box (nginx in front, docker sandboxes behind) with the current nax compiler.
 const API =
   process.env.NEXT_PUBLIC_PLAYGROUND_API ||
   "https://019f791d26bb77fdba1492fdca11ab05.ap-southeast-1.a8g1v3.xyz/api/playgrounds/run";
-const STORAGE_KEY = "naxPlaygroundCode";
+const MODE_STORAGE_KEY = "naxPlaygroundMode";
+const CODE_STORAGE_KEY: Record<Mode, string> = {
+  n: "naxPlaygroundCode",
+  x: "naxPlaygroundCodeX",
+};
 const RUN_TIMEOUT_MS = 30_000;
 
-const DEFAULT_CODE = `fn main() {
+const DEFAULT_CODE: Record<Mode, string> = {
+  n: `fn main() {
     println('hello world')
-}`;
+}`,
+  x: `import allocator.arena
 
-const readDraft = (): string | null => {
+type book_t = struct{
+    string title
+    int pages
+}
+
+fn main() {
+    var ar = arena.init(4096)
+    defer ar.deinit()
+
+    var b = ar.new(book_t{title: 'nax', pages: 42})
+    println(b.title, b.pages)
+}`,
+};
+
+const readStorage = (key: string): string | null => {
   try {
-    return localStorage.getItem(STORAGE_KEY);
+    return localStorage.getItem(key);
   } catch {
     return null;
   }
 };
 
-const saveDraft = (value: string) => {
+const writeStorage = (key: string, value: string) => {
   try {
-    localStorage.setItem(STORAGE_KEY, value);
+    localStorage.setItem(key, value);
   } catch {
     // storage may be unavailable (e.g. private browsing or quota exceeded)
   }
 };
 
-// The landing page hands a program over in the URL hash (#code=...); otherwise the last draft is restored.
-// The playground builds a single main.n, so the editor always holds one .n file.
+// The landing page hands a program over in the URL hash (#code=... or #mode=x&code=...); otherwise the last draft is restored.
+// The playground builds a single main.n or main.x according to the active file tab.
 export function Playground() {
-  const [code, setCode] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>("n");
+  const [drafts, setDrafts] = useState<Record<Mode, string> | null>(null);
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const activeRequest = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    const shared = new URLSearchParams(window.location.hash.slice(1)).get("code");
-    if (shared !== null) {
-      saveDraft(shared);
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const sharedCode = params.get("code");
+    const hashMode = params.get("mode");
+    const savedMode = readStorage(MODE_STORAGE_KEY);
+    const initialMode: Mode =
+      hashMode === "x" || hashMode === "n"
+        ? hashMode
+        : sharedCode !== null
+          ? "n"
+          : savedMode === "x"
+            ? "x"
+            : "n";
+
+    const nextDrafts: Record<Mode, string> = {
+      n: readStorage(CODE_STORAGE_KEY.n) ?? DEFAULT_CODE.n,
+      x: readStorage(CODE_STORAGE_KEY.x) ?? DEFAULT_CODE.x,
+    };
+
+    if (sharedCode !== null) {
+      nextDrafts[initialMode] = sharedCode;
+      writeStorage(CODE_STORAGE_KEY[initialMode], sharedCode);
+    }
+    if (sharedCode !== null || hashMode !== null) {
+      writeStorage(MODE_STORAGE_KEY, initialMode);
       // a reload must not bring the original program back over later edits
       history.replaceState(null, "", window.location.pathname + window.location.search);
     }
-    setCode(shared ?? readDraft() ?? DEFAULT_CODE);
+
+    setMode(initialMode);
+    setDrafts(nextDrafts);
   }, []);
 
   useEffect(() => {
@@ -56,9 +104,20 @@ export function Playground() {
     };
   }, []);
 
+  const code = drafts ? drafts[mode] : null;
+
+  const selectMode = (nextMode: Mode) => {
+    if (nextMode === mode || isLoading) {
+      return;
+    }
+    setMode(nextMode);
+    setOutput("");
+    writeStorage(MODE_STORAGE_KEY, nextMode);
+  };
+
   const onChange = (value: string) => {
-    setCode(value);
-    saveDraft(value);
+    setDrafts((prev) => (prev ? { ...prev, [mode]: value } : prev));
+    writeStorage(CODE_STORAGE_KEY[mode], value);
   };
 
   const runCode = async () => {
@@ -78,7 +137,8 @@ export function Playground() {
     setOutput("运行中...");
 
     try {
-      const response = await fetch(API, {
+      const endpoint = mode === "x" ? `${API}?mode=x` : API;
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
         body: code,
@@ -129,8 +189,27 @@ export function Playground() {
         <section className="flex h-[440px] min-h-0 flex-col border-2 border-[#111112] bg-white lg:h-auto">
           <h2 className="sr-only">代码编辑</h2>
           <div className="flex h-12 shrink-0 items-stretch justify-between border-b border-[#EFEFED] bg-[#F4F3F0] pl-4 pr-2.5">
-            <div className="relative -mb-px flex items-center border-x border-t-2 border-[#EFEFED] border-t-nax-red bg-white px-5 font-mono text-[13px] text-[#111111]">
-              main<span className="text-nax-red">.n</span>
+            <div role="tablist" aria-label="运行模式" className="flex items-stretch">
+              {MODES.map((m) => {
+                const selected = m === mode;
+                return (
+                  <button
+                    key={m}
+                    role="tab"
+                    type="button"
+                    aria-selected={selected}
+                    disabled={isLoading}
+                    onClick={() => selectMode(m)}
+                    className={`relative -mb-px flex items-center whitespace-nowrap border-x border-t-2 px-5 font-mono text-[13px] transition-colors disabled:opacity-60 ${
+                      selected
+                        ? "border-[#EFEFED] border-t-nax-red bg-white text-[#111111]"
+                        : "border-transparent text-[#6B6A67] hover:text-[#111111]"
+                    }`}
+                  >
+                    main<span className="text-nax-red">.{m}</span>
+                  </button>
+                );
+              })}
             </div>
             <button
               type="button"
@@ -167,7 +246,7 @@ export function Playground() {
             style={{ fontFamily: MONO }}
           >
             <div className="text-zinc-400">
-              <span className="select-none text-zinc-600">$ </span>nax build main.n &amp;&amp; ./main
+              <span className="select-none text-zinc-600">$ </span>nax build main.{mode} &amp;&amp; ./main
             </div>
             <pre aria-live="polite" className="whitespace-pre-wrap break-words text-zinc-100" style={{ fontFamily: "inherit" }}>
               {output}
