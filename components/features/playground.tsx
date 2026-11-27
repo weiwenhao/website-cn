@@ -4,21 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { Play } from "lucide-react";
 import { MONO, naxEditor } from "@/components/features/nax-codemirror";
+import { PLAYGROUND_TIMEOUT_MS, runPlayground, type PlaygroundMode } from "@/lib/playground-api";
 
-type Mode = "n" | "x";
+type Mode = PlaygroundMode;
 
 const MODES: Mode[] = ["n", "x"];
 
-// The playground server runs on its own box (nginx in front, docker sandboxes behind) with the current nax compiler.
-const API =
-  process.env.NEXT_PUBLIC_PLAYGROUND_API ||
-  "https://019f791d26bb77fdba1492fdca11ab05.ap-southeast-1.a8g1v3.xyz/api/playgrounds/run";
 const MODE_STORAGE_KEY = "naxPlaygroundMode";
 const CODE_STORAGE_KEY: Record<Mode, string> = {
   n: "naxPlaygroundCode",
   x: "naxPlaygroundCodeX",
 };
-const RUN_TIMEOUT_MS = 30_000;
 
 const DEFAULT_CODE: Record<Mode, string> = {
   n: `fn main() {
@@ -131,28 +127,14 @@ export function Playground() {
     const timeoutId = setTimeout(() => {
       timedOut = true;
       controller.abort();
-    }, RUN_TIMEOUT_MS);
+    }, PLAYGROUND_TIMEOUT_MS);
 
     setIsLoading(true);
     setOutput("运行中...");
 
     try {
-      const endpoint = mode === "x" ? `${API}?mode=x` : API;
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: code,
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        // the server says what went wrong in {"error": ...} (busy, too long, exit code); the gateway in front of it answers in plain text
-        const reason = await response.json().then((body) => body.error).catch(() => undefined);
-        throw new Error(reason ?? `请求失败（状态码 ${response.status}）`);
-      }
-
-      const result = await response.json();
-      setOutput(typeof result.data === "string" ? result.data : "");
+      const data = await runPlayground(code, mode, controller.signal);
+      setOutput(data);
     } catch (error) {
       if (controller.signal.aborted && !timedOut) {
         return;

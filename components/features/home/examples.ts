@@ -13,18 +13,26 @@ export const EXAMPLES: Example[] = [
   {
     id: "http",
     file: "main.n",
-    cmd: "curl localhost:8888/hello",
-    output: "hello nax",
+    browser: true,
+    cmd: "nax build main.n && ./main",
+    output: "200 hello nax",
     code: `import http
+import http.client
+import co
 
-fn main() {
+fn serve():void! {
     var app = http.server()
-
     app.get('/hello', fn(http.request_t req, ref<http.response_t> res):void! {
         res.send('hello nax')
     })
-
     app.listen(8888)
+}
+
+fn main() {
+    go serve()
+    co.sleep(100)
+    var resp = client.new().get('http://127.0.0.1:8888/hello').send()
+    println(resp.status, resp.text())
 }`,
   },
   {

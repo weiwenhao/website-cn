@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Play } from "lucide-react";
 import { CodeSnippet } from "@/components/features/home/code-snippet";
 import { EXAMPLES } from "@/components/features/home/examples";
+import { PLAYGROUND_TIMEOUT_MS, runPlayground, type PlaygroundMode } from "@/lib/playground-api";
 
-export type Mode = "n" | "x";
+export type Mode = PlaygroundMode;
 
 const MODES: Mode[] = ["n", "x"];
 
@@ -19,6 +21,12 @@ const IDS: Record<Mode, string[]> = {
 };
 
 const find = (mode: Mode, id: string) => EXAMPLES.find((e) => e.id === id && e.file.endsWith(`.${mode}`))!;
+
+type RunState =
+  | { kind: "idle" }
+  | { kind: "running" }
+  | { kind: "done"; output: string; elapsedMs: number }
+  | { kind: "error"; message: string };
 
 // n is the light editor, x the dark one; the hero switches both together.
 const THEME = {
@@ -40,6 +48,9 @@ const THEME = {
     cmd: "text-[#6B6A67]",
     prompt: "text-[#9A9894]",
     result: "text-[#111111]",
+    muted: "text-[#6B6A67]",
+    error: "text-[#CF222E]",
+    live: "text-[#116329]",
   },
   x: {
     snippet: "dark" as const,
@@ -59,16 +70,21 @@ const THEME = {
     cmd: "text-zinc-400",
     prompt: "text-zinc-600",
     result: "text-zinc-100",
+    muted: "text-zinc-400",
+    error: "text-[#FF7B72]",
+    live: "text-[#9FE3B6]",
   },
 };
 
 // The hero code window. The two file tabs on top are the run modes (the suffix decides the mode) and switch the whole hero;
-// below them is one tab per example of the chosen mode, the program, and its real output.
+// below them is one tab per example of the chosen mode, the program, and a terminal panel that can run it live.
 export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (mode: Mode) => void }) {
   // each mode remembers the example tab that was open last
   const [picked, setPicked] = useState<Record<Mode, string>>({ n: IDS.n[0], x: IDS.x[0] });
   const [copied, setCopied] = useState(false);
+  const [runState, setRunState] = useState<RunState>({ kind: "idle" });
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeRun = useRef<AbortController | null>(null);
   const t = THEME[mode];
   const activeId = picked[mode];
   const example = find(mode, activeId);
@@ -86,11 +102,15 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
       if (copyTimer.current) {
         clearTimeout(copyTimer.current);
       }
+      activeRun.current?.abort();
     };
   }, []);
 
   useEffect(() => {
     clearCopyState();
+    activeRun.current?.abort();
+    activeRun.current = null;
+    setRunState({ kind: "idle" });
   }, [mode, activeId]);
 
   const copy = async () => {
@@ -108,6 +128,56 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
       // clipboard may be unavailable; the code stays selectable
     }
   };
+
+  const runLive = async () => {
+    if (!example.browser || runState.kind === "running") {
+      return;
+    }
+
+    activeRun.current?.abort();
+    const controller = new AbortController();
+    activeRun.current = controller;
+    let timedOut = false;
+    const timeoutId = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, PLAYGROUND_TIMEOUT_MS);
+
+    const startedAt = performance.now();
+    setRunState({ kind: "running" });
+
+    try {
+      const output = await runPlayground(example.code, mode, controller.signal);
+      if (activeRun.current !== controller) {
+        return;
+      }
+      setRunState({
+        kind: "done",
+        output: output.replace(/\r?\n$/, ""),
+        elapsedMs: Math.round(performance.now() - startedAt),
+      });
+    } catch (error) {
+      if (controller.signal.aborted && !timedOut) {
+        return;
+      }
+      if (activeRun.current !== controller) {
+        return;
+      }
+      const message = timedOut
+        ? "请求超时"
+        : error instanceof Error
+          ? error.message
+          : String(error);
+      setRunState({ kind: "error", message });
+    } finally {
+      clearTimeout(timeoutId);
+      if (activeRun.current === controller) {
+        activeRun.current = null;
+      }
+    }
+  };
+
+  const isRunning = runState.kind === "running";
 
   return (
     <div className={`overflow-hidden rounded-xl border transition-colors duration-500 ${t.frame}`}>
@@ -190,7 +260,7 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
         role="tabpanel"
         id="hero-panel"
         aria-labelledby={`hero-tab-${mode}-${activeId}`}
-        className={`h-[376px] overflow-auto px-5 py-4 [scrollbar-width:thin] ${t.scroll}`}
+        className={`h-[448px] overflow-auto px-5 py-4 [scrollbar-width:thin] ${t.scroll}`}
       >
         <CodeSnippet code={example.code} theme={t.snippet} className="text-[13px] leading-[1.75]" />
       </div>
@@ -198,11 +268,34 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
       <div
         className={`min-h-[84px] border-t px-5 py-3 font-mono text-[12.5px] leading-6 transition-colors duration-500 ${t.line} ${t.out}`}
       >
-        <div className={t.cmd}>
-          <span className={`select-none ${t.prompt}`}>$ </span>
-          {example.cmd}
+        <div className="flex items-center justify-between gap-3">
+          <div className={`min-w-0 truncate ${t.cmd}`}>
+            <span className={`select-none ${t.prompt}`}>$ </span>
+            {example.cmd}
+            {runState.kind === "done" && (
+              <span className={`ml-2.5 font-sans text-[11px] font-medium ${t.live}`}>
+                实时 · {(runState.elapsedMs / 1000).toFixed(1)}s
+              </span>
+            )}
+          </div>
+          {example.browser && (
+            <button
+              type="button"
+              onClick={runLive}
+              disabled={isRunning}
+              className="inline-flex h-7 shrink-0 items-center gap-1.5 border border-nax-red bg-nax-red px-2.5 font-sans text-[12px] font-semibold text-white transition hover:bg-[#D93A36] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60"
+            >
+              <Play aria-hidden className="h-3 w-3 fill-current" />
+              {isRunning ? "运行中..." : "运行"}
+            </button>
+          )}
         </div>
-        {example.output && <div className={`mt-0.5 whitespace-pre ${t.result}`}>{example.output}</div>}
+        <div aria-live="polite" className={`mt-1 max-h-[120px] overflow-auto whitespace-pre-wrap break-words [scrollbar-width:thin] ${t.scroll}`}>
+          {runState.kind === "running" && <span className={t.muted}>沙箱运行中...</span>}
+          {runState.kind === "error" && <span className={t.error}>错误：{runState.message}</span>}
+          {runState.kind === "done" && <span className={t.result}>{runState.output}</span>}
+          {runState.kind === "idle" && example.output && <span className={t.result}>{example.output}</span>}
+        </div>
       </div>
     </div>
   );
