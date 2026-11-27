@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CodeSnippet } from "@/components/features/home/code-snippet";
 import { EXAMPLES } from "@/components/features/home/examples";
@@ -68,15 +68,42 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
   // each mode remembers the example tab that was open last
   const [picked, setPicked] = useState<Record<Mode, string>>({ n: IDS.n[0], x: IDS.x[0] });
   const [copied, setCopied] = useState(false);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const t = THEME[mode];
   const activeId = picked[mode];
   const example = find(mode, activeId);
 
+  const clearCopyState = () => {
+    if (copyTimer.current) {
+      clearTimeout(copyTimer.current);
+      copyTimer.current = null;
+    }
+    setCopied(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (copyTimer.current) {
+        clearTimeout(copyTimer.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    clearCopyState();
+  }, [mode, activeId]);
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(example.code);
+      if (copyTimer.current) {
+        clearTimeout(copyTimer.current);
+      }
       setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
+      copyTimer.current = setTimeout(() => {
+        copyTimer.current = null;
+        setCopied(false);
+      }, 1600);
     } catch {
       // clipboard may be unavailable; the code stays selectable
     }
@@ -84,13 +111,13 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
 
   return (
     <div className={`overflow-hidden rounded-xl border transition-colors duration-500 ${t.frame}`}>
-      <div className={`flex h-11 items-stretch border-b pl-4 pr-3 transition-colors duration-500 ${t.line} ${t.bar}`}>
+      <div className={`flex h-11 items-stretch border-b pl-3 pr-2.5 transition-colors duration-500 sm:pl-4 sm:pr-3 ${t.line} ${t.bar}`}>
         <div className="mr-4 hidden items-center gap-1.5 sm:flex" aria-hidden>
           <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
           <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
           <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
         </div>
-        <div role="tablist" aria-label="运行模式" className="flex items-stretch">
+        <div role="tablist" aria-label="运行模式" className="flex shrink-0 items-stretch">
           {MODES.map((m) => {
             const selected = m === mode;
             return (
@@ -99,8 +126,9 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
                 role="tab"
                 type="button"
                 aria-selected={selected}
+                aria-controls="hero-panel"
                 onClick={() => onModeChange(m)}
-                className={`relative -mb-px flex items-center border-x border-t-2 px-5 font-mono text-[13px] transition-colors duration-300 ${
+                className={`relative -mb-px flex items-center whitespace-nowrap border-x border-t-2 px-3.5 font-mono text-[13px] transition-colors duration-300 sm:px-5 ${
                   selected ? `${t.line} border-t-nax-red ${t.fileOn}` : `border-transparent ${t.file}`
                 }`}
               >
@@ -109,19 +137,20 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
             );
           })}
         </div>
-        <div className="ml-auto flex items-center gap-2 self-center">
-          {/* like the copy button, the link is on every example; the program is handed to the playground in the URL hash,
-              the examples it cannot run (a server that never exits, everything in x) open it empty-handed */}
-          <Link
-            href={example.browser ? `/playground#code=${encodeURIComponent(example.code)}` : "/playground"}
-            className={`rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
-          >
-            在浏览器中尝试
-          </Link>
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
+          {/* only show the playground link when this example can actually run in the single-file .n playground */}
+          {example.browser && (
+            <Link
+              href={`/playground#code=${encodeURIComponent(example.code)}`}
+              className={`whitespace-nowrap rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
+            >
+              在浏览器中尝试
+            </Link>
+          )}
           <button
             type="button"
             onClick={copy}
-            className={`rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
+            className={`whitespace-nowrap rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
           >
             {copied ? "已复制" : "复制"}
           </button>

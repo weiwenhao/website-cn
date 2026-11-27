@@ -2,18 +2,19 @@ import { HighlightStyle, StreamLanguage, syntaxHighlighting } from "@codemirror/
 import { tags } from "@lezer/highlight";
 import { EditorView, type Extension } from "@uiw/react-codemirror";
 import { KEYWORDS, TYPES } from "@/components/features/nax-words";
+import { MONO_FONT_STACK } from "@/lib/fonts";
 
-export const MONO = '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+export const MONO = MONO_FONT_STACK;
 
 const keywords = new Set(KEYWORDS);
 const types = new Set(TYPES);
 
-type State = { comment: boolean; afterType: boolean };
+type State = { comment: boolean; rawString: boolean; afterType: boolean; afterFn: boolean };
 
 // A small tokenizer for nax. It follows the Prism grammar of the landing page (home/nax-prism.ts),
 // so a program is colored the same in the hero window and in the playground.
 const language = StreamLanguage.define<State>({
-  startState: () => ({ comment: false, afterType: false }),
+  startState: () => ({ comment: false, rawString: false, afterType: false, afterFn: false }),
 
   token(stream, state) {
     if (state.comment) {
@@ -25,12 +26,23 @@ const language = StreamLanguage.define<State>({
       return "comment";
     }
 
+    if (state.rawString) {
+      if (stream.match(/^[^`]*`/)) {
+        state.rawString = false;
+      } else {
+        stream.skipToEnd();
+      }
+      return "string";
+    }
+
     if (stream.eatSpace()) {
       return null;
     }
 
     const afterType = state.afterType;
+    const afterFn = state.afterFn;
     state.afterType = false;
+    state.afterFn = false;
 
     if (stream.match("//")) {
       stream.skipToEnd();
@@ -47,7 +59,16 @@ const language = StreamLanguage.define<State>({
     }
 
     const quote = stream.peek();
-    if (quote === "'" || quote === '"' || quote === "`") {
+    if (quote === "`") {
+      stream.next();
+      if (!stream.match(/^[^`]*`/)) {
+        state.rawString = true;
+        stream.skipToEnd();
+      }
+      return "string";
+    }
+
+    if (quote === "'" || quote === '"') {
       stream.next();
       let escaped = false;
       for (let ch = stream.next(); ch != null; ch = stream.next()) {
@@ -59,7 +80,7 @@ const language = StreamLanguage.define<State>({
       return "string";
     }
 
-    if (stream.match(/^(?:0x[\da-fA-F]+|\d+(?:\.\d+)?)/)) {
+    if (stream.match(/^(?:0x[\da-fA-F]+|0b[01]+|0o[0-7]+|\d+(?:\.\d+)?)/)) {
       return "number";
     }
 
@@ -67,9 +88,15 @@ const language = StreamLanguage.define<State>({
       const word = stream.current();
       if (keywords.has(word)) {
         state.afterType = word === "type";
+        state.afterFn = word === "fn";
         return "keyword";
       }
-      if (afterType || types.has(word) || word.endsWith("_t")) {
+      if (
+        afterType ||
+        (afterFn && stream.match(/^(?:<[^>]*>)?\./, false)) ||
+        types.has(word) ||
+        word.endsWith("_t")
+      ) {
         return "type";
       }
       if (/^[A-Z][A-Z0-9_]{2,}$/.test(word)) {

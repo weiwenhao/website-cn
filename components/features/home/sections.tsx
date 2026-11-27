@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CodeSnippet } from "@/components/features/home/code-snippet";
 
 type Tone = "paper" | "ink" | "red";
@@ -44,7 +43,7 @@ function Chip({ children }: { children: string }) {
 // The first three cards are the site's original ones, texts unchanged; the fourth is the two run modes, worded as a list of noun phrases like the others. They sit on the red band, each in its own box.
 const PILLARS = [
   { title: "轻量&简洁&自然", text: "轻量、简洁、一致性的语法设计，轻松掌握并快速上手使用" },
-  { title: "安全可靠", text: "强类型、静态分析与编译、内存安全、异常处理，轻松编写安全可靠的软件" },
+  { title: "安全可靠", text: "强类型、静态分析与编译、内存安全、类型化错误处理，轻松编写安全可靠的软件" },
   {
     title: "高性能",
     text: "高性能 GC 实现、高性能共享栈协程实现、基于 libuv 的网络 IO、使用纯 C 实现的 runtime",
@@ -192,7 +191,7 @@ export function ProjectList() {
 
 function Sponsor({ name, special = false }: { name: string; special?: boolean }) {
   const chip = (
-    <Link
+    <a
       href={`https://github.com/${name}`}
       target="_blank"
       rel="noopener noreferrer"
@@ -201,12 +200,12 @@ function Sponsor({ name, special = false }: { name: string; special?: boolean })
       }`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={`https://github.com/${name}.png`} alt={`${name} logo`} className="h-9 w-9 rounded-full" />
+      <img src={`https://github.com/${name}.png`} alt={`${name} logo`} width={36} height={36} loading="lazy" className="h-9 w-9 rounded-full" />
       <span className="font-mono text-[13px] text-[#2F3437]">{name}</span>
-    </Link>
+    </a>
   );
 
-  // The special sponsor wears a ring of the whole color spectrum instead of the ink border; `.nax-rainbow` is defined in the page's <style>.
+  // The special sponsor wears a ring of the whole color spectrum instead of the ink border; `.nax-rainbow` is defined in globals.css.
   return special ? <div className="nax-rainbow rounded-full p-[3px]">{chip}</div> : chip;
 }
 

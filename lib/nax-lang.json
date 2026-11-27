@@ -60,15 +60,15 @@
       "patterns": [
         {
           "name": "keyword.declaration.nax",
-          "match": "\\b(var|type|fn|import|new|const|test)\\b"
+          "match": "\\b(var|const|type|fn|import|pub|new|test|self)\\b"
         },
         {
           "name": "keyword.control.nax",
-          "match": "\\b(if|else|for|in|break|continue|return|match|select)\\b"
+          "match": "\\b(if|else|for|in|break|continue|return|match|select|defer)\\b"
         },
         {
           "name": "keyword.error.nax",
-          "match": "\\b(try|catch|throw)\\b"
+          "match": "\\b(errdef|catch|throw)\\b"
         },
         {
           "name": "keyword.concurrent.nax",
@@ -92,7 +92,8 @@
         },
         {
           "name": "storage.type.composite.nax",
-          "match": "\\b(struct|chan|arr|vec|map|set|tup|ptr|ref|enum|union|interface)\\b"        }
+          "match": "\\b(struct|interface|chan|arr|vec|map|set|tup|ptr|ref|enum|union)\\b"
+        }
       ]
     },
     "functions": {

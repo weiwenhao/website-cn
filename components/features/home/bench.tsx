@@ -101,22 +101,22 @@ function BarChart({ chart }: { chart: Chart }) {
         {chart.rows.map((row) => {
           const isNax = row.name === "Nax";
           return (
-            <div key={row.name} className="grid grid-cols-[4rem_1fr] items-center gap-3">
+            <div key={row.name} className="grid grid-cols-[3.75rem_minmax(0,1fr)_5.25rem] items-center gap-3">
               <span className={`text-[13px] ${isNax ? "font-bold text-white" : "text-zinc-400"}`}>{row.name}</span>
-              <div className="flex items-center gap-2.5">
+              <div className="min-w-0">
                 <div
                   title={`${row.name}: ${row.label} ${chart.unit}`}
                   className={`h-3 min-w-[4px] ${isNax ? "bg-nax-red" : "bg-zinc-600"}`}
-                  style={{ width: `${(row.value / max) * 72}%` }}
+                  style={{ width: `${(row.value / max) * 100}%` }}
                 />
-                <span
-                  className={`whitespace-nowrap font-mono text-[12.5px] tabular-nums ${
-                    isNax ? "font-semibold text-white" : "text-zinc-400"
-                  }`}
-                >
-                  {row.label}
-                </span>
               </div>
+              <span
+                className={`whitespace-nowrap text-right font-mono text-[12.5px] tabular-nums ${
+                  isNax ? "font-semibold text-white" : "text-zinc-400"
+                }`}
+              >
+                {row.label}
+              </span>
             </div>
           );
         })}
@@ -150,11 +150,15 @@ export function Benchmarks() {
     <div>
       <dl className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {STATS.map((s) => (
-          <div key={s.label} className="border-2 border-white p-8">
+          <div key={s.label} className="min-w-0 border-2 border-white p-6 xl:p-8">
             <dt className="text-[14px] text-zinc-400">{s.label}</dt>
             <dd className="mt-4">
-              <span className="text-[56px] font-bold leading-none tracking-[-0.04em] text-nax-red lg:text-[64px]">{s.value}</span>
-              <span className="ml-2 text-lg text-zinc-300">{s.unit}</span>
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-[48px] font-bold leading-none tracking-[-0.04em] text-nax-red md:text-[36px] lg:text-[48px] xl:text-[60px]">
+                  {s.value}
+                </span>
+                <span className="text-base text-zinc-300 xl:text-lg">{s.unit}</span>
+              </div>
               <div className="mt-4 text-[15px] text-zinc-400">{s.note}</div>
             </dd>
           </div>
@@ -167,7 +171,7 @@ export function Benchmarks() {
         ))}
       </div>
 
-      <p className="mt-8 text-[13px] leading-[1.9] text-zinc-500">
+      <p className="mt-8 text-[13px] leading-[1.9] text-zinc-400">
         测试环境：Nax v0.7.2、Go 1.25.5、Rust 1.92.0、Node.js v25.2.0，Linux 虚拟机（aarch64，Apple M4，9 核，8 GB）。
         <br className="hidden sm:inline" />
         完整数据与测试方法见{" "}

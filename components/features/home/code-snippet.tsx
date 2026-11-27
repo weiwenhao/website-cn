@@ -2,8 +2,9 @@
 
 import { Highlight } from "prism-react-renderer";
 import { Prism, naxDarkTheme, naxLightTheme } from "@/components/features/home/nax-prism";
+import { MONO_FONT_STACK } from "@/lib/fonts";
 
-const MONO = '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+const MONO = MONO_FONT_STACK;
 
 export function CodeSnippet({
   code,

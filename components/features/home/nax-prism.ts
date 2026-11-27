@@ -9,7 +9,10 @@ if (!Prism.languages.nax) {
       { pattern: /\/\*[\s\S]*?\*\//, greedy: true },
       { pattern: /\/\/.*/, greedy: true },
     ],
-    string: { pattern: /(["'`])(?:\\[\s\S]|(?!\1)[^\\])*\1/, greedy: true },
+    string: [
+      { pattern: /`[^`]*`/, greedy: true },
+      { pattern: /(["'])(?:\\[\s\S]|(?!\1)[^\\])*\1/, greedy: true },
+    ],
     keyword: new RegExp(`\\b(?:${KEYWORDS.join("|")})\\b`),
     builtin: new RegExp(`\\b(?:${TYPES.join("|")})\\b`),
     "class-name": [
@@ -18,8 +21,8 @@ if (!Prism.languages.nax) {
       /\b[a-z_][a-z0-9_]*_t\b/,
     ],
     constant: /\b[A-Z][A-Z0-9_]{2,}\b/,
-    function: /\b[a-z_][a-z0-9_]*(?=\s*\()/,
-    number: /\b(?:0x[\da-fA-F]+|\d+(?:\.\d+)?)\b/,
+    function: /\b[A-Za-z_]\w*(?=\s*\()/,
+    number: /\b(?:0x[\da-fA-F]+|0b[01]+|0o[0-7]+|\d+(?:\.\d+)?)\b/,
     operator: /->|\.\.|[-+*/%=!<>&|^?:]+/,
     punctuation: /[{}[\](),.;]/,
   };

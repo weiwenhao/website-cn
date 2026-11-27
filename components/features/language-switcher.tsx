@@ -1,24 +1,25 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 
 export function LanguageSwitcher() {
   const pathname = usePathname();
-  const chineseSiteBaseUrl = "https://naxlang.org";
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const englishSiteBaseUrl = 'https://naxlang.org';
 
-  // Construct the target URL by combining the base URL of the Chinese site
-  // with the current path from the English site.
-  // The URL constructor handles joining them correctly (e.g. avoids double slashes if pathname is '/').
-  const targetHref = new URL(pathname, chineseSiteBaseUrl).toString();
+  // When served under /cn on the main origin, a plain relative anchor jumps cleanly back into the English app
+  // (including preview deployments). When deployed standalone (e.g. nature-lang.cn), link to the English domain.
+  const targetHref = basePath
+    ? pathname || '/'
+    : new URL(pathname, englishSiteBaseUrl).toString();
 
   return (
-    <Link
+    <a
       href={targetHref}
       className="p-2 hover:text-primary flex items-center justify-center"
       style={{ fontWeight: 500, fontSize: 17 }}
     >
       <span className="inline-block align-middle">EN</span>
-    </Link>
+    </a>
   );
 }

@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
 import "@/globals.css";
 import { Header } from "@/components/features/header";
 import { SiteFooter } from "@/components/features/site-footer";
-
-const font = Outfit({
-  weight: "400",
-  subsets: ["latin"]
-});
-
+import { ibmPlexMono, outfit } from "@/lib/fonts";
 
 export const metadata: Metadata = {
-  title: "Nax Programming Language",
-  description: "A modern programming language designed for elegant, efficient, and reliable software development",
+  title: "Nax 编程语言",
+  description: "通用系统型编程语言与编译器，用简洁优雅的方式构建高性能、安全可靠、跨平台软件",
 };
 
 export default function RootLayout({
@@ -21,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${font.className}`}>
-      <body className="antialiased min-h-screen flex flex-col font-body">
+    <html lang="zh-CN" className={`${outfit.variable} ${ibmPlexMono.variable}`}>
+      <body className="antialiased min-h-screen flex flex-col font-sans">
         {/* Header */}
         <Header />
     

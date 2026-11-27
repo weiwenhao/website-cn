@@ -83,10 +83,10 @@ fn delay_sum(int a, int b):int {
 }
 
 fn main() {
-  var fut = go delay_sum(1, 1) // eq: future_t<int> fut = @async(delay_sum(1, 1))
-  var result = fut.await()
+    var fut = go delay_sum(1, 1) // eq: future_t<int> fut = @async(delay_sum(1, 1))
+    var result = fut.await()
 
-  println('result =', result)
+    println('result =', result)
 }`,
   },
   {
@@ -117,18 +117,18 @@ fn main() {
     file: "main.n",
     browser: true,
     cmd: "nax build main.n && ./main",
-    output: "",
+    output: "-1\n42",
     code: `fn main() {
     int? foo = null
     int bar = match foo {
         is int v -> v // auto assert
         is null -> -1
     }
+    println(bar)
 
-    assert(bar == -1)
-
+    foo = 42
     if foo is int v {
-        assert(v == -1)
+        println(v)
     }
 }`,
   },
@@ -172,6 +172,7 @@ type rectangle: measurable = struct{
 fn rectangle.area(self):int {
     return self.width * self.height
 }
+
 fn rectangle.perimeter(self):int {
     return 2 * (self.width + self.height)
 }
@@ -309,18 +310,18 @@ fn main() {
     id: "nullable",
     file: "main.x",
     cmd: "nax build main.x && ./main",
-    output: "",
+    output: "-1\n42",
     code: `fn main() {
     int? foo = null
     int bar = match foo {
         is int v -> v // auto assert
         is null -> -1
     }
+    println(bar)
 
-    assert(bar == -1)
-
+    foo = 42
     if foo is int v {
-        assert(v == -1)
+        println(v)
     }
 }`,
   },

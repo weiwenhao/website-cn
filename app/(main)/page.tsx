@@ -1,4 +1,3 @@
-import { Outfit } from "next/font/google";
 import { Benchmarks } from "@/components/features/home/bench";
 import { Hero } from "@/components/features/home/hero";
 import {
@@ -10,46 +9,9 @@ import {
   UseCases,
 } from "@/components/features/home/sections";
 
-// The layout loads Outfit at weight 400 only. The landing page needs the heavier weights for its headings.
-const font = Outfit({ weight: ["400", "500", "600", "700"], subsets: ["latin"] });
-
-// Outfit only covers Latin glyphs, so name the CJK faces explicitly instead of leaving it to the browser default.
-const CJK = '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif';
-
-// Hero entrance: one short fade-up per block. The ring of the special sponsor shows the whole spectrum, and
-// the spectrum flows along it. All of it is skipped when the visitor prefers reduced motion.
-const MOTION = `
-.nax-rainbow {
-  background-image: linear-gradient(90deg, #ED4845, #F59E0B, #FACC15, #22C55E, #06B6D4, #3B82F6, #8B5CF6, #EC4899, #ED4845);
-  background-size: 150px 100%;
-  background-repeat: repeat-x;
-}
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes nax-rise {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: none; }
-  }
-  .nax-rise {
-    animation: nax-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--i, 0) * 80ms);
-  }
-  @keyframes nax-flow {
-    to { background-position: 150px 0; }
-  }
-  .nax-rainbow {
-    animation: nax-flow 4s linear infinite;
-  }
-}
-`;
-
 export default function Home() {
   return (
-    <div
-      className={`${font.className} overflow-x-clip bg-white text-[#2F3437]`}
-      style={{ fontFamily: `${font.style.fontFamily}, ${CJK}` }}
-    >
-      <style>{MOTION}</style>
-
+    <div className="overflow-x-clip bg-white text-[#2F3437]">
       <Hero />
 
       {/* 01 pillars: the red band continues the red panel of the hero */}
@@ -104,7 +66,7 @@ export default function Home() {
       {/* 05 sponsors */}
       <section className="bg-[#F6F5F2] py-20 lg:py-24">
         <div className="container mx-auto px-4">
-          <SectionHead index="05" title="Sponsors" />
+          <SectionHead index="05" title="赞助商" />
           <div className="mt-12">
             <Sponsors />
           </div>

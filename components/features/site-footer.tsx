@@ -41,26 +41,28 @@ export function SiteFooter() {
                   href="/docs/get-started"
                   className="text-sm hover:text-primary"
                 >
-                  Get Started
+                  快速开始
                 </Link>
               </li>
               <li>
-                <Link
+                <a
                   href="https://github.com/naxlang/nax/tree/master/tests/features/cases"
-                  className="text-sm hover:text-primary"
-                >
-                  Examples
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="https://github.com/weiwenhao/website"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm hover:text-primary"
                 >
-                  Edit on GitHub
-                </Link>
+                  代码示例
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/weiwenhao/website-cn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm hover:text-primary"
+                >
+                  在 GitHub 上编辑
+                </a>
               </li>
             </ul>
           </div>
@@ -68,20 +70,22 @@ export function SiteFooter() {
           <div>
             <h3 className="font-semibold mb-3">社交媒体</h3>
             <div className="flex items-center gap-4">
-              <Link
+              <a
                 href="https://github.com/naxlang/nax"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-primary"
               >
                 <Github className="h-5 w-5" />
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://x.com/nature_lang"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-primary"
               >
                 <Twitter className="h-5 w-5" />
-              </Link>
+              </a>
               <div className="flex items-center gap-2">
                 <span className="text-sm">微信讨论组:</span>
                 <span className="text-sm text-muted-foreground">nature-lang</span>

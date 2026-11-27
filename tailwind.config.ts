@@ -9,6 +9,25 @@ export default {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: [
+  				'var(--font-outfit)',
+  				'"PingFang SC"',
+  				'"Hiragino Sans GB"',
+  				'"Microsoft YaHei"',
+  				'"Noto Sans CJK SC"',
+  				'"Source Han Sans SC"',
+  				'sans-serif'
+  			],
+  			mono: [
+  				'var(--font-ibm-plex-mono)',
+  				'ui-monospace',
+  				'SFMono-Regular',
+  				'Menlo',
+  				'Consolas',
+  				'monospace'
+  			]
+  		},
   		colors: {
 			'nax-red': '#ED4845',
 			'nax-blue': '#3170A7',

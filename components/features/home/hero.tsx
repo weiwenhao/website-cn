@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CodeBlock, type Mode } from "@/components/features/code-block";
 
-// Hero entrance helper; the keyframes live in the page's <style>.
+// Hero entrance helper; the keyframes live in globals.css.
 const rise = (i: number) => ({ "--i": i }) as React.CSSProperties;
 
 // n is the paper hero, x the ink one. The red panel and the red button stay the same in both.
