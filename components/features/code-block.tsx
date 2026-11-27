@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Play } from "lucide-react";
+import { Check, Copy, ExternalLink, Play, RotateCw } from "lucide-react";
 import { CodeSnippet } from "@/components/features/home/code-snippet";
 import { EXAMPLES } from "@/components/features/home/examples";
 import { PLAYGROUND_TIMEOUT_MS, runPlayground, type PlaygroundMode } from "@/lib/playground-api";
@@ -39,6 +39,7 @@ const THEME = {
     file: "text-[#6B6A67] hover:text-[#111111]",
     fileOn: "bg-white text-[#111111]",
     copy: "text-[#6B6A67] hover:text-[#111111]",
+    iconBtn: "text-[#6B6A67] hover:bg-black/[0.06] hover:text-[#111111]",
     tabs: "bg-white",
     tab: "text-[#6B6A67] hover:text-[#111111]",
     tabOn: "font-medium text-[#111111]",
@@ -46,9 +47,11 @@ const THEME = {
     scroll: "[scrollbar-color:#D4D4D0_transparent]",
     out: "bg-[#FBFBFA]",
     cmd: "text-[#6B6A67]",
+    cmdHover: "hover:text-[#111111]",
     prompt: "text-[#9A9894]",
     result: "text-[#111111]",
     muted: "text-[#6B6A67]",
+    run: "text-[#111112] hover:text-nax-red",
     error: "text-[#CF222E]",
     live: "text-[#116329]",
   },
@@ -61,6 +64,7 @@ const THEME = {
     file: "text-zinc-500 hover:text-zinc-200",
     fileOn: "bg-[#171718] text-white",
     copy: "text-zinc-400 hover:text-white",
+    iconBtn: "text-zinc-400 hover:bg-white/[0.08] hover:text-white",
     tabs: "bg-[#171718]",
     tab: "text-zinc-400 hover:text-white",
     tabOn: "font-medium text-white",
@@ -68,16 +72,17 @@ const THEME = {
     scroll: "[scrollbar-color:#3A3A3E_transparent]",
     out: "bg-[#121213]",
     cmd: "text-zinc-400",
+    cmdHover: "hover:text-zinc-100",
     prompt: "text-zinc-600",
     result: "text-zinc-100",
     muted: "text-zinc-400",
+    run: "text-zinc-100 hover:text-nax-red",
     error: "text-[#FF7B72]",
     live: "text-[#9FE3B6]",
   },
 };
 
-// The hero code window. The two file tabs on top are the run modes (the suffix decides the mode) and switch the whole hero;
-// below them is one tab per example of the chosen mode, the program, and a terminal panel that can run it live.
+// The hero code window. Every band keeps a fixed height so switching modes, tabs, or running live never shifts the hero.
 export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (mode: Mode) => void }) {
   // each mode remembers the example tab that was open last
   const [picked, setPicked] = useState<Record<Mode, string>>({ n: IDS.n[0], x: IDS.x[0] });
@@ -181,7 +186,7 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
 
   return (
     <div className={`overflow-hidden rounded-xl border transition-colors duration-500 ${t.frame}`}>
-      <div className={`flex h-11 items-stretch border-b pl-3 pr-2.5 transition-colors duration-500 sm:pl-4 sm:pr-3 ${t.line} ${t.bar}`}>
+      <div className={`flex h-11 items-stretch border-b pl-3 pr-3 transition-colors duration-500 sm:pl-4 sm:pr-4 ${t.line} ${t.bar}`}>
         <div className="mr-4 hidden items-center gap-1.5 sm:flex" aria-hidden>
           <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
           <span className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${t.dot}`} />
@@ -207,8 +212,7 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
             );
           })}
         </div>
-        <div className="ml-auto flex shrink-0 items-center gap-1.5 self-center sm:gap-2">
-          {/* only show the playground link when this example can run in the single-file playground */}
+        <div className="ml-auto flex shrink-0 items-center gap-1 self-center">
           {example.browser && (
             <Link
               href={
@@ -216,17 +220,21 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
                   ? `/playground#mode=x&code=${encodeURIComponent(example.code)}`
                   : `/playground#code=${encodeURIComponent(example.code)}`
               }
-              className={`whitespace-nowrap rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
+              title="在 Playground 中打开"
+              aria-label="在 Playground 中打开"
+              className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors ${t.iconBtn}`}
             >
-              在浏览器中尝试
+              <ExternalLink aria-hidden className="h-3.5 w-3.5" />
             </Link>
           )}
           <button
             type="button"
             onClick={copy}
-            className={`whitespace-nowrap rounded px-1.5 py-0.5 text-xs transition-colors ${t.copy}`}
+            title={copied ? "已复制" : "复制"}
+            aria-label={copied ? "已复制" : "复制"}
+            className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors ${copied ? t.live : t.iconBtn}`}
           >
-            {copied ? "已复制" : "复制"}
+            {copied ? <Check aria-hidden className="h-3.5 w-3.5" /> : <Copy aria-hidden className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
@@ -234,7 +242,7 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
       <div
         role="tablist"
         aria-label="语法示例"
-        className={`flex flex-wrap border-b px-2 transition-colors duration-500 ${t.line} ${t.tabs}`}
+        className={`no-scrollbar flex h-[41px] flex-nowrap items-stretch overflow-x-auto border-b px-2 transition-colors duration-500 ${t.line} ${t.tabs}`}
       >
         {IDS[mode].map((id) => {
           const selected = id === activeId;
@@ -247,10 +255,10 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
               aria-selected={selected}
               aria-controls="hero-panel"
               onClick={() => setPicked((p) => ({ ...p, [mode]: id }))}
-              className={`relative px-2.5 py-2.5 text-[13px] transition-colors ${selected ? t.tabOn : t.tab}`}
+              className={`relative shrink-0 whitespace-nowrap px-2.5 text-[13px] transition-colors ${selected ? t.tabOn : t.tab}`}
             >
               {id}
-              {selected && <span aria-hidden className={`absolute inset-x-2.5 -bottom-px h-[2px] ${t.underline}`} />}
+              {selected && <span aria-hidden className={`absolute inset-x-2.5 bottom-0 h-[2px] ${t.underline}`} />}
             </button>
           );
         })}
@@ -266,35 +274,67 @@ export function CodeBlock({ mode, onModeChange }: { mode: Mode; onModeChange: (m
       </div>
 
       <div
-        className={`min-h-[84px] border-t px-5 py-3 font-mono text-[12.5px] leading-6 transition-colors duration-500 ${t.line} ${t.out}`}
+        className={`flex h-[104px] flex-col border-t px-5 py-3 font-mono text-[12.5px] leading-6 transition-colors duration-500 ${t.line} ${t.out}`}
       >
-        <div className="flex items-center justify-between gap-3">
-          <div className={`min-w-0 truncate ${t.cmd}`}>
-            <span className={`select-none ${t.prompt}`}>$ </span>
-            {example.cmd}
-            {runState.kind === "done" && (
-              <span className={`ml-2.5 font-sans text-[11px] font-medium ${t.live}`}>
-                实时 · {(runState.elapsedMs / 1000).toFixed(1)}s
-              </span>
-            )}
-          </div>
-          {example.browser && (
+        <div className="flex shrink-0 items-center justify-between gap-3">
+          {example.browser ? (
             <button
               type="button"
               onClick={runLive}
               disabled={isRunning}
-              className="inline-flex h-7 shrink-0 items-center gap-1.5 border border-nax-red bg-nax-red px-2.5 font-sans text-[12px] font-semibold text-white transition hover:bg-[#D93A36] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60"
+              className={`min-w-0 truncate text-left transition-colors disabled:pointer-events-none ${t.cmd} ${t.cmdHover}`}
             >
-              <Play aria-hidden className="h-3 w-3 fill-current" />
-              {isRunning ? "运行中..." : "运行"}
+              <span className={`select-none ${t.prompt}`}>$ </span>
+              {example.cmd}
             </button>
+          ) : (
+            <div className={`min-w-0 truncate ${t.cmd}`}>
+              <span className={`select-none ${t.prompt}`}>$ </span>
+              {example.cmd}
+            </div>
+          )}
+
+          {example.browser && (
+            <div className="flex shrink-0 items-center gap-3">
+              {runState.kind === "done" && (
+                <span className={`font-sans text-[11.5px] font-medium tabular-nums ${t.live}`}>
+                  {(runState.elapsedMs / 1000).toFixed(1)}s
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={runLive}
+                disabled={isRunning}
+                className={`inline-flex items-center gap-1.5 font-sans text-[12.5px] font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 ${
+                  runState.kind === "done" || runState.kind === "error" ? t.copy : t.run
+                }`}
+              >
+                {runState.kind === "done" || runState.kind === "error" ? (
+                  <>
+                    <RotateCw aria-hidden className="h-3 w-3" />
+                    {runState.kind === "error" ? "重试" : "重新运行"}
+                  </>
+                ) : (
+                  <>
+                    <Play aria-hidden className="h-2.5 w-2.5 fill-nax-red text-nax-red" />
+                    {isRunning ? "运行中..." : "运行"}
+                  </>
+                )}
+              </button>
+            </div>
           )}
         </div>
-        <div aria-live="polite" className={`mt-1 max-h-[120px] overflow-auto whitespace-pre-wrap break-words [scrollbar-width:thin] ${t.scroll}`}>
+
+        <div
+          aria-live="polite"
+          className={`mt-1 min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words [scrollbar-width:thin] ${t.scroll}`}
+        >
           {runState.kind === "running" && <span className={t.muted}>沙箱运行中...</span>}
           {runState.kind === "error" && <span className={t.error}>错误：{runState.message}</span>}
           {runState.kind === "done" && <span className={t.result}>{runState.output}</span>}
-          {runState.kind === "idle" && example.output && <span className={t.result}>{example.output}</span>}
+          {runState.kind === "idle" && !example.browser && example.output && (
+            <span className={t.result}>{example.output}</span>
+          )}
         </div>
       </div>
     </div>
