@@ -31,10 +31,9 @@ export function Header() {
         >
           <Github className="h-5 w-5" />
         </a>
-        {/* same look as the primary button of the landing page, scaled to the header */}
         <Link
           href="/docs/donate"
-          className="inline-flex h-10 items-center gap-1.5 border-2 border-nax-red bg-nax-red px-4 text-[14px] font-semibold text-white transition hover:bg-[#D93A36] active:scale-[0.98]"
+          className="inline-flex h-10 items-center gap-1.5 border-2 border-[#F35774] bg-[#F35774] px-4 text-[14px] font-semibold text-white transition hover:border-[#E34764] hover:bg-[#E34764] active:scale-[0.98]"
         >
           <Heart className="h-4 w-4" />
           <span>捐赠</span>
